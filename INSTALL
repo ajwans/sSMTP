@@ -1,0 +1,76 @@
+To install ssmtp:
+-----------------
+
+Check the options and directories in Makfile.
+
+Then type:
+
+	make
+
+and finally install the files:
+
+	make install
+
+or to install it as the main Mail Transport Agent
+
+	make install-sendmail
+
+-- Hugo
+
+
+Fedora Core 1 system install:
+-----------------------------
+
+I would actually just suggest the INSTALL from automake.  But:
+
+If you are building sSMPT from scratch the following steps worked on a
+Fedora Core 1 system.  To install it in the /usr/local directory:
+
+        ./configure
+        make
+        make install
+
+Then edit the ssmpt.conf file /usr/local/etc and create a symbolic
+link from where your system thinks the sendmail binary goes to the
+/usr/local/sbin/ssmpt executable.
+
+-- Sven Heinicke <sven@nec-labs.com>
+
+
+Information about the options:
+------------------------------
+
+  To install this program, you compile it with the correct options
+and copy the binary.
+
+  If you have more than one community which uses a given binary,
+there is a small (3 line) config file that allows setting variables
+that aren't static.
+  These three are
+	root: The person who gets root's mail (also daemons', etc).
+		This userid (on the mailhub) get all mail sent to
+		local adressees with userids less than 10.  In other
+		words, she gets mail the system mails to root, daemon,
+		etc.
+	mailhub: The place where the mail goes.  This is looked up with
+		gethostbyname, and so must resolve to an IP address. MX
+		records don't count, as several vendors' machines that we
+		run ssmtp on (notably suns) don't fully support them.
+		They'd be nice, though...
+	rewriteDomain: The place to say the mail came from. This is for
+		hostname-hiding, and only applies if the programs is
+		compiled with REWRITE_DOMAIN defined. We don't usually have
+		to do so (our main mailhubs run zmailer: our clients run all
+		sorts of junk).
+	hostname: the Fully Qualified Domain Name of the machine, in case
+		you have set hostname to the short form.
+
+  The full set of options are discussed in the makefile, and briefly are the
+type of machine to compile for, the place to send the mail and the domain to
+rewrite to, if applicable.
+
+  To make multiple versions I use symlink-trees and scripts that passes
+options to the make command, then renames the binaries to things like
+ssmtp.S4C-SunOS4.1.1...  I also can make DEC-style setld kits.
+
+-- dave

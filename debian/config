@@ -1,0 +1,62 @@
+#!/bin/sh -e
+
+. /usr/share/debconf/confmodule
+
+if [ -f /etc/ssmtp/ssmtp.conf ]
+then
+	for v in `grep -E "^(root|mailhub|rewriteDomain|hostname|FromLineOverride)=" /etc/ssmtp/ssmtp.conf`
+	do
+		export $v
+	done
+
+	db_set ssmtp/root "$root"
+	if [ -n "$mailhub" ]
+	then
+		if [ `expr index "$mailhub" :` -ne 0 ]
+		then
+			db_set ssmtp/port "${mailhub#*:}"
+			db_set ssmtp/mailhub "${mailhub%:*}"
+		else
+			db_set ssmtp/port 25
+			db_set ssmtp/mailhub "$mailhub"
+		fi
+	fi
+	if [ -n "$rewriteDomain" ]
+	then
+		db_set ssmtp/rewritedomain "$rewriteDomain"
+	fi
+	if [ -n "$hostname" ]
+	then
+		db_set ssmtp/hostname "$hostname"
+	fi
+	if [ -n "$FromLineOverride" ]
+	then
+		if [ "$FromLineOverride" = "YES" ]
+		then
+			db_set ssmtp/fromoverride true
+		else
+			db_set ssmtp/fromoverride false
+		fi
+	fi
+fi
+
+db_input medium ssmtp/root || true
+db_go
+
+db_input medium ssmtp/mailhub || true
+db_go
+
+db_input low ssmtp/port || true
+db_go
+
+db_input medium ssmtp/rewritedomain || true
+db_go
+
+db_input low ssmtp/hostname || true
+db_go
+
+db_input medium ssmtp/fromoverride || true
+db_go
+
+# Program End
+exit 0

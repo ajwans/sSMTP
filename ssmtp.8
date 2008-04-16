@@ -1,0 +1,288 @@
+.TH SSMTP 8 "Last change: 4 February 2005"
+.SH NAME
+ssmtp, sendmail \- send a message using smtp
+.SH SYNOPSIS
+.B ssmtp
+.RI "[ " flags " ] [ " address " "  ... " ]"
+.br
+.B /usr/lib/sendmail
+.RI "[ " flags " ] [ " address " "  ... " ]"
+.br
+.SH DESCRIPTION
+.I ssmtp
+is a send-only sendmail emulator for machines which normally pick their mail
+up from a centralized mailhub (via pop, imap, nfs mounts or other means).
+It provides the functionality required for humans and programs to send
+mail via the standard or /usr/bin/mail user agents.
+.PP
+It accepts a mail stream on standard input with recipients specified on the
+command line and synchronously forwards the message to the mail transfer
+agent of a mailhub for the mailhub MTA to process. Failed messages are
+placed in dead.letter in the sender's home directory.
+.PP
+Config files allow one to specify the address to receive mail from
+root, daemon, etc.; a default mailhub; a default domain to be used in
+From: lines; and per-user From: addresses and mailhub names.
+.sp
+.PP
+It does not attempt to provide all the functionality of sendmail: it is
+intended for use where other programs are the primary means of at last mail
+delivery.  It is usefull with pop/imap, or to simulate the Sun shared mail
+spool option for non-Sun machines, for machines whose sendmails are too
+difficult (or various) to configure, for machines with known disfeatures in
+their sendmails or for ones where there are ``mysterious problems''. 
+.PP
+It does not do aliasing, which must be done either in the user agent
+or on the mailhub. Nor does it honor .forwards, which have to be done
+on the recieving host.  It especially does not deliver to pipelines.
+
+.SH OPTIONS
+Most sendmail options are irrelevent to sSMTP. Those marked ``ignored'' or
+``default'' have no effect on mail transfer.  Those marked ``unsupported''
+are fatal errors.  Those marked ``simulated'' are not errors, but the result
+is for the program to exit with an informative message. A sort of fatal
+non-error.
+
+.TP
+.B \-4
+Forces ssmtp to use IPv4 addresses only.
+
+.TP
+.B \-6
+Forces ssmtp to use IPv6 addresses only.
+
+.TP
+\fB\-au\fP\fIusername\fP
+Specifies username for SMTP authentication.
+
+.TP
+\fB\-ap\fP\fIpassword\fP
+Specifies password for SMTP authentication.
+
+.TP
+\fB\-am\fP\fImechanism\fP
+Specifies mechanism for SMTP authentication. (Only LOGIN and CRAM-MD5)
+
+.TP
+.B \-ba
+(unsupported) ARPANET mode. All input lines must end with a LINEFEED, and
+all messages will be generated with a CR-LF at the end. Also, the ``From:''
+and ``Sender:'' fields are examined for the name of the sender.
+
+.TP
+.B \-bd 
+(unsupported) Run as a daemon.
+
+.TP
+.B \-bi
+(ignored) Initialise the alias database.
+
+.TP
+.B \-bm
+(default) Deliver mail in the usual way.
+
+.TP
+.B \-bp
+(simulated) Print a summary of the mail queue.
+
+.TP
+.B \-bs
+(unsupported) Read SMTP commands from stdin.
+
+.TP
+.B \-bt
+(unsupported) Run in address test mode.
+
+.TP
+.B \-bv
+(unsupported) Verify names only.
+
+.TP
+.B \-bz
+(unsupported) Create the configuration freeze file.
+
+.TP
+\fB\-C\fP\fIfile\fP 
+Use alternate configuration file.
+
+.TP
+\fB\-d\fP\fIX\fP
+Set debugging value to X.
+
+.TP
+.B \-E 
+(ignored) Don't trust userid of sender.
+
+.TP
+\fB\-F\fP\fIfullname\fP
+Set the full name of the sender.
+
+.TP
+\fB\-f\fP\fIname\fP
+Sets the name of the ``from'' person. This option is valid only if no
+From: line is specified within the header of the email.
+
+.TP
+\fB\-h\fP\fI\fN\fP
+(ignored) Set the hop count to N.
+
+.TP
+.B \-m 
+(ignored) Ignore originator in alias.
+
+.TP
+\fB\-M\fP\fIid\fP
+(ignored) Attempt to deliver the queued message with message-id id.
+
+.TP
+\fB\-N\fP \fIdsn\fP
+(ignored) Set delivery status notification conditions to dsn.
+
+.TP
+.B \-n 
+(default) Do not do aliasing.
+
+.TP
+\fB\-oA\fP\fIfile\fP
+(ignored) Use alternate alias file.
+
+.TP
+.B \-oc
+(ignored) Delay ``expensive'' connections.
+
+.TP
+\fB\-od\fP\fx\fP
+(ignored) Set the delivery mode to interactive/synchronous, background or queue
+(Always interactive).
+
+.TP
+.B \-oD
+(ignored) Run newaliases if required.
+
+.TP
+\fB\-oe\fP\fx\fP
+(ignored) Set error processing to mail, write, print or quit. (Always print).
+
+.TP
+\fB\-oF\fP\fImode\fP
+(ignored) The mode to use when creating temporary files.
+
+.TP
+.B \-of
+(ignored) Save UNIX-system-style ``From'' lines at the front of messages.
+
+.TP
+\fB\-og\fP\fIN\fP
+(ignored) Set group ID to use when calling mailers.
+
+.TP
+\fB\-oH\fP\fIfile\fP
+(ignored) Set SMTP help file.
+
+.TP
+.B \-oi
+(default) Do not take dots on a line by themselves as a message terminator.
+
+.TP
+\fB\-oL\fP\fIn\fP
+(ignored) The log level.
+
+.TP
+.B \-om
+(default) Send to ``me'' (the sender) also if in an alias.
+
+.TP
+.B \-oo
+(unsupported) If set, this message may have old style headers. 
+
+.TP
+\fB\-oQ\fP\fIqueuedir\fP
+(ignored) Select the directory in which to queue messages.
+
+.TP
+\fB\-or\fP\fItimeout\fP
+(ignored) The timeout on reads.
+
+.TP
+\fB\-oS\fP\fIfile\fP 
+(ignored) Save statistics in the named file.
+
+.TP
+.B \-os
+(ignored) Always instantiate the queue.
+
+.TP
+\fB\-oT\fP\fItime\fP
+(ignored) Set timeout on messages.
+
+.TP
+\fB\-ot\fP\fIstz,dtz\fP
+(ignored) Set the name of the time zone.
+
+.TP
+\fB\-ou\fP\fIN\fP
+(ignored) Set the default user id for mailers.
+
+.TP
+\fB\-q\fP\fI[time]\fP
+(simulated) Process the queue.
+
+.TP
+\fB\-r\fP\fIname\fP
+Same as -f.
+
+.TP
+\fB\-R\fP\fIstring\fP
+(ignored) Process queue for recipient.
+
+.TP
+\fB\-R\fP \fIreturn\fP
+(ignored) Set the amount of the message to be returned if the message bounces.
+
+.TP
+.B \-t
+Read  message, searching for recipients. ``To:'', `Cc:'', and ``Bcc:'' lines
+will be scanned for people to send to. Any addresses  in  the  argument list
+will be suppressed (not supported).
+
+.TP
+.B \-v
+Go into verbose mode. 
+
+.TP
+.B \-V
+Say version and quit.
+
+.SH REVERSE ALIASES
+A reverse alias gives the From: address placed on a user's outgoing messages
+and (optionally) the mailhub these messages will be sent through. Example:
+.sp
+.RS +.3i
+.ta 1.0i
+.nf
+root:jdoe@isp.com:mail.isp.com
+.fi
+.RE
+.sp
+Messages root sends will be identified as from jdoe@isp.com and sent
+through mail.isp.com.
+
+.SH FILES
+ /etc/ssmtp/ssmtp.conf - configuration file
+.br
+ /etc/ssmtp/revaliases - reverse aliases file
+
+.SH SEE ALSO
+RFC821, RFC822, ssmtp.conf(5).
+
+.SH AUTHORS
+Matt Ryan (mryan@debian.org)
+Hugo Haas (hugo@debian.org)
+Christoph Lameter (clameter@debian.org)
+Dave Collier-Brown (davecb@hobbes.ss.org)
+
+.SH BUGS
+sSMTP does not support exception lists to the -t option (never seen it
+used).
+
+sSMTP will fail if the mailhub is unreachable.

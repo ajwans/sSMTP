@@ -1,0 +1,174 @@
+#
+#    Translators, if you are not familiar with the PO format, gettext
+#    documentation is worth reading, especially sections dedicated to
+#    this format, e.g. by running:
+#         info -n '(gettext)PO Files'
+#         info -n '(gettext)Header Entry'
+#
+#    Some information specific to po-debconf are available at
+#            /usr/share/doc/po-debconf/README-trans
+#         or http://www.debian.org/intl/l10n/po-debconf/README-trans
+#
+#    Developers do not need to manually edit POT or PO files.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: ssmtp 2.61-5\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2006-06-04 21:34-0500\n"
+"PO-Revision-Date: 2006-02-04 11:12+0100\n"
+"Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
+"Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=iso-8859-1\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#. Type: boolean
+#. Description
+#: ../templates:4
+msgid "Automatically overwrite config files?"
+msgstr "Skriv automatiskt över konfigurationsfiler?"
+
+#. Type: boolean
+#. Description
+#: ../templates:4
+msgid ""
+"The mail configuration file /etc/ssmtp/ssmtp.conf can be automatically "
+"updated on each upgrade with the information supplied to the debconf "
+"database. If you do not want this to happen (ie/ you want to maintain "
+"control of this file yourself) then set this option to have the program "
+"never touch this file."
+msgstr ""
+"Konfigurationsfilen /etc/ssmtp/ssmtp.conf kan automatiskt uppdateras för "
+"varje uppgradering med information som angivits i debconfs databas. Om du "
+"inte vill att detta ska göras (du vill hantera kontrollen av denna fil "
+"själv) kan du ange att programmet aldrig ska röra denna fil."
+
+#. Type: string
+#. Description
+#: ../templates:14
+#, fuzzy
+msgid "Who gets mail for userids < 1000:"
+msgstr "Vem ska få e-post för användar-id:n < 1000?"
+
+#. Type: string
+#. Description
+#: ../templates:14
+msgid ""
+"Mail sent to a local user whose UID is less than 1000 will instead be sent "
+"here. This is useful for daemons which mail reports to root and other system "
+"UIDs. Make this empty to disable rewriting."
+msgstr ""
+"E-post som skickats till en lokal användare vars uid är mindre än 1000 "
+"kommer skickas hit istället. Detta är användbart för demoner vars e-post "
+"rapporteras till root och andra system-uid. Lämna denna blank för att "
+"inaktivera omskrivning."
+
+#. Type: string
+#. Description
+#: ../templates:23
+#, fuzzy
+msgid "Name of your mailhub:"
+msgstr "Namnet på din e-posthubb?"
+
+#. Type: string
+#. Description
+#: ../templates:23
+msgid ""
+"This sets the host to which mail is delivered. The actual machine name is "
+"required; no MX records are consulted. Commonly, mailhosts are named \"mail."
+"domain.com\"."
+msgstr ""
+"Det här ställer in vilken värd som postleveranser ska göras. Det aktuella "
+"maskinnamnet krävs; inga MX-pekare efterfrågas. Vanligtvis är e-posthubbar "
+"namngivna \"mail.domain.se\"."
+
+#. Type: string
+#. Description
+#: ../templates:31
+#, fuzzy
+msgid "Remote SMTP port number:"
+msgstr "Portnummer för fjärr-SMTP?"
+
+#. Type: string
+#. Description
+#: ../templates:31
+msgid ""
+"If your remote SMTP server listens on a port other than 25 (Standard/RFC) "
+"then set it here."
+msgstr ""
+"Om din fjärr-SMTP-server lyssnar på en port annan än 25 (Standard/RFC) kan "
+"du ställa in det här."
+
+#. Type: string
+#. Description
+#: ../templates:37
+#, fuzzy
+msgid "What domain to masquerade as:"
+msgstr "Vilken domän ska post maskeras som?"
+
+#. Type: string
+#. Description
+#: ../templates:37
+msgid ""
+"ssmtp will use \"username@REWRITEDOMAIN\" as the default From: address for "
+"outgoing mail which contains only a local username."
+msgstr ""
+"ssmtp kommer att använda \"användarnamn@OMSKRIVENDOMÄN\" som standard Från:-"
+"adress för utgående post som bara innehåller ett lokalt användarnamn."
+
+#. Type: string
+#. Description
+#: ../templates:43
+#, fuzzy
+msgid "What name to store in /etc/mailname:"
+msgstr "Vilket namn ska lagras i /etc/mailnamn?"
+
+#. Type: string
+#. Description
+#: ../templates:43
+msgid ""
+"This is the portion of the address after the '@' sign to be shown on "
+"outgoing news and mail messages."
+msgstr ""
+"Det är är delen av adressen efter \"@\"-tecknet som visas på utgående "
+"nyhetsgrupper och e-postmeddelanden."
+
+#. Type: string
+#. Description
+#: ../templates:49
+#, fuzzy
+msgid "Fully qualified hostname:"
+msgstr "Hela kvalificerade värdnamnet?"
+
+#. Type: string
+#. Description
+#: ../templates:49
+msgid ""
+"This should specify the real hostname of this machine, and will be sent to "
+"the mailhub when delivering mail."
+msgstr ""
+"Det här bör ange det riktiga värdnamnet för denna maskin och kommer att "
+"skickas till e-posthubb vid postleveranser."
+
+#. Type: boolean
+#. Description
+#: ../templates:56
+msgid "Allow override of From: line in email header?"
+msgstr "Tillåt åsidosättning av Från:-rad i e-posthuvud?"
+
+#. Type: boolean
+#. Description
+#: ../templates:56
+msgid ""
+"A \"positive\" response will permit local users to enter any From: line in "
+"their messages without it being mangled, and cause ssmtp to rewrite the "
+"envelope header with that address. A \"negative\" response will disallow "
+"this, and use only the default address or addresses set in /etc/ssmtp/"
+"revaliases."
+msgstr ""
+"Ett \"positivt\" svar kommer att tillåta lokala användare att ange vilken "
+"Från:-rad som helst i sina meddelanden utan att manglas och orsaka ssmtp att "
+"skriva om brevhuvudet med den adressen. Ett \"negativt\" svar kommer att "
+"stänga av detta och endast använda standardadressen eller adresser inställda "
+"i /etc/ssmtp/revaliases."

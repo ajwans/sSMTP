@@ -1,0 +1,101 @@
+### This is now deprecated. Please see the RCS log for ssmtp.c etc for ###
+### upto date change information ###
+
+Thu Feb 24 09:19:51 EST 2000	Hugo Haas
+  - Fixed stripFromLine() which was generating wrong From: line (Debian bug
+    #58863).
+
+Sun Feb 20 22:35:36 EST 2000    Hugo Haas
+  - stripFromLine() now supports addresses like "hugo@debian.org (Hugo Haas)"
+
+Sat Feb  5 15:07:47 EST 2000	Hugo Haas
+  - Applied patch from Tony Finch <fanf@demon.net> for Sendmail's -f
+    option.
+  - Added a WARNING file.
+
+Sun Jan 16 13:47:46 EST 2000    Hugo Haas
+  - Applied patch by Michael Luxton <lux99999@yahoo.com> adding per-user
+    mailhub specification to reverse alias feature
+
+Sun Dec  5 14:19:57 EST 1999	Hugo Haas
+  - Applied patch by Andreas Trottmann <andreas.trottmann@werft22.com>
+    preventing buffer overflows.
+
+August 1999 Grant Edwards
+  - Added support for plaintext (base64) login authorization 
+    options -au Username -ap Password will cause ssmtp to attempt
+    to login to the ESMTP server.  Only tested w/ MS-Exchange server.
+
+June 1999 Hugo Haas
+  - Added parseaddr correctly parsing RFC822 addresses, written by Miquel
+    van Smoorenburg <miquels@cistron.nl> (Debian Bug #38795).
+
+March 1999 Hugo Haas
+  - Added patch by Joel Rosdahl <joel@debian.org> adding FromLineOverride
+
+January 1999 Hugo Haas
+  - Corrected (again) options parsing mechanism: -R option is now ignored
+    correctly
+
+October 1998 Hugo Haas
+  - Corrected option parsing mechanism
+  - Added support for the '-f', '-F' and '-r' options
+
+June 1998 Hugo Haas
+  - Using macros for the configuration and reverse aliases files
+
+June 1998 Hugo Haas
+  - Cleanup of the source
+  - Options can now be specified using a single block (Debian Bug#22691)
+  - Wrote stripFromLine() options
+
+April 1998 Hugo Haas
+  - Made 'Root' option work (Debian Bug#21335)
+  - Handled the case when the user has no name (do not send "(null)")
+
+April 1998 Hugo Haas
+  - Now ignoring -R keyword, -N dsn stuff
+
+April 1998 Hugo Haas
+  - Removed awful getDate() method; replaced by get_arpadate()
+
+April 1998 Hugo Haas
+  - Removed quote in the From: line
+
+March 1998 Hugo Haas
+  - Moved the configuration files to /etc/ssmtp
+
+March 1998 Hugo Haas
+  - No more adding "To: postmaster" (qmail and sendmail do this)
+  - Improved "-f", "-F" and "-r" options
+
+January 1998 Hugo Haas
+  - Changed the configuration parsing (Debian Bug#17470)
+  - Changed the logging: verbosity reduced
+
+January 1998 Hugo Haas
+  - Changed the header parsing because it gobbled pseudo-header lines
+    (Debian Bug#17240)
+  - Changed the RewriteDomain option
+
+December 1997 Hugo Haas
+  - Changed the MAIL FROM command to be RFC821 compliant (Debian Bug#15690)
+  - Modified the recordReciepient function: no memory was allocated for
+     the last recipient
+  - Added the sending of the recorded recipients (Debian Bug#15690)
+     The old way to do it was wrong. (Removed the argv=reciepients stuff)
+
+November 1997 Hugo Haas
+  - Changed the RCPT stuff which was wrong for arguments with "<>"
+
+October 1997 Hugo Haas
+  - Added the reverse aliases process for the From: field
+  - Send the required headers at the beginning
+  - Send only one recipient at a time
+  - Changed the header parsing to avoid a bug due to mailx
+
+September 1997 Christoph Lameter
+  - Fixed up to use more modern C (attempt to fix problems)
+  - Fixed scores of bugs (I doubt it ever worked before)
+  - Made it work under Debian/Linux
+  - Add support for -t option. Limit header to 4K.

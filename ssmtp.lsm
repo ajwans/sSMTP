@@ -1,0 +1,13 @@
+Begin3
+Title:		ssmtp
+Version:	2.60
+Entered-date:	Sep 29, 2002
+Description:	Extremely simple MTA to get mail off the system to a Mailhub
+Keywords:	MTA, simple
+Author: 	hugo@larve.net (Hugo Haas)
+Maintained-by:	mryan@debian.org (Matt Ryan)
+Primary-site:	sunsite.unc.edu /pub/Linux/system/mail/mta
+		162K ssmtp-2.50.tar.gz
+Platforms:	Linux (all Unix)
+Copying-policy:	GPL
+End

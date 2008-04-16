@@ -1,0 +1,94 @@
+
+
+srcdir= @srcdir@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libexecdir=@libexecdir@
+bindir=$(prefix)/sbin
+mandir=$(prefix)/man/man8
+
+LN_S=@LN_S@
+CC=@CC@
+
+etcdir=@sysconfdir@
+SSMTPCONFDIR=$(etcdir)/ssmtp
+# (End of relocation section)
+
+# Configuration files
+CONFIGURATION_FILE=$(SSMTPCONFDIR)/ssmtp.conf
+REVALIASES_FILE=$(SSMTPCONFDIR)/revaliases
+
+INSTALLED_CONFIGURATION_FILE=$(CONFIGURATION_FILE)
+INSTALLED_REVALIASES_FILE=$(REVALIASES_FILE)
+
+# Programs
+GEN_CONFIG=$(srcdir)/generate_config
+
+SRCS=ssmtp.c arpadate.c base64.c xgethostname.c @SRCS@
+
+OBJS=$(SRCS:.c=.o)
+
+INSTALL=@INSTALL@
+
+EXTRADEFS=\
+-DSSMTPCONFDIR=\"$(SSMTPCONFDIR)\" \
+-DCONFIGURATION_FILE=\"$(CONFIGURATION_FILE)\" \
+-DREVALIASES_FILE=\"$(REVALIASES_FILE)\" \
+
+
+CFLAGS=@DEFS@ $(EXTRADEFS) @CFLAGS@
+
+.PHONY: all
+all: ssmtp
+
+%.dvi: %.tex
+	latex $<
+
+.PHONY: install
+install: ssmtp $(GEN_CONFIG)
+	$(INSTALL) -d -m 755 $(bindir)
+	$(INSTALL) -s -m 755 ssmtp $(bindir)/ssmtp
+	$(INSTALL) -d -m 755 $(mandir)
+	$(INSTALL) -m 644 $(srcdir)/ssmtp.8 $(mandir)/ssmtp.8
+	$(INSTALL) -d -m 755 $(SSMTPCONFDIR)
+	$(INSTALL) -m 644 $(srcdir)/revaliases $(INSTALLED_REVALIASES_FILE)
+	$(GEN_CONFIG) $(INSTALLED_CONFIGURATION_FILE)
+
+
+.PHONY: install-sendmail
+install-sendmail: install
+	$(RM) $(bindir)/sendmail
+	$(LN_S) ssmtp $(bindir)/sendmail
+	$(INSTALL) -d -m 755 $(libexecdir)
+	$(RM) $(libexecdir)/sendmail
+	$(LN_S) sendmail /lib/sendmail
+	$(RM) $(mandir)/sendmail.8
+	$(LN_S) ssmtp.8 $(mandir)/sendmail.8
+
+.PHONY: uninstall
+uninstall:
+	$(RM) $(bindir)/ssmtp
+	$(RM) $(mandir)/ssmtp.8
+	$(RM) $(CONFIGURATION_FILE) $(REVALIASES_FILE)
+	$(RM) -r $(SSMTPCONFDIR)
+
+.PHONY: uninstall-sendmail
+uninstall-sendmail: uninstall
+	$(RM)  $(bindir)/sendmail /lib/sendmail
+	$(RM)  $(mandir)/sendmail.8
+
+# Binaries:
+ssmtp: $(OBJS)
+	$(CC) -o ssmtp $(OBJS) @LIBS@ $(CFLAGS)
+
+.PHONY: clean
+clean:
+	$(RM) ssmtp *.o md5auth/*.o core
+
+.PHONY: distclean
+distclean: clean docclean
+	$(RM) config.* Makefile
+
+.PHONY: docclean
+docclean:
+	$(RM) *.dvi *.log *.aux

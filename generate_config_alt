@@ -1,0 +1,243 @@
+#!/bin/sh -e
+
+#Date: Sun, 25 Apr 2004 14:30:40 -0700
+#From: Robert R Schneck-McConnell <schneck@Math.Berkeley.EDU>
+#
+#Below is a replacement for the current generate_config script for ssmtp.
+#Thanks to Jari Aalto it will suggest the current values of options
+#as defaults, if the config file already exists.
+#
+#It also explains what each option actually does; with such a small program
+#it seems nice to be able to actually understand the configuration.
+#
+#The only real change in output behavior is that it encourages a default of
+#FromLineOverride=YES, which seems sensible to me for most users.
+#
+#Robert
+
+conffile=$1
+if [ -z $1 ]
+then
+  conffile=/etc/ssmtp/ssmtp.conf
+fi
+
+conffvalue()
+{
+	:
+}
+
+if test -s $conffile
+then
+if awk --version > /dev/null
+then
+conffvalue()
+{
+	awk -F= '/^[\t]*[^#]/ && $1 ~ re {print $2; exit}' \
+	    re="$1" $conffile
+}
+else
+echo "(You seem to be missing awk, so I can't read the values currently"
+echo "stored in $conffile; you'll have to re-enter them manually if"
+echo "you want to re-use them.  $conffile will not be overwritten"
+echo "unless you confirm the overwrite at the end of the configuration.)"
+echo
+echo
+fi
+fi
+
+echo "Configure sSMTP in Five Easy Steps"
+echo
+echo "(1) mailhub"
+echo "This is the computer responsible for handling your outgoing mail."
+echo "It could be the SMTP server of your ISP, or a departmental mailhub."
+echo "Use the fully-qualified domain name (foo.bar.baz) of the mailhub;"
+echo "if it uses an unusual SMTP port number, use the colon syntax"
+echo "  foo.bar.baz:2525"
+echo "Otherwise sSMTP will use the standard SMTP port number (25)."
+echo "(Note that sSMTP can support a user-dependent mailhub with the"
+echo "'reverse aliases' feature, for which see the man page.)"
+echo
+
+found=$(conffvalue mailhub)
+found=${found:-$SMTPSERVER}
+
+echo -n "Please enter your mailhub [$found]: "
+read mailhub
+
+mailhub=${mailhub:-$found}
+
+echo
+echo "(2) FromLineOverride"
+echo "This specifies how sSMTP handles the From: line of outgoing mail."
+echo "If FromLineOverride=YES, sSMTP will leave the From: line alone if"
+echo "it already exists.  If FromLineOverride has any other value, or"
+echo "there is no From: line, sSMTP creates the From: line using your"
+echo "username (or the -f command-line option), and the value of the"
+echo "rewriteDomain option (step (4), below)."
+echo "    If you use a mail user agent (MUA; e.g. mutt, pine) I recommend"
+echo "using YES and having the MUA set the From: line.  (Exception: the"
+echo "'reverse aliases' feature can be used to set up a particular From:"
+echo "address for each user, in which case don't use FromLineOverride=YES."
+echo "See the man page.)"
+echo
+
+found=$(conffvalue FromLineOverride)
+found=${found:-YES}
+
+echo -n "FromLineOverride? [$found]: "
+read FromLineOverride
+
+FromLineOverride=${FromLineOverride:-$found}
+
+echo
+echo "(3) hostname"
+echo "sSMTP uses the hostname of your computer to identify itself to the"
+echo "mailhub, and in the Received: headers of the outgoing mail.  This"
+echo "has relatively little effect on how the mail is handled."
+echo "    Use the fully-qualified domain name (FQDN) of your computer"
+echo "(foo.bar.baz).  If it doesn't have a FQDN, use some name for your box."
+echo
+
+found=$(conffvalue hostname)
+found=$(found:-`hostname --fqdn`)
+
+echo -n "Hostname of your box [$found]: "
+read hostname
+
+hostname=${hostname:-$found}
+
+echo
+echo "(4) rewriteDomain"
+echo "Please enter the mail name of your system."
+echo "sSMTP uses this value to add a domain to unqualified e-mail addresses"
+echo "(addresses without an @-sign)."
+echo "    You probably want to use the domain from your own e-mail address."
+echo "You probably want to set up your MUA to handle unqualified addresses"
+echo "itself, in which case sSMTP will never have to use this."
+echo
+
+found=$(conffvalue rewriteDomain)
+if test -f /etc/mailname
+then found=${found:-`head -1 /etc/mailname`}
+fi
+found=${found:-$hostname}
+
+echo -n "Mail name [$found]: "
+read rewriteDomain
+
+rewriteDomain=${rewriteDomain:-$found}
+
+echo
+echo "(5) root"
+echo "Last and least: if sSMTP finds an unqualified e-mail address among"
+echo "the recipients, and it corresponds to a username on your local"
+echo "machine with a userid less than 1000, then the e-mail is sent to"
+echo "this value instead.  The idea is that mail sent to 'root' should"
+echo "probably go to 'postmaster' instead."
+echo "    If you set up your MUA to do its own handling of unqualified"
+echo "addresses, this is irrelevant.  Use the default value of 'postmaster'"
+echo "or your own e-mail address if you're paranoid."
+echo
+
+found=$(conffvalue root)
+found=${found:-postmaster}
+
+echo -n "System users receive mail at [$found]: "
+read root
+
+root=${root:-$found}
+
+#
+# Generate configuration file
+#
+if test -s "$conffile"
+then
+    echo
+    echo
+    echo "Configuration file $conffile already exists."
+    echo -n "Reconfigure and lose your previous settings (y/N)? "
+    read ans
+
+    if test "$ans" = "y"  -o  "$ans" = "Y"
+    then
+	true
+    else
+	exit 0
+    fi
+fi
+
+cat > $conffile <<EOF
+#
+# /etc/ssmtp/ssmtp.conf -- a config file for sSMTP sendmail.
+#
+
+mailhub=$mailhub
+FromLineOverride=$FromLineOverride
+hostname=$hostname
+rewriteDomain=$rewriteDomain
+root=$root
+
+#Configure sSMTP in Five Easy Steps
+#
+#(1) mailhub
+#This is the computer responsible for handling your outgoing mail.
+#It could be the SMTP server of your ISP, or a departmental mailhub.
+#Use the fully-qualified domain name (foo.bar.baz) of the mailhub;
+#if it uses an unusual SMTP port number, use the colon syntax
+#  foo.bar.baz:2525
+#Otherwise sSMTP will use the standard SMTP port number (25).
+#(Note that sSMTP can support a user-dependent mailhub with the
+#'reverse aliases' feature, for which see the man page.)
+#
+#(2) FromLineOverride
+#This specifies how sSMTP handles the From: line of outgoing mail.
+#If FromLineOverride=YES, sSMTP will leave the From: line alone if
+#it already exists.  If FromLineOverride has any other value, or
+#there is no From: line, sSMTP creates the From: line using your
+#username (or the -f command-line option), and the value of the
+#rewriteDomain option (step (4), below).
+#    If you use a mail user agent (MUA; e.g. mutt, pine) I recommend
+#using YES and having the MUA set the From: line.  (Exception: the
+#'reverse aliases' feature can be used to set up a particular From:
+#address for each user, in which case don't use FromLineOverride=YES.
+#See the man page.)
+#
+#(3) hostname
+#sSMTP uses the hostname of your computer to identify itself to the
+#mailhub, and in the Received: headers of the outgoing mail.  This
+#has relatively little effect on how the mail is handled.
+#    Use the fully-qualified domain name (FQDN) of your computer
+#(foo.bar.baz).  If it doesn't have a FQDN, use some name for your box.
+#
+#(4) rewriteDomain
+#Please enter the mail name of your system.
+#sSMTP uses this value to add a domain to unqualified e-mail addresses
+#(addresses without an @-sign).
+#    You probably want to use the domain from your own e-mail address.
+#You probably want to set up your MUA to handle unqualified addresses
+#itself, in which case sSMTP will never have to use this.
+#
+#(5) root
+#Last and least: if sSMTP finds an unqualified e-mail address among
+#the recipients, and it corresponds to a username on your local
+#machine with a userid less than 1000, then the e-mail is sent to
+#this value instead.  The idea is that mail sent to 'root' should
+#probably go to 'postmaster' instead.
+#    If you set up your MUA to do its own handling of unqualified
+#addresses, this is irrelevant.  Use the default value of 'postmaster'
+#or your own e-mail address if you're paranoid.
+#    Make this empty to disable rewriting.
+EOF
+
+echo
+echo
+echo "Please check the configuration file $conffile for correctness."
+echo
+echo
+
+
+
+Debian bug tracking system administrator <owner@bugs.debian.org>. Last modified: Sun, 16 May 2004 02:35:33 UTC
+
+Debian Bug tracking system
+copyright 1999 Darren O. Benham, 1997, 2003 nCipher Corporation Ltd, 1994-7 Ian Jackson. 

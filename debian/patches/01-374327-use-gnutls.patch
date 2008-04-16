@@ -1,0 +1,59 @@
+--- a/configure
++++ b/configure
+@@ -1562,7 +1562,7 @@
+ #define HAVE_SSL 1
+ EOF
+
+-	LIBS="$LIBS -lssl"
++	LIBS="$LIBS /usr/lib/libgnutls-openssl.so"
+ fi
+ enableval=""
+
+--- a/configure.in
++++ b/configure.in
+@@ -52,7 +52,7 @@
+ [  --enable-ssl           support for secure connection to mail server])
+ if test x$enableval = xyes ; then
+ 	AC_DEFINE(HAVE_SSL)
+-	LIBS="$LIBS -lssl"
++	LIBS="$LIBS /usr/lib/libgnutls-openssl.so"
+ fi
+ enableval=""
+ 
+--- a/ssmtp.c	2008-03-07 06:43:18.000000000 +1100
++++ b/ssmtp.c	2008-03-06 21:01:57.000000000 +1100
+@@ -28,11 +28,7 @@
+ #include <ctype.h>
+ #include <netdb.h>
+ #ifdef HAVE_SSL
+-#include <openssl/crypto.h>
+-#include <openssl/x509.h>
+-#include <openssl/pem.h>
+-#include <openssl/ssl.h>
+-#include <openssl/err.h>
++#include <gnutls/openssl.h>
+ #endif
+ #ifdef MD5AUTH
+ #include "md5auth/hmac_md5.h"
+@@ -1132,7 +1128,7 @@
+ 	}
+ 
+ 	if(use_cert == True) { 
+-		if(SSL_CTX_use_certificate_chain_file(ctx, tls_cert) <= 0) {
++		if(SSL_CTX_use_certificate_file(ctx, tls_cert, SSL_FILETYPE_PEM) <= 0) {
+ 			perror("Use certfile");
+ 			return(-1);
+ 		}
+@@ -1142,10 +1138,12 @@
+ 			return(-1);
+ 		}
+ 
++#ifdef NOT_USED
+ 		if(!SSL_CTX_check_private_key(ctx)) {
+ 			log_event(LOG_ERR, "Private key does not match the certificate public key\n");
+ 			return(-1);
+ 		}
++#endif
+ 	}
+ #endif
+ 

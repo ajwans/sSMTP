@@ -1,0 +1,17 @@
+.TH NEWALIASES 8 "September 2000" "Debian GNU/Linux"
+.SH NAME
+newaliases \- update /etc/aliases database
+.SH SYNOPSIS
+.B newaliases
+.SH DESCRIPTION
+This is a link to the ssmtp binary. It invokes
+.B /usr/sbin/sendmail
+with the
+.B -bi
+option. It is provided for compatibility with the sendmail program.
+.P
+In this case it does absolutely nothing since sSMTP does not support
+/etc/aliases and is just there to avoid programs returning error messages.
+.SH AUTHOR
+This manual page was written by Christoph Lameter <clameter@debian.org>,
+for the Debian GNU/Linux system. Minor fixes by Matt Ryan <mryan@debian.org>

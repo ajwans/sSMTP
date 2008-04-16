@@ -1,0 +1,12 @@
+ssmtp for DEBIAN
+----------------
+
+This is a secure, minimal mail sender.
+
+There is one configuration file in /etc/ssmtp/ssmtp.conf where all parameters
+are set. Support for debconf has been added, so to change the parameters use
+the command "dpkg-reconfigure ssmtp".
+
+SSMTP also supports reverse aliases if the file /etc/ssmtp/revaliases is
+present. See ssmtp(8) for details. 
+

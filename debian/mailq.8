@@ -1,0 +1,17 @@
+.TH MAILQ 8 "July 2001" "Debian GNU/Linux"
+.SH NAME
+mailq \- show contents of the mail queue
+.SH SYNOPSIS
+.B mailq
+.SH DESCRIPTION
+This is a link to the ssmtp binary. It invokes
+.B /usr/sbin/sendmail
+with the
+.B -q
+option. It is provided for compatibility with the sendmail program.
+.P
+In this case it does absolutely nothing since sSMTP does not support
+mail queues and is just there to avoid programs returning error messages.
+.SH AUTHOR
+This manual page was written by Matt Ryan <mryan@debian.org> for the
+Debian GNU/Linux system.

@@ -1,0 +1,10 @@
+The Addheader patch creates the configuration directive AddHeader.
+It adds anything up to newline or '#' to the beginning of mail headers.
+You can use a directive in ssmtp.conf like this:
+
+AddHeader=X-security-level: public
+
+I have changed the strtok callss in the read_config to a similarly
+looking function, which does not modify the argument string.
+I did not, however changed every strtok down the way.
+

@@ -1,0 +1,34 @@
+Tobias Rundstrom supplied a patch to ssmtp to enable secure mailtransfer
+between your local (ssmtp) machine and the mailhub. It also supports
+authentication with RSA keys, to enable you to (if you patch the MTA on
+the mailhub) have RSA key checks on all relay mails.
+
+He wanted this so that he could have the same SMTP server on his laptop even
+when he moved around on different networks. As he said - "I could have used
+postfix as I did on my mailhub, but that was overkill, so I patched the
+smallest program there was :)"
+
+information about smtp over ssl for postfix is avalible at:
+http://www.aet.tu-cottbus.de/personen/jaenicke/pfixtls
+
+How to use this:
+I had to add the following config directives:
+
+UseTLS=YES/NO
+Set this to yes and ssmtp will try to connect with SSL to the remote machine.
+
+UseSTARTTLS=YES/NO
+Do a EHLO/STARTTLS before starting the SSL negotiation (see http://www.ietf.org/rfc/rfc2487.txt).
+
+UseTLSCert=YES/NO
+Set this to yes to make ssmtp identify itself with a certificate.
+
+TLSCert=<file>
+Specify which certificate file should be used.
+
+
+TODO:
+* Check server certificate for changes and notify about it.
+* Diffrent Certificate and Key file?
+
+

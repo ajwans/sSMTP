@@ -1,0 +1,167 @@
+#
+#    Translators, if you are not familiar with the PO format, gettext
+#    documentation is worth reading, especially sections dedicated to
+#    this format, e.g. by running:
+#         info -n '(gettext)PO Files'
+#         info -n '(gettext)Header Entry'
+#
+#    Some information specific to po-debconf are available at
+#            /usr/share/doc/po-debconf/README-trans
+#         or http://www.debian.org/intl/l10n/po-debconf/README-trans
+#
+#    Developers do not need to manually edit POT or PO files.
+#
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: ssmtp 2.61-10\n"
+"Report-Msgid-Bugs-To: Anibal Monsalve Salazar <anibal@debian.org>\n"
+"POT-Creation-Date: 2006-06-04 21:34-0500\n"
+"PO-Revision-Date: 2006-10-19 23:52+0900\n"
+"Last-Translator: Hideki Yamane(Debian-JP) <henrich@debian.or.jp>\n"
+"Language-Team: Japanese <debian-japanese@lists.debian.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#. Type: boolean
+#. Description
+#: ../templates:4
+msgid "Automatically overwrite config files?"
+msgstr "設定ファイルを自動的に上書きしますか?"
+
+#. Type: boolean
+#. Description
+#: ../templates:4
+msgid ""
+"The mail configuration file /etc/ssmtp/ssmtp.conf can be automatically "
+"updated on each upgrade with the information supplied to the debconf "
+"database. If you do not want this to happen (ie/ you want to maintain "
+"control of this file yourself) then set this option to have the program "
+"never touch this file."
+msgstr ""
+"メール設定ファイルの /etc/ssmtp/ssmtp.conf を毎回のアップグレード時に "
+"debconf データベースに与えられた情報で自動的に更新できます。これが嫌な場合 "
+"(つまり、ファイルを自分自身で設定しつづけたい場合)、このオプションを指定して"
+"プログラムがこのファイルを触らないようにしてください。"
+
+#. Type: string
+#. Description
+#: ../templates:14
+msgid "Who gets mail for userids < 1000:"
+msgstr "ユーザ ID が 1000 未満のメールを受け取るユーザ:"
+
+#. Type: string
+#. Description
+#: ../templates:14
+msgid ""
+"Mail sent to a local user whose UID is less than 1000 will instead be sent "
+"here. This is useful for daemons which mail reports to root and other system "
+"UIDs. Make this empty to disable rewriting."
+msgstr ""
+"UID が 1000 未満のローカルユーザへのメールは、代わりにここで指定したアドレス"
+"へ送られます。これは、root やほかのシステム UID へのメールレポートを送るデー"
+"モンにとって役に立ちます。これを空にしておくと上書きはされません。"
+
+#. Type: string
+#. Description
+#: ../templates:23
+msgid "Name of your mailhub:"
+msgstr "メールハブの名前:"
+
+#. Type: string
+#. Description
+#: ../templates:23
+msgid ""
+"This sets the host to which mail is delivered. The actual machine name is "
+"required; no MX records are consulted. Commonly, mailhosts are named \"mail."
+"domain.com\"."
+msgstr ""
+"メールが配送されるホストをここで設定します。実際のマシン名が必要です: MX レ"
+"コードは考慮されません。大抵の場合、メールホストの名前は \"mail.domain.com\" "
+"です。"
+
+#. Type: string
+#. Description
+#: ../templates:31
+msgid "Remote SMTP port number:"
+msgstr "リモート SMTP サーバのポート番号:"
+
+#. Type: string
+#. Description
+#: ../templates:31
+msgid ""
+"If your remote SMTP server listens on a port other than 25 (Standard/RFC) "
+"then set it here."
+msgstr ""
+"リモート SMTP サーバが 25 番 (標準・RFCで規定) 以外のポートで listen している"
+"場合、ここで指定してください。"
+
+#. Type: string
+#. Description
+#: ../templates:37
+msgid "What domain to masquerade as:"
+msgstr "どのドメインとして送信するか:"
+
+#. Type: string
+#. Description
+#: ../templates:37
+msgid ""
+"ssmtp will use \"username@REWRITEDOMAIN\" as the default From: address for "
+"outgoing mail which contains only a local username."
+msgstr ""
+"ssmtp はローカルユーザ名のみで外部へ送信されるメールに対し、標準の From: アド"
+"レスとして \"username@REWRITEDOMAIN\" を利用します。"
+
+#. Type: string
+#. Description
+#: ../templates:43
+msgid "What name to store in /etc/mailname:"
+msgstr "/etc/mailname に記述する名前:"
+
+#. Type: string
+#. Description
+#: ../templates:43
+msgid ""
+"This is the portion of the address after the '@' sign to be shown on "
+"outgoing news and mail messages."
+msgstr ""
+"これは外部へ送信されるニュースとメールで使われる '@' の後に記述するアドレス部"
+"分です。"
+
+#. Type: string
+#. Description
+#: ../templates:49
+msgid "Fully qualified hostname:"
+msgstr "FQDN (完全修飾ドメイン名):"
+
+#. Type: string
+#. Description
+#: ../templates:49
+msgid ""
+"This should specify the real hostname of this machine, and will be sent to "
+"the mailhub when delivering mail."
+msgstr ""
+"ここでは、このマシンの実際のホスト名を指定し、メール送信時にメールハブへ送り"
+"ます。"
+
+#. Type: boolean
+#. Description
+#: ../templates:56
+msgid "Allow override of From: line in email header?"
+msgstr "メールヘッダの From: 行の上書きを許可しますか?"
+
+#. Type: boolean
+#. Description
+#: ../templates:56
+msgid ""
+"A \"positive\" response will permit local users to enter any From: line in "
+"their messages without it being mangled, and cause ssmtp to rewrite the "
+"envelope header with that address. A \"negative\" response will disallow "
+"this, and use only the default address or addresses set in /etc/ssmtp/"
+"revaliases."
+msgstr ""
+"「はい」と答えると、ローカルユーザはメッセージ中の From: 行を自由に記述でき、"
+"ssmtp にいじられることはありません。ssmtp は envelope をそのアドレスで書き換"
+"えます。「いいえ」と答えるとこのような動作はせず、デフォルトのアドレスか /"
+"etc/ssmtp/revaliases で指定されたアドレスのみを使います。"
