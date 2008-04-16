@@ -15,12 +15,16 @@ Upstream mantainers
   Anibal Monsalve Salazar
   Santiago Ruano Rincón
 
+Copyright notices
+
+  Copyright (C) 1998 Hugo Haas
+  Copyright (c) 2001 Neal H Walfield <neal@cs.uml.edu>
+  Copyright (C) 2004-2008 Anibal Monsalve Salazar <anibal@debian.org>
+
 License
 
   sSMTP is licensed under the GNU General Public License (GPL)
   version 2 or above.
-
-  Copyright (C) 2004-2008  Anibal Monsalve Salazar <anibal@debian.org>
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
