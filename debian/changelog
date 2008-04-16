@@ -9,6 +9,7 @@ ssmtp (2.62-1) unstable; urgency=low
 
   * New upstream version 
     - New COPYRIGHT file. Closes: #456442
+  * Added Portuguese po-debconf translation. (Closes: #421178)
   * Updated debian/copyright
   * Bumped Standards-Version to 3.7.3
   * Use quilt to maintain patches
