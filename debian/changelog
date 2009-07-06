@@ -1,13 +1,54 @@
 ssmtp (2.63-1) unstable; urgency=low
 
-  * New upstream version 
+  * New upstream version
   * Updated debian/copyright
 
  -- Anibal Monsalve Salazar <anibal@debian.org>  Fri, 07 Mar 2008 21:09:10 +1100
 
+ssmtp (2.62-3) unstable; urgency=medium
+
+  * Fix pending l10n issues. Debconf translations:
+    - Vietnamese. Closes: #513670
+
+ -- Anibal Monsalve Salazar <anibal@debian.org>  Sat, 31 Jan 2009 20:06:28 +1100
+
+ssmtp (2.62-2.2) unstable; urgency=medium
+
+  * NMU.
+  * Make sure that a CRLF is output even when the message from stdin
+    doesn't have one. Closes: #506188
+
+ -- Kari Pahula <kaol@debian.org>  Fri, 21 Nov 2008 10:09:02 +0200
+
+ssmtp (2.62-2.1) unstable; urgency=low
+
+  * NMU.
+  * Only double leading dots at line start and don't overexpand buffer in
+    standardise().  Don't add extra "\r\n" endings in between lines over
+    BUF_SZ bytes long. Closes: #345780
+
+ -- Kari Pahula <kaol@debian.org>  Tue, 04 Nov 2008 15:11:15 +0200
+
+ssmtp (2.62-2) unstable; urgency=low
+
+  [ Christian Perrier ]
+  * Fix pending l10n issues. Debconf translations:
+    - Swedish. Closes: #492108
+    - Finnish. Closes: #501709
+
+ -- Anibal Monsalve Salazar <anibal@debian.org>  Tue, 14 Oct 2008 19:56:05 +1100
+
+ssmtp (2.62-1.1) unstable; urgency=high
+
+  * Non-maintainer upload by the Security Team.
+  * Fix possible information disclosure in corner cases (no gecos)
+    by adding a missing else branch (02-CVE-2008-3962; Closes: #498366).
+
+ -- Nico Golde <nion@debian.org>  Thu, 02 Oct 2008 14:15:57 +0200
+
 ssmtp (2.62-1) unstable; urgency=low
 
-  * New upstream version 
+  * New upstream version
     - New COPYRIGHT file. Closes: #456442
   * Added Portuguese po-debconf translation. (Closes: #421178)
   * Updated debian/copyright
@@ -83,7 +124,7 @@ ssmtp (2.61-9) unstable; urgency=low
 ssmtp (2.61-8) unstable; urgency=medium
 
   [ Santiago Ruano Rincón ]
-  * Updated fr.po, by Michel Grentzinger <mic.grentz@online.fr> 
+  * Updated fr.po, by Michel Grentzinger <mic.grentz@online.fr>
     (Closes: #376345)
 
   [ Alejandro Rios ]
@@ -272,7 +313,7 @@ ssmtp (2.60.5) unstable; urgency=low
     Patch by Michel Grentzinger <mic.grentz@online.fr>
   * Added french translation of the debconf templates (Closes: #202274)
     Patch by Michel Grentzinger <mic.grentz@online.fr>
-    
+
  -- Anibal Monsalve Salazar <A.Monsalve.Salazar@IEEE.org>  Sat, 10 Apr 2004 09:41:51 +1000
 
 ssmtp (2.60.4) unstable; urgency=low
@@ -591,13 +632,13 @@ ssmtp (2.38-1) unstable; urgency=high
 
 ssmtp (2.37-1) unstable; urgency=low
 
-  * New upstream version (closes: #54817). 
+  * New upstream version (closes: #54817).
 
  -- Hugo Haas <hugo@debian.org>  Sun, 20 Feb 2000 22:37:20 -0500
 
 ssmtp (2.36-1) unstable; urgency=low
 
-  * New upstream release: option -f works as expected (closes: #53313). 
+  * New upstream release: option -f works as expected (closes: #53313).
 
  -- Hugo Haas <hugo@debian.org>  Sat,  5 Feb 2000 15:10:43 -0500
 

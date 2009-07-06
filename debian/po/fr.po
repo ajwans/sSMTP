@@ -12,8 +12,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: 2.61-7\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-06-04 21:34-0500\n"
+"Report-Msgid-Bugs-To: ssmtp@packages.debian.org\n"
+"POT-Creation-Date: 2008-10-07 07:21+0200\n"
 "PO-Revision-Date: 2006-06-30 11:16+0200\n"
 "Last-Translator: Michel Grentzinger <mic.grentz@online.fr>\n"
 "Language-Team: French <debian-l10n-french@lists.debian.org>\n"
@@ -23,13 +23,13 @@ msgstr ""
 
 #. Type: boolean
 #. Description
-#: ../templates:4
+#: ../templates:1001
 msgid "Automatically overwrite config files?"
 msgstr "Reconstituer automatiquement les fichiers de configuration ?"
 
 #. Type: boolean
 #. Description
-#: ../templates:4
+#: ../templates:1001
 msgid ""
 "The mail configuration file /etc/ssmtp/ssmtp.conf can be automatically "
 "updated on each upgrade with the information supplied to the debconf "
@@ -46,14 +46,13 @@ msgstr ""
 
 #. Type: string
 #. Description
-#: ../templates:14
+#: ../templates:2001
 msgid "Who gets mail for userids < 1000:"
-msgstr ""
-"Destinataire des courriels pour les utilisateurs système (UID<1000) :"
+msgstr "Destinataire des courriels pour les utilisateurs système (UID<1000) :"
 
 #. Type: string
 #. Description
-#: ../templates:14
+#: ../templates:2001
 msgid ""
 "Mail sent to a local user whose UID is less than 1000 will instead be sent "
 "here. This is useful for daemons which mail reports to root and other system "
@@ -66,13 +65,13 @@ msgstr ""
 
 #. Type: string
 #. Description
-#: ../templates:23
+#: ../templates:3001
 msgid "Name of your mailhub:"
 msgstr "Nom d'hôte de votre concentrateur de courriel (« mail hub ») :"
 
 #. Type: string
 #. Description
-#: ../templates:23
+#: ../templates:3001
 msgid ""
 "This sets the host to which mail is delivered. The actual machine name is "
 "required; no MX records are consulted. Commonly, mailhosts are named \"mail."
@@ -80,18 +79,17 @@ msgid ""
 msgstr ""
 "Ce paramètre définit l'hôte vers lequel le courriel est distribué. Le nom de "
 "la machine concernée est nécessaire. Les enregistrements MX ne seront pas "
-"utilisés. Généralement, les hôtes de courriel sont nommés « mail.domain."
-"com »."
+"utilisés. Généralement, les hôtes de courriel sont nommés « mail.domain.com »."
 
 #. Type: string
 #. Description
-#: ../templates:31
+#: ../templates:4001
 msgid "Remote SMTP port number:"
 msgstr "Numéro du port SMTP distant :"
 
 #. Type: string
 #. Description
-#: ../templates:31
+#: ../templates:4001
 msgid ""
 "If your remote SMTP server listens on a port other than 25 (Standard/RFC) "
 "then set it here."
@@ -101,13 +99,13 @@ msgstr ""
 
 #. Type: string
 #. Description
-#: ../templates:37
+#: ../templates:5001
 msgid "What domain to masquerade as:"
 msgstr "Domaine de masquage (« masquerade ») :"
 
 #. Type: string
 #. Description
-#: ../templates:37
+#: ../templates:5001
 msgid ""
 "ssmtp will use \"username@REWRITEDOMAIN\" as the default From: address for "
 "outgoing mail which contains only a local username."
@@ -117,13 +115,13 @@ msgstr ""
 
 #. Type: string
 #. Description
-#: ../templates:43
+#: ../templates:6001
 msgid "What name to store in /etc/mailname:"
 msgstr "Nom d'hôte à utiliser dans /etc/mailname :"
 
 #. Type: string
 #. Description
-#: ../templates:43
+#: ../templates:6001
 msgid ""
 "This is the portion of the address after the '@' sign to be shown on "
 "outgoing news and mail messages."
@@ -133,13 +131,13 @@ msgstr ""
 
 #. Type: string
 #. Description
-#: ../templates:49
+#: ../templates:7001
 msgid "Fully qualified hostname:"
 msgstr "Nom de domaine pleinement qualifié :"
 
 #. Type: string
 #. Description
-#: ../templates:49
+#: ../templates:7001
 msgid ""
 "This should specify the real hostname of this machine, and will be sent to "
 "the mailhub when delivering mail."
@@ -149,13 +147,13 @@ msgstr ""
 
 #. Type: boolean
 #. Description
-#: ../templates:56
+#: ../templates:8001
 msgid "Allow override of From: line in email header?"
 msgstr "Autoriser le remplacement de l'en-tête « From: » dans les messages ?"
 
 #. Type: boolean
 #. Description
-#: ../templates:56
+#: ../templates:8001
 msgid ""
 "A \"positive\" response will permit local users to enter any From: line in "
 "their messages without it being mangled, and cause ssmtp to rewrite the "
@@ -164,7 +162,7 @@ msgid ""
 "revaliases."
 msgstr ""
 "Cette option permettra aux utilisateurs locaux de saisir n'importe quelle "
-"ligne « From: » dans leurs messages sans qu'elle ne soit réécrite et "
-"obligera ssmtp à réécrire les en-têtes d'enveloppe avec cette adresse. Une "
-"réponse négative désactivera cela, et l'adresse par défaut ou celles "
-"définies dans /etc/ssmtp/revaliases seront utilisées."
+"ligne « From: » dans leurs messages sans qu'elle ne soit réécrite et obligera "
+"ssmtp à réécrire les en-têtes d'enveloppe avec cette adresse. Une réponse "
+"négative désactivera cela, et l'adresse par défaut ou celles définies dans /"
+"etc/ssmtp/revaliases seront utilisées."

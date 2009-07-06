@@ -1,26 +1,22 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
-#, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: ssmtp\n"
 "Report-Msgid-Bugs-To: ssmtp@packages.debian.org\n"
 "POT-Creation-Date: 2008-10-07 07:21+0200\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
+"PO-Revision-Date: \n"
+"Last-Translator: Esko Arajärvi <edu@iki.fi>\n"
+"Language-Team: Finnish <debian-l10n-finnish@lists.debian.org>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-Language: Finnish\n"
+"X-Poedit-Country: FINLAND\n"
 
 #. Type: boolean
 #. Description
 #: ../templates:1001
 msgid "Automatically overwrite config files?"
-msgstr ""
+msgstr "Korvataanko asetustiedostot automaattisesti?"
 
 #. Type: boolean
 #. Description
@@ -32,12 +28,16 @@ msgid ""
 "control of this file yourself) then set this option to have the program "
 "never touch this file."
 msgstr ""
+"Sähköpostien asetustiedosto /etc/ssmtp/ssmtp.conf voidaan päivittää "
+"automaattisesti aina paketin päivityksen yhteydessä käyttäen debconf-"
+"tietokantaan annettuja tietoja. Jos et halua näitä päivityksiä (eli haluat "
+"hallinnoida tiedostoa käsin), älä valitse tätä vaihtoehtoa."
 
 #. Type: string
 #. Description
 #: ../templates:2001
 msgid "Who gets mail for userids < 1000:"
-msgstr ""
+msgstr "Kenelle lähetetään viestit, joiden vastaanottajan käyttäjä-id < 1000?"
 
 #. Type: string
 #. Description
@@ -47,12 +47,17 @@ msgid ""
 "here. This is useful for daemons which mail reports to root and other system "
 "UIDs. Make this empty to disable rewriting."
 msgstr ""
+"Viestit käyttäjille, joiden käyttäjä-id on pienempi kuin 1000, lähetetään "
+"näiden käyttäjien sijaan tälle käyttäjälle. Tästä on hyötyä taustaohjelmien "
+"kanssa, jotka lähettävät viestejä pääkäyttäjälle ja muille "
+"järjestelmätunnuksille. Jätä kenttä tyhjäksi, jos haluat poistaa "
+"uudelleenohjauksen käytöstä."
 
 #. Type: string
 #. Description
 #: ../templates:3001
 msgid "Name of your mailhub:"
-msgstr ""
+msgstr "Sähköpostipalvelimen nimi:"
 
 #. Type: string
 #. Description
@@ -62,12 +67,15 @@ msgid ""
 "required; no MX records are consulted. Commonly, mailhosts are named \"mail."
 "domain.com\"."
 msgstr ""
+"Tämä määrittää koneen, jolle viestit välitetään. Tämän täytyy olla oikea "
+"konenimi, MX-tietueita ei tutkita. Usein postipalvelimien nimi on muotoa "
+"”mail.example.com”."
 
 #. Type: string
 #. Description
 #: ../templates:4001
 msgid "Remote SMTP port number:"
-msgstr ""
+msgstr "Etä-SMTP-portin numero:"
 
 #. Type: string
 #. Description
@@ -76,12 +84,14 @@ msgid ""
 "If your remote SMTP server listens on a port other than 25 (Standard/RFC) "
 "then set it here."
 msgstr ""
+"Jos etäpään SMTP-palvelin kuuntelee muuta porttia kuin 25 (standardi), anna "
+"se tässä."
 
 #. Type: string
 #. Description
 #: ../templates:5001
 msgid "What domain to masquerade as:"
-msgstr ""
+msgstr "Mistä verkkoalueesta viestit naamioidaan tuleviksi:"
 
 #. Type: string
 #. Description
@@ -90,12 +100,14 @@ msgid ""
 "ssmtp will use \"username@REWRITEDOMAIN\" as the default From: address for "
 "outgoing mail which contains only a local username."
 msgstr ""
+"Jos viestin lähettäjänä on pelkkä paikallinen käyttäjätunnus, ssmtp käyttää "
+"lähettäjäosoitteena oletuksena muotoa ”tunnus@NAAMIOVERKKOALUE”."
 
 #. Type: string
 #. Description
 #: ../templates:6001
 msgid "What name to store in /etc/mailname:"
-msgstr ""
+msgstr "Tiedostoon /etc/mailname tallennettava nimi:"
 
 #. Type: string
 #. Description
@@ -104,12 +116,14 @@ msgid ""
 "This is the portion of the address after the '@' sign to be shown on "
 "outgoing news and mail messages."
 msgstr ""
+"Tämä on ”@”-merkin jälkeinen osoitteen osa, joka näytetään lähtevissä "
+"sähköposteissa ja uutisviesteissä."
 
 #. Type: string
 #. Description
 #: ../templates:7001
 msgid "Fully qualified hostname:"
-msgstr ""
+msgstr "Täydellinen verkkotunnus:"
 
 #. Type: string
 #. Description
@@ -118,12 +132,15 @@ msgid ""
 "This should specify the real hostname of this machine, and will be sent to "
 "the mailhub when delivering mail."
 msgstr ""
+"Tämän tulisi määrittää tämän koneen oikea konenimi, joka lähetetään "
+"sähköpostipalvelimelle välitettäessä viestejä."
 
 #. Type: boolean
 #. Description
 #: ../templates:8001
 msgid "Allow override of From: line in email header?"
 msgstr ""
+"Sallitaanko lähettäjäosoitteen muuttaminen sähköpostin otsikkotiedoissa?"
 
 #. Type: boolean
 #. Description
@@ -135,3 +152,8 @@ msgid ""
 "this, and use only the default address or addresses set in /etc/ssmtp/"
 "revaliases."
 msgstr ""
+"Jos valitset tämän, paikalliset käyttäjät voivat asettaa "
+"lähettäjäosoitteeksi minkä tahansa haluamansa, ja ssmtp muokkaa "
+"lähetysotsakkeeseen annetun osoitteen. Jos et valitse tätä, käyttäjät eivät "
+"voi muokata lähettäjäosoitetta ja käytössä ovat vain tiedostossa /etc/ssmtp/"
+"revaliases asetetut oletusosoitteet."
