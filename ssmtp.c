@@ -886,7 +886,7 @@ bool_t read_config()
 		p=firsttok(&begin, "= \t\n");
 		if(p){
 			rightside=begin;
-			q = firsttok(&begin, "= \t\n:");
+			q = firsttok(&begin, "= \t\n");
 		}
 		if(p && q) {
 			if(strcasecmp(p, "Root") == 0) {
@@ -899,13 +899,13 @@ bool_t read_config()
 				}
 			}
 			else if(strcasecmp(p, "MailHub") == 0) {
+				if((r = strchr(q, ':')) != NULL) {
+					*r++ = '\0';
+					port = atoi(r);
+				}
+			
 				if((mailhost = strdup(q)) == (char *)NULL) {
 					die("parse_config() -- strdup() failed");
-				}
-
-				if((r = firsttok(&begin, "= \t\n:")) != NULL) {
-					port = atoi(r);
-					free(r);
 				}
 
 				if(log_level > 0) {
