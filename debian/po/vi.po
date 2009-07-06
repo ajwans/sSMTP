@@ -16,15 +16,15 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Generator: LocFactoryEditor 1.8\n"
 
-#: ../templates:1001
 #. Type: boolean
 #. Description
+#: ../templates:1001
 msgid "Automatically overwrite config files?"
 msgstr "Tự động ghi đè lên các tập tin cấu hình ?"
 
-#: ../templates:1001
 #. Type: boolean
 #. Description
+#: ../templates:1001
 msgid ""
 "The mail configuration file /etc/ssmtp/ssmtp.conf can be automatically "
 "updated on each upgrade with the information supplied to the debconf "
@@ -32,50 +32,56 @@ msgid ""
 "control of this file yourself) then set this option to have the program "
 "never touch this file."
 msgstr ""
-"Tập tin cấu hình thư « /etc/ssmtp/ssmtp.conf » có thể được tự động cập nhật mỗi lần nâng cấp, dùng thông tin được cung cấp cho cơ sở dữ liệu cấu hình debconf. Nếu bạn không muốn trường hợp này xảy ra (tức là bạn muốn tự điều khiển tập tin này) thì đặt tùy chọn này để không bao giờ cho phép chương trình sửa đổi tập tin này."
+"Tập tin cấu hình thư « /etc/ssmtp/ssmtp.conf » có thể được tự động cập nhật "
+"mỗi lần nâng cấp, dùng thông tin được cung cấp cho cơ sở dữ liệu cấu hình "
+"debconf. Nếu bạn không muốn trường hợp này xảy ra (tức là bạn muốn tự điều "
+"khiển tập tin này) thì đặt tùy chọn này để không bao giờ cho phép chương "
+"trình sửa đổi tập tin này."
 
-#: ../templates:2001
 #. Type: string
 #. Description
+#: ../templates:2001
 msgid "Who gets mail for userids < 1000:"
 msgstr "Ai nhận thư cho UID dưới 1000:"
 
-#: ../templates:2001
 #. Type: string
 #. Description
+#: ../templates:2001
 msgid ""
 "Mail sent to a local user whose UID is less than 1000 will instead be sent "
 "here. This is useful for daemons which mail reports to root and other system "
 "UIDs. Make this empty to disable rewriting."
 msgstr ""
-"Thư được gửi cho một người dùng cục bộ có UID dưới 1000 thì được chuyển hướng đến đây. Tùy chọn này có ích cho trình nền gửi thư cho người chủ (root) và UID hệ thống khác. Bỏ trống tùy chọn này để tắt chức năng ghi lại."
+"Thư được gửi cho một người dùng cục bộ có UID dưới 1000 thì được chuyển "
+"hướng đến đây. Tùy chọn này có ích cho trình nền gửi thư cho người chủ "
+"(root) và UID hệ thống khác. Bỏ trống tùy chọn này để tắt chức năng ghi lại."
 
-#: ../templates:3001
 #. Type: string
 #. Description
+#: ../templates:3001
 msgid "Name of your mailhub:"
 msgstr "Tên của tâm thư (mailhub):"
 
-#: ../templates:3001
 #. Type: string
 #. Description
+#: ../templates:3001
 msgid ""
 "This sets the host to which mail is delivered. The actual machine name is "
 "required; no MX records are consulted. Commonly, mailhosts are named \"mail."
 "domain.com\"."
 msgstr ""
-"Giá trị này lập máy cho đó mọi thư được phát. Cần thiết tên máy thật: không đọc mục "
-"ghi MX nào. Bình thường, máy thư có tên « mail.miền.com »."
+"Giá trị này lập máy cho đó mọi thư được phát. Cần thiết tên máy thật: không "
+"đọc mục ghi MX nào. Bình thường, máy thư có tên « mail.miền.com »."
 
-#: ../templates:4001
 #. Type: string
 #. Description
+#: ../templates:4001
 msgid "Remote SMTP port number:"
 msgstr "Số thứ tự cổng SMTP ở xa:"
 
-#: ../templates:4001
 #. Type: string
 #. Description
+#: ../templates:4001
 msgid ""
 "If your remote SMTP server listens on a port other than 25 (Standard/RFC) "
 "then set it here."
@@ -83,60 +89,63 @@ msgstr ""
 "Nếu trình phục vụ SMTP ở xa có lắng nghe trên một cổng khác với 25 (chuẩn/"
 "RFC) thì hãy lập nó vào đây."
 
-#: ../templates:5001
 #. Type: string
 #. Description
+#: ../templates:5001
 msgid "What domain to masquerade as:"
 msgstr "Có nên giả trang là miền nào :"
 
-#: ../templates:5001
 #. Type: string
 #. Description
+#: ../templates:5001
 msgid ""
 "ssmtp will use \"username@REWRITEDOMAIN\" as the default From: address for "
 "outgoing mail which contains only a local username."
 msgstr ""
-"Phần mềm ssmtp sẽ dùng « tên_ngườI_dùng@MIỀN_GHI_LẠI » là địa chỉ « Từ : » (From:) mặc định cho thư gửi đi mà chứa chỉ một tên người dùng cục bộ."
+"Phần mềm ssmtp sẽ dùng « tên_ngườI_dùng@MIỀN_GHI_LẠI » là địa chỉ « Từ : "
+"» (From:) mặc định cho thư gửi đi mà chứa chỉ một tên người dùng cục bộ."
 
-#: ../templates:6001
 #. Type: string
 #. Description
+#: ../templates:6001
 msgid "What name to store in /etc/mailname:"
 msgstr "Có nên lưu vào « /etc/mailname » tên nào :"
 
-#: ../templates:6001
 #. Type: string
 #. Description
+#: ../templates:6001
 msgid ""
 "This is the portion of the address after the '@' sign to be shown on "
 "outgoing news and mail messages."
 msgstr ""
-"Đây là phần địa chỉ đằng sau dấu a-còng « @ », để hiển thị trên các bài tin và thư gửi đi."
+"Đây là phần địa chỉ đằng sau dấu a-còng « @ », để hiển thị trên các bài tin "
+"và thư gửi đi."
 
-#: ../templates:7001
 #. Type: string
 #. Description
+#: ../templates:7001
 msgid "Fully qualified hostname:"
 msgstr "Tên miền khả năng đầy đủ :"
 
-#: ../templates:7001
 #. Type: string
 #. Description
+#: ../templates:7001
 msgid ""
 "This should specify the real hostname of this machine, and will be sent to "
 "the mailhub when delivering mail."
 msgstr ""
-"Giá trị này nên ghi rõ tên máy thật của máy này, và sẽ được gửi cho thiết bị trung tâm mạng thư (mailhub) khi phát thư."
+"Giá trị này nên ghi rõ tên máy thật của máy này, và sẽ được gửi cho thiết bị "
+"trung tâm mạng thư (mailhub) khi phát thư."
 
-#: ../templates:8001
 #. Type: boolean
 #. Description
+#: ../templates:8001
 msgid "Allow override of From: line in email header?"
 msgstr "Cho phép ghi đè lên dòng « Từ : » trong phần đầu thư ?"
 
-#: ../templates:8001
 #. Type: boolean
 #. Description
+#: ../templates:8001
 msgid ""
 "A \"positive\" response will permit local users to enter any From: line in "
 "their messages without it being mangled, and cause ssmtp to rewrite the "
