@@ -485,6 +485,11 @@ char *from_format(char *str, bool_t override_from)
 				die("from_format() -- snprintf() failed");
 			}
 		}
+		else {
+			if(snprintf(buf, BUF_SZ, "%s", str) == -1) {
+				die("from_format() -- snprintf() failed");
+			}
+		}
 	}
 
 #if 0
