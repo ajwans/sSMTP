@@ -7,6 +7,7 @@ ssmtp (2.63-1) UNRELEASED; urgency=low
   * Update Vcs-Git and Vcs-Browser in debian/control
   * Fix maintainer-script-without-set-e
   * Fix copyright-refers-to-symlink-license
+  * Failover to multiple mailhubs in IPv4. Closes: 351993
 
  -- Anibal Monsalve Salazar <anibal@debian.org>  Tue, 07 Jul 2009 12:06:16 +1000
 

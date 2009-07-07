@@ -3,3 +3,7 @@
   - Merge 01_password-handling.patch from Ubuntu
   - Process very long lines with dots correctly
   - Fix CVE-2008-3962
+  - Failover to multiple mailhubs in IPv4
+    Patch by Alexander Perlis <aprl@math.arizona.edu>
+    http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=351993
+

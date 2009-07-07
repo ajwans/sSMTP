@@ -1111,7 +1111,7 @@ int smtp_open(char *host, int port)
 #else
 	struct sockaddr_in name;
 	struct hostent *hent;
-	int s, namelen;
+	int i, s, namelen;
 #endif
 
 #ifdef HAVE_SSL
@@ -1200,15 +1200,21 @@ int smtp_open(char *host, int port)
 		return(-1);
 	}
 
+	for (i = 0; ; ++i) {
+		if (!hent->h_addr_list[i]) {
+			log_event(LOG_ERR, "Unable to connect to %s:%d", host, port);
+			return(-1);
+		}
+
 	/* This SHOULD already be in Network Byte Order from gethostbyname() */
-	name.sin_addr.s_addr = ((struct in_addr *)(hent->h_addr))->s_addr;
+	name.sin_addr.s_addr = ((struct in_addr *)(hent->h_addr_list[i]))->s_addr;
 	name.sin_family = hent->h_addrtype;
 	name.sin_port = htons(port);
 
 	namelen = sizeof(struct sockaddr_in);
-	if(connect(s, (struct sockaddr *)&name, namelen) < 0) {
-		log_event(LOG_ERR, "Unable to connect to %s:%d", host, port);
-		return(-1);
+	if(connect(s, (struct sockaddr *)&name, namelen) < 0)
+		continue;
+	break;
 	}
 #endif
 
