@@ -1,17 +1,33 @@
---- a/configure
-+++ b/configure
-@@ -1562,7 +1562,7 @@
+http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=374327
+
+GPL code linked against OpenSSL without exception
+
+[ Alejandro Rios ]
+* Initial port from openssl to gnutls
+ 
+[ Anibal Monsalve Salazar ]
+* configure: replaced -lssl with /usr/lib/libgnutls-openssl.so.
+* ssmtp.c: replaced SSL_CTX_use_certificate_chain_file with
+  SSL_CTX_use_certificate_file and marked SSL_CTX_check_private_key
+  as not used.
+
+Alejandro Rios <alerios@debian.org>
+Anibal Monsalve Salazar <anibal@debian.org>
+
+--- a/configure	2008-03-07 07:53:03.000000000 +1100
++++ b/configure	2009-07-06 23:33:59.000000000 +1000
+@@ -1562,7 +1562,7 @@ if test x$enableval = xyes ; then
  #define HAVE_SSL 1
  EOF
-
+ 
 -	LIBS="$LIBS -lssl"
 +	LIBS="$LIBS /usr/lib/libgnutls-openssl.so"
  fi
  enableval=""
-
---- a/configure.in
-+++ b/configure.in
-@@ -52,7 +52,7 @@
+ 
+--- a/configure.in	2008-03-07 06:34:46.000000000 +1100
++++ b/configure.in	2009-07-06 23:33:59.000000000 +1000
+@@ -52,7 +52,7 @@ AC_ARG_ENABLE(ssl,
  [  --enable-ssl           support for secure connection to mail server])
  if test x$enableval = xyes ; then
  	AC_DEFINE(HAVE_SSL)
@@ -20,9 +36,9 @@
  fi
  enableval=""
  
---- a/ssmtp.c	2008-03-07 06:43:18.000000000 +1100
-+++ b/ssmtp.c	2008-03-06 21:01:57.000000000 +1100
-@@ -28,11 +28,7 @@
+--- a/ssmtp.c	2009-07-06 22:48:57.000000000 +1000
++++ b/ssmtp.c	2009-07-06 23:33:59.000000000 +1000
+@@ -26,11 +26,7 @@
  #include <ctype.h>
  #include <netdb.h>
  #ifdef HAVE_SSL
@@ -35,7 +51,7 @@
  #endif
  #ifdef MD5AUTH
  #include "md5auth/hmac_md5.h"
-@@ -1132,7 +1128,7 @@
+@@ -1133,7 +1129,7 @@ int smtp_open(char *host, int port)
  	}
  
  	if(use_cert == True) { 
@@ -44,7 +60,7 @@
  			perror("Use certfile");
  			return(-1);
  		}
-@@ -1142,10 +1138,12 @@
+@@ -1143,10 +1139,12 @@ int smtp_open(char *host, int port)
  			return(-1);
  		}
  

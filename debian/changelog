@@ -1,9 +1,10 @@
-ssmtp (2.63-1) unstable; urgency=low
+ssmtp (2.63-1) UNRELEASED; urgency=low
 
   * New upstream version
   * Updated debian/copyright
+  * Update 01-374327-use-gnutls.patch
 
- -- Anibal Monsalve Salazar <anibal@debian.org>  Fri, 07 Mar 2008 21:09:10 +1100
+ -- Anibal Monsalve Salazar <anibal@debian.org>  Tue, 07 Jul 2009 12:06:16 +1000
 
 ssmtp (2.62-3ubuntu1) karmic; urgency=low
 

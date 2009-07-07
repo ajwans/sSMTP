@@ -903,7 +903,7 @@ bool_t read_config()
 					*r++ = '\0';
 					port = atoi(r);
 				}
-			
+
 				if((mailhost = strdup(q)) == (char *)NULL) {
 					die("parse_config() -- strdup() failed");
 				}
