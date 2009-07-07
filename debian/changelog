@@ -1,4 +1,4 @@
-ssmtp (2.63-1) UNRELEASED; urgency=low
+ssmtp (2.63-1) unstable; urgency=low
 
   * New upstream version
   * Updated debian/copyright
@@ -9,7 +9,7 @@ ssmtp (2.63-1) UNRELEASED; urgency=low
   * Fix copyright-refers-to-symlink-license
   * Failover to multiple mailhubs in IPv4. Closes: 351993
 
- -- Anibal Monsalve Salazar <anibal@debian.org>  Tue, 07 Jul 2009 12:06:16 +1000
+ -- Anibal Monsalve Salazar <anibal@debian.org>  Tue, 07 Jul 2009 14:18:13 +1000
 
 ssmtp (2.62-3ubuntu1) karmic; urgency=low
 
