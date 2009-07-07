@@ -3,6 +3,7 @@ ssmtp (2.63-1) UNRELEASED; urgency=low
   * New upstream version
   * Updated debian/copyright
   * Update 01-374327-use-gnutls.patch
+  * Fix out-of-date-standards-version
 
  -- Anibal Monsalve Salazar <anibal@debian.org>  Tue, 07 Jul 2009 12:06:16 +1000
 
