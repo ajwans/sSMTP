@@ -5,8 +5,8 @@ Maintainer: Anibal Monsalve Salazar <anibal@debian.org>
 Uploaders: Santiago Ruano Rincón <santiago@debian.org>
 Build-Depends: po-debconf, libgnutls-dev, quilt
 Standards-Version: 3.8.2
-Vcs-Svn: svn://svn.debian.org/ssmtp/
-Vcs-Browser: http://svn.debian.org/wsvn/ssmtp
+Vcs-Git: git://git.debian.org/ssmtp/ssmtp.git
+Vcs-Browser: http://git.debian.org/?p=ssmtp/ssmtp.git
 
 Package: ssmtp
 Architecture: any
