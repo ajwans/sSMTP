@@ -1,0 +1,169 @@
+http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=397149
+
+Patch provided by Ingo Rohloff <lundril@gmx.de>
+fixes 32bit-ism that was breaking CRAM-MD5 calculation on AMD64
+
+
+diff -ruN ssmtp/md5auth/global.h ssmtp_new/md5auth/global.h
+--- ssmtp/md5auth/global.h	2002-09-27 14:16:24.000000000 +0200
++++ ssmtp_new/md5auth/global.h	2008-10-26 16:40:05.000000000 +0100
+@@ -13,12 +13,6 @@
+ /* POINTER defines a generic pointer type */
+ typedef unsigned char *POINTER;
+ 
+-/* UINT2 defines a two byte word */
+-typedef unsigned short int UINT2;
+-
+-/* UINT4 defines a four byte word */
+-typedef unsigned long int UINT4;
+-
+ /* PROTO_LIST is defined depending on how PROTOTYPES is defined above.
+ If using PROTOTYPES, then PROTO_LIST returns the list, otherwise it
+   returns an empty list.
+diff -ruN ssmtp/md5auth/hmac_md5.c ssmtp_new/md5auth/hmac_md5.c
+--- ssmtp/md5auth/hmac_md5.c	2002-09-27 14:16:24.000000000 +0200
++++ ssmtp_new/md5auth/hmac_md5.c	2008-10-26 16:40:24.000000000 +0100
+@@ -1,7 +1,7 @@
+-#include "global.h"
+-#include "md5.h"
+ #include <string.h>
+ #include <sys/types.h>
++#include "global.h"
++#include "md5.h"
+ 
+ /*
+ ** Function: hmac_md5 (RFC 2104)
+diff -ruN ssmtp/md5auth/md5c.c ssmtp_new/md5auth/md5c.c
+--- ssmtp/md5auth/md5c.c	2002-09-27 14:16:24.000000000 +0200
++++ ssmtp_new/md5auth/md5c.c	2008-10-26 16:39:53.000000000 +0100
+@@ -23,6 +23,7 @@
+ documentation and/or software.
+  */
+ 
++#include <sys/types.h>
+ #include "global.h"
+ #include "md5.h"
+ 
+@@ -45,11 +46,11 @@
+ #define S43 15
+ #define S44 21
+ 
+-static void MD5Transform PROTO_LIST ((UINT4 [4], unsigned char [64]));
++static void MD5Transform PROTO_LIST ((u_int32_t [4], unsigned char [64]));
+ static void Encode PROTO_LIST
+-  ((unsigned char *, UINT4 *, unsigned int));
++  ((unsigned char *, u_int32_t *, unsigned int));
+ static void Decode PROTO_LIST
+-  ((UINT4 *, unsigned char *, unsigned int));
++  ((u_int32_t *, unsigned char *, unsigned int));
+ static void MD5_memcpy PROTO_LIST ((POINTER, POINTER, unsigned int));
+ static void MD5_memset PROTO_LIST ((POINTER, int, unsigned int));
+ 
+@@ -74,22 +75,22 @@
+ Rotation is separate from addition to prevent recomputation.
+  */
+ #define FF(a, b, c, d, x, s, ac) { \
+- (a) += F ((b), (c), (d)) + (x) + (UINT4)(ac); \
++ (a) += F ((b), (c), (d)) + (x) + (u_int32_t)(ac); \
+  (a) = ROTATE_LEFT ((a), (s)); \
+  (a) += (b); \
+   }
+ #define GG(a, b, c, d, x, s, ac) { \
+- (a) += G ((b), (c), (d)) + (x) + (UINT4)(ac); \
++ (a) += G ((b), (c), (d)) + (x) + (u_int32_t)(ac); \
+  (a) = ROTATE_LEFT ((a), (s)); \
+  (a) += (b); \
+   }
+ #define HH(a, b, c, d, x, s, ac) { \
+- (a) += H ((b), (c), (d)) + (x) + (UINT4)(ac); \
++ (a) += H ((b), (c), (d)) + (x) + (u_int32_t)(ac); \
+  (a) = ROTATE_LEFT ((a), (s)); \
+  (a) += (b); \
+   }
+ #define II(a, b, c, d, x, s, ac) { \
+- (a) += I ((b), (c), (d)) + (x) + (UINT4)(ac); \
++ (a) += I ((b), (c), (d)) + (x) + (u_int32_t)(ac); \
+  (a) = ROTATE_LEFT ((a), (s)); \
+  (a) += (b); \
+   }
+@@ -123,10 +124,10 @@
+   index = (unsigned int)((context->count[0] >> 3) & 0x3F);
+ 
+   /* Update number of bits */
+-  if ((context->count[0] += ((UINT4)inputLen << 3))
+-   < ((UINT4)inputLen << 3))
++  if ((context->count[0] += ((u_int32_t)inputLen << 3))
++   < ((u_int32_t)inputLen << 3))
+  context->count[1]++;
+-  context->count[1] += ((UINT4)inputLen >> 29);
++  context->count[1] += ((u_int32_t)inputLen >> 29);
+ 
+   partLen = 64 - index;
+ 
+@@ -183,10 +184,10 @@
+ /* MD5 basic transformation. Transforms state based on block.
+  */
+ static void MD5Transform (state, block)
+-UINT4 state[4];
++u_int32_t state[4];
+ unsigned char block[64];
+ {
+-  UINT4 a = state[0], b = state[1], c = state[2], d = state[3], x[16];
++  u_int32_t a = state[0], b = state[1], c = state[2], d = state[3], x[16];
+ 
+   Decode (x, block, 64);
+ 
+@@ -272,12 +273,12 @@
+   MD5_memset ((POINTER)x, 0, sizeof (x));
+ }
+ 
+-/* Encodes input (UINT4) into output (unsigned char). Assumes len is
++/* Encodes input (u_int32_t) into output (unsigned char). Assumes len is
+   a multiple of 4.
+  */
+ static void Encode (output, input, len)
+ unsigned char *output;
+-UINT4 *input;
++u_int32_t *input;
+ unsigned int len;
+ {
+   unsigned int i, j;
+@@ -290,19 +291,19 @@
+   }
+ }
+ 
+-/* Decodes input (unsigned char) into output (UINT4). Assumes len is
++/* Decodes input (unsigned char) into output (u_int32_t). Assumes len is
+   a multiple of 4.
+  */
+ static void Decode (output, input, len)
+-UINT4 *output;
++u_int32_t *output;
+ unsigned char *input;
+ unsigned int len;
+ {
+   unsigned int i, j;
+ 
+   for (i = 0, j = 0; j < len; i++, j += 4)
+- output[i] = ((UINT4)input[j]) | (((UINT4)input[j+1]) << 8) |
+-   (((UINT4)input[j+2]) << 16) | (((UINT4)input[j+3]) << 24);
++ output[i] = ((u_int32_t)input[j]) | (((u_int32_t)input[j+1]) << 8) |
++   (((u_int32_t)input[j+2]) << 16) | (((u_int32_t)input[j+3]) << 24);
+ }
+ 
+ /* Note: Replace "for loop" with standard memcpy if possible.
+diff -ruN ssmtp/md5auth/md5.h ssmtp_new/md5auth/md5.h
+--- ssmtp/md5auth/md5.h	2002-09-27 14:16:24.000000000 +0200
++++ ssmtp_new/md5auth/md5.h	2008-10-26 16:40:44.000000000 +0100
+@@ -25,8 +25,8 @@
+ 
+ /* MD5 context. */
+ typedef struct {
+-  UINT4 state[4];                                   /* state (ABCD) */
+-  UINT4 count[2];        /* number of bits, modulo 2^64 (lsb first) */
++  u_int32_t state[4];                                   /* state (ABCD) */
++  u_int32_t count[2];        /* number of bits, modulo 2^64 (lsb first) */
+   unsigned char buffer[64];                         /* input buffer */
+ } MD5_CTX;
+ 
+

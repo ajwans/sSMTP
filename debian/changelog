@@ -1,3 +1,11 @@
+ssmtp (2.63-1.1) unstable; urgency=low
+
+  * Non-maintainer upload.
+  * allow cram-md5 authentication to work on 64bit systems, by applying patch
+    provided by Ingo Rohloff in the bug report (closes: 397149)
+
+ -- Philip Hands <phil@hands.com>  Sun, 27 Sep 2009 09:48:41 +0100
+
 ssmtp (2.63-1) unstable; urgency=low
 
   * New upstream version
