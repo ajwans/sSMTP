@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 2.61-7\n"
 "Report-Msgid-Bugs-To: ssmtp@packages.debian.org\n"
-"POT-Creation-Date: 2008-10-07 07:21+0200\n"
+"POT-Creation-Date: 2009-11-24 09:07+1100\n"
 "PO-Revision-Date: 2006-06-30 11:16+0200\n"
 "Last-Translator: Michel Grentzinger <mic.grentz@online.fr>\n"
 "Language-Team: French <debian-l10n-french@lists.debian.org>\n"
@@ -47,7 +47,9 @@ msgstr ""
 #. Type: string
 #. Description
 #: ../templates:2001
-msgid "Who gets mail for userids < 1000:"
+#, fuzzy
+#| msgid "Who gets mail for userids < 1000:"
+msgid "Username who gets mail for userids < 1000:"
 msgstr "Destinataire des courriels pour les utilisateurs système (UID<1000) :"
 
 #. Type: string
@@ -100,7 +102,9 @@ msgstr ""
 #. Type: string
 #. Description
 #: ../templates:5001
-msgid "What domain to masquerade as:"
+#, fuzzy
+#| msgid "What domain to masquerade as:"
+msgid "Domain to masquerade as:"
 msgstr "Domaine de masquage (« masquerade ») :"
 
 #. Type: string
@@ -116,7 +120,9 @@ msgstr ""
 #. Type: string
 #. Description
 #: ../templates:6001
-msgid "What name to store in /etc/mailname:"
+#, fuzzy
+#| msgid "What name to store in /etc/mailname:"
+msgid "Name to store in /etc/mailname:"
 msgstr "Nom d'hôte à utiliser dans /etc/mailname :"
 
 #. Type: string

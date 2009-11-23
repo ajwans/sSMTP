@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ssmtp 2.62-1.2\n"
 "Report-Msgid-Bugs-To: ssmtp@packages.debian.org\n"
-"POT-Creation-Date: 2008-10-07 07:21+0200\n"
+"POT-Creation-Date: 2009-11-24 09:07+1100\n"
 "PO-Revision-Date: 2009-01-31 18:13+1030\n"
 "Last-Translator: Clytie Siddall <clytie@riverland.net.au>\n"
 "Language-Team: Vietnamese <vi-VN@googlegroups.com>\n"
@@ -41,7 +41,9 @@ msgstr ""
 #. Type: string
 #. Description
 #: ../templates:2001
-msgid "Who gets mail for userids < 1000:"
+#, fuzzy
+#| msgid "Who gets mail for userids < 1000:"
+msgid "Username who gets mail for userids < 1000:"
 msgstr "Ai nhận thư cho UID dưới 1000:"
 
 #. Type: string
@@ -92,7 +94,9 @@ msgstr ""
 #. Type: string
 #. Description
 #: ../templates:5001
-msgid "What domain to masquerade as:"
+#, fuzzy
+#| msgid "What domain to masquerade as:"
+msgid "Domain to masquerade as:"
 msgstr "Có nên giả trang là miền nào :"
 
 #. Type: string
@@ -108,7 +112,9 @@ msgstr ""
 #. Type: string
 #. Description
 #: ../templates:6001
-msgid "What name to store in /etc/mailname:"
+#, fuzzy
+#| msgid "What name to store in /etc/mailname:"
+msgid "Name to store in /etc/mailname:"
 msgstr "Có nên lưu vào « /etc/mailname » tên nào :"
 
 #. Type: string

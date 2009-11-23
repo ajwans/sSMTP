@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ssmtp_2.61-10_de\n"
 "Report-Msgid-Bugs-To: ssmtp@packages.debian.org\n"
-"POT-Creation-Date: 2006-10-19 01:30+0200\n"
+"POT-Creation-Date: 2009-11-24 09:07+1100\n"
 "PO-Revision-Date: 2006-11-18 23:04+0100\n"
 "Last-Translator: Erik Schanze <eriks@debian.org>\n"
 "Language-Team: German <debian-l10n-german@lists.debian.org>\n"
@@ -48,7 +48,9 @@ msgstr ""
 #. Type: string
 #. Description
 #: ../templates:2001
-msgid "Who gets mail for userids < 1000:"
+#, fuzzy
+#| msgid "Who gets mail for userids < 1000:"
+msgid "Username who gets mail for userids < 1000:"
 msgstr "Wer erhält E-Mails für Benutzer-IDs < 1000:"
 
 #. Type: string
@@ -78,9 +80,9 @@ msgid ""
 "required; no MX records are consulted. Commonly, mailhosts are named \"mail."
 "domain.com\"."
 msgstr ""
-"Bei diesem Rechner werden E-Mails abgeliefert. Es wird der "
-"tatsächliche Rechnername benötigt; MX-Einträge werden nicht beachtet. "
-"E-Mailserver heißen gewöhnlich »mail.domain.com«."
+"Bei diesem Rechner werden E-Mails abgeliefert. Es wird der tatsächliche "
+"Rechnername benötigt; MX-Einträge werden nicht beachtet. E-Mailserver heißen "
+"gewöhnlich »mail.domain.com«."
 
 #. Type: string
 #. Description
@@ -95,13 +97,15 @@ msgid ""
 "If your remote SMTP server listens on a port other than 25 (Standard/RFC) "
 "then set it here."
 msgstr ""
-"Wenn der entfernte SMTP-Server auf einem anderen als Port 25 "
-"(Standard/RFC) läuft, dann geben Sie den Port hier an."
+"Wenn der entfernte SMTP-Server auf einem anderen als Port 25 (Standard/RFC) "
+"läuft, dann geben Sie den Port hier an."
 
 #. Type: string
 #. Description
 #: ../templates:5001
-msgid "What domain to masquerade as:"
+#, fuzzy
+#| msgid "What domain to masquerade as:"
+msgid "Domain to masquerade as:"
 msgstr "Als welche Domäne ausgeben:"
 
 #. Type: string
@@ -111,14 +115,16 @@ msgid ""
 "ssmtp will use \"username@REWRITEDOMAIN\" as the default From: address for "
 "outgoing mail which contains only a local username."
 msgstr ""
-"Ssmtp benutzt das Schema »Benutzername@UMSCHREIBDOMÄNE« in der "
-"Absenderzeile für ausgehende E-Mails, die nur einen lokalen "
-"Benutzernamen als Absender enthalten."
+"Ssmtp benutzt das Schema »Benutzername@UMSCHREIBDOMÄNE« in der Absenderzeile "
+"für ausgehende E-Mails, die nur einen lokalen Benutzernamen als Absender "
+"enthalten."
 
 #. Type: string
 #. Description
 #: ../templates:6001
-msgid "What name to store in /etc/mailname:"
+#, fuzzy
+#| msgid "What name to store in /etc/mailname:"
+msgid "Name to store in /etc/mailname:"
 msgstr "Welchen Namen in der Datei /etc/mailname speichern:"
 
 #. Type: string
@@ -128,8 +134,8 @@ msgid ""
 "This is the portion of the address after the '@' sign to be shown on "
 "outgoing news and mail messages."
 msgstr ""
-"Dies ist der Teil der Adresse nach dem »@«, der für alle ausgehenden "
-"E-Mails und News verwendet wird."
+"Dies ist der Teil der Adresse nach dem »@«, der für alle ausgehenden E-Mails "
+"und News verwendet wird."
 
 #. Type: string
 #. Description
@@ -144,8 +150,8 @@ msgid ""
 "This should specify the real hostname of this machine, and will be sent to "
 "the mailhub when delivering mail."
 msgstr ""
-"Dies sollte der richtige Rechnername Ihrer Maschine sein. Er wird "
-"beim Senden der E-Mail an den E-Mailserver übermittelt."
+"Dies sollte der richtige Rechnername Ihrer Maschine sein. Er wird beim "
+"Senden der E-Mail an den E-Mailserver übermittelt."
 
 #. Type: boolean
 #. Description
@@ -168,4 +174,3 @@ msgstr ""
 "wird auch die Envelope-Kopfzeile mit dieser Adresse überschreiben. Wenn Sie "
 "ablehnen, verhindern Sie dies und lassen nur die Standardadresse oder eine "
 "aus der Datei /etc/ssmtp/revaliases zu."
-

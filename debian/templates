@@ -11,7 +11,7 @@ _Description: Automatically overwrite config files?
 Template: ssmtp/root
 Type: string
 Default: postmaster
-_Description: Who gets mail for userids < 1000:
+_Description: Username who gets mail for userids < 1000:
  Mail sent to a local user whose UID is less than 1000 will instead be
  sent here. This is useful for daemons which mail reports to root and
  other system UIDs.
@@ -34,13 +34,13 @@ _Description: Remote SMTP port number:
 
 Template: ssmtp/rewritedomain
 Type: string
-_Description: What domain to masquerade as:
+_Description: Domain to masquerade as:
  ssmtp will use "username@REWRITEDOMAIN" as the default From: address
  for outgoing mail which contains only a local username.
 
 Template: ssmtp/mailname
 Type: string
-_Description: What name to store in /etc/mailname:
+_Description: Name to store in /etc/mailname:
  This is the portion of the address after the '@' sign to be shown on
  outgoing news and mail messages.
 
