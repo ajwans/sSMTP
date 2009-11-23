@@ -7,6 +7,7 @@ Build-Depends: po-debconf, libgnutls-dev, quilt
 Standards-Version: 3.8.3
 Vcs-Git: git://git.debian.org/ssmtp/ssmtp.git
 Vcs-Browser: http://git.debian.org/?p=ssmtp/ssmtp.git
+Homepage: http://packages.qa.debian.org/s/ssmtp.html
 
 Package: ssmtp
 Architecture: any

@@ -5,6 +5,7 @@ ssmtp (2.64-1) UNRELEASED; urgency=low
   * Source package format is 3.0 (quilt)
   * Fix out-of-date-standards-version
   * Fix malformed-prompt-in-templates
+  * Fix no-homepage-field
 
  -- Anibal Monsalve Salazar <anibal@debian.org>  Mon, 23 Nov 2009 21:11:25 +1100
 
