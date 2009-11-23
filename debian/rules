@@ -4,13 +4,11 @@
 # Copyright (C) 2004-2005 Anibal Monsalve Salazar <anibal@debian.org>
 #
 
-include /usr/share/quilt/quilt.make
-
 SHELL=/bin/bash
 CC=gcc
 CFLAGS=-O2 -g -Wall
 
-do_cfg: patch
+do_cfg:
 	test -f Makefile || ./configure --exec-prefix="/usr" --prefix="" --enable-ssl --enable-inet6 --enable-md5auth --with-cflags="$(CFLAGS)"
 
 build:	do_cfg
@@ -75,7 +73,7 @@ binary-arch:	checkroot configure build
 
 binary-indep:
 
-clean: unpatch
+clean:
 	test \! -f Makefile || make distclean
 	-rm -rf debian/tmp
 	-rm -f debian/{files,substvars}

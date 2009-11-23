@@ -2,6 +2,7 @@ ssmtp (2.64-1) UNRELEASED; urgency=low
 
   * New upstream version
     Delete 02-397149-amd64-crammd5.patch (merged)
+  * Source package format is 3.0 (quilt)
 
  -- Anibal Monsalve Salazar <anibal@debian.org>  Mon, 23 Nov 2009 21:11:25 +1100
 
