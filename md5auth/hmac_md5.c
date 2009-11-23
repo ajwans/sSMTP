@@ -1,7 +1,7 @@
-#include "global.h"
-#include "md5.h"
 #include <string.h>
 #include <sys/types.h>
+#include "global.h"
+#include "md5.h"
 
 /*
 ** Function: hmac_md5 (RFC 2104)
