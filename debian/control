@@ -4,7 +4,7 @@ Priority: extra
 Maintainer: Anibal Monsalve Salazar <anibal@debian.org>
 Uploaders: Santiago Ruano Rincón <santiago@debian.org>
 Build-Depends: po-debconf, libgnutls-dev, quilt
-Standards-Version: 3.8.2
+Standards-Version: 3.8.3
 Vcs-Git: git://git.debian.org/ssmtp/ssmtp.git
 Vcs-Browser: http://git.debian.org/?p=ssmtp/ssmtp.git
 
