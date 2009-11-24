@@ -10,6 +10,7 @@ ssmtp (2.64-1) UNRELEASED; urgency=low
     with Solaris 11. Closes: 557725
   * Add 03-557741-remote-addr.patch by Victor Sudakov to insert the X-
     Originating-IP header. Closes: 557741
+  * Make AuthUser/AuthPass not visible to all users. Closes: 500454
 
  -- Anibal Monsalve Salazar <anibal@debian.org>  Mon, 23 Nov 2009 21:11:25 +1100
 
