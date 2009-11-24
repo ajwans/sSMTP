@@ -1,6 +1,6 @@
 Source: ssmtp
 Section: mail
-Priority: extra
+Priority: optional
 Maintainer: Anibal Monsalve Salazar <anibal@debian.org>
 Uploaders: Santiago Ruano Rincón <santiago@debian.org>
 Build-Depends: po-debconf, libgnutls-dev, quilt

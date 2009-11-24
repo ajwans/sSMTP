@@ -1,3 +1,9 @@
+ssmtp (2.64-2) UNRELEASED; urgency=low
+
+  * Priority is optional
+
+ -- Anibal Monsalve Salazar <anibal@debian.org>  Tue, 24 Nov 2009 14:49:15 +1100
+
 ssmtp (2.64-1) unstable; urgency=low
 
   * New upstream version
