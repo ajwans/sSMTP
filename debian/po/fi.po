@@ -1,9 +1,10 @@
+# Esko Arajärvi <edu@iki.fi>, 2010.
 msgid ""
 msgstr ""
 "Project-Id-Version: ssmtp\n"
 "Report-Msgid-Bugs-To: ssmtp@packages.debian.org\n"
 "POT-Creation-Date: 2009-11-24 09:07+1100\n"
-"PO-Revision-Date: \n"
+"PO-Revision-Date: 2010-01-09 21:39+0200\n"
 "Last-Translator: Esko Arajärvi <edu@iki.fi>\n"
 "Language-Team: Finnish <debian-l10n-finnish@lists.debian.org>\n"
 "MIME-Version: 1.0\n"
@@ -11,6 +12,8 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Poedit-Language: Finnish\n"
 "X-Poedit-Country: FINLAND\n"
+"X-Generator: Lokalize 1.0\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #. Type: boolean
 #. Description
@@ -36,10 +39,8 @@ msgstr ""
 #. Type: string
 #. Description
 #: ../templates:2001
-#, fuzzy
-#| msgid "Who gets mail for userids < 1000:"
 msgid "Username who gets mail for userids < 1000:"
-msgstr "Kenelle lähetetään viestit, joiden vastaanottajan käyttäjä-id < 1000?"
+msgstr "Tunnus, joka saa viestit, joiden vastaanottajan käyttäjä-id < 1000:"
 
 #. Type: string
 #. Description
@@ -92,8 +93,6 @@ msgstr ""
 #. Type: string
 #. Description
 #: ../templates:5001
-#, fuzzy
-#| msgid "What domain to masquerade as:"
 msgid "Domain to masquerade as:"
 msgstr "Mistä verkkoalueesta viestit naamioidaan tuleviksi:"
 
@@ -110,8 +109,6 @@ msgstr ""
 #. Type: string
 #. Description
 #: ../templates:6001
-#, fuzzy
-#| msgid "What name to store in /etc/mailname:"
 msgid "Name to store in /etc/mailname:"
 msgstr "Tiedostoon /etc/mailname tallennettava nimi:"
 

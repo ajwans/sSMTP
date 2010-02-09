@@ -1,3 +1,10 @@
+# French translation of ssmtp debconf templates
+#
+# Copyright (C) 2009 Debian French l10n Team
+# <debian-l10n-french@lists.debian.org>
+# This file is distributed under the same license as the clamsmtp package.
+# Translator:
+# Michel Grentzinger <mic.grentz@online.fr>
 #
 #    Translators, if you are not familiar with the PO format, gettext
 #    documentation is worth reading, especially sections dedicated to
@@ -11,21 +18,21 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: 2.61-7\n"
+"Project-Id-Version: 2.64-2\n"
 "Report-Msgid-Bugs-To: ssmtp@packages.debian.org\n"
 "POT-Creation-Date: 2009-11-24 09:07+1100\n"
-"PO-Revision-Date: 2006-06-30 11:16+0200\n"
+"PO-Revision-Date: 2009-11-29 20:30+0100\n"
 "Last-Translator: Michel Grentzinger <mic.grentz@online.fr>\n"
 "Language-Team: French <debian-l10n-french@lists.debian.org>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=ISO-8859-15\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
 #. Type: boolean
 #. Description
 #: ../templates:1001
 msgid "Automatically overwrite config files?"
-msgstr "Reconstituer automatiquement les fichiers de configuration ?"
+msgstr "Reconstituer automatiquement les fichiers de configurationÂ ?"
 
 #. Type: boolean
 #. Description
@@ -37,20 +44,19 @@ msgid ""
 "control of this file yourself) then set this option to have the program "
 "never touch this file."
 msgstr ""
-"Le fichier de configuration du courriel (/etc/ssmtp/ssmtp.conf) peut être "
-"automatiquement adapté à chaque mise à niveau d'après les informations "
-"fournies dans la base de données de debconf. Si vous ne voulez pas que cela "
-"arrive (c.-à-d. que vous souhaitez garder le contrôle de ce fichier), "
-"répondez négativement à cette question afin que le programme ne modifie "
+"Le fichier de configuration du courriel (/etc/ssmtp/ssmtp.conf) peut Ãªtre "
+"automatiquement adaptÃ© Ã  chaque mise Ã  niveau d'aprÃ¨s les informations "
+"fournies dans la base de donnÃ©es de debconf. Si vous ne voulez pas que cela "
+"arrive (c.-Ã -d. que vous souhaitez garder le contrÃ´le de ce fichier), "
+"rÃ©pondez nÃ©gativement Ã  cette question afin que le programme ne modifie "
 "jamais ce fichier."
 
 #. Type: string
 #. Description
 #: ../templates:2001
-#, fuzzy
-#| msgid "Who gets mail for userids < 1000:"
 msgid "Username who gets mail for userids < 1000:"
-msgstr "Destinataire des courriels pour les utilisateurs système (UID<1000) :"
+msgstr ""
+"Destinataire des courriels pour les utilisateurs systÃ¨me (UID < 1000)Â :"
 
 #. Type: string
 #. Description
@@ -60,16 +66,16 @@ msgid ""
 "here. This is useful for daemons which mail reports to root and other system "
 "UIDs. Make this empty to disable rewriting."
 msgstr ""
-"Les courriels envoyés à un utilisateur local dont l'UID est inférieur à 1000 "
-"seront envoyés à l'adresse indiquée ici. C'est utile pour les démons qui "
-"expédient des rapports au superutilisateur et aux autres UID système. "
-"Veuillez laisser ce champ vide pour désactiver la réécriture d'adresse."
+"Les courriels envoyÃ©s Ã  un utilisateur local dont l'UID est infÃ©rieur Ã  1000 "
+"seront envoyÃ©s Ã  l'adresse indiquÃ©e ici. C'est utile pour les dÃ©mons qui "
+"expÃ©dient des rapports au superutilisateur et aux autres UID systÃ¨me. "
+"Veuillez laisser ce champ vide pour dÃ©sactiver la rÃ©Ã©criture d'adresse."
 
 #. Type: string
 #. Description
 #: ../templates:3001
 msgid "Name of your mailhub:"
-msgstr "Nom d'hôte de votre concentrateur de courriel (« mail hub ») :"
+msgstr "Nom d'hÃ´te de votre concentrateur de courriel (Â«Â mail hubÂ Â»)Â :"
 
 #. Type: string
 #. Description
@@ -79,15 +85,15 @@ msgid ""
 "required; no MX records are consulted. Commonly, mailhosts are named \"mail."
 "domain.com\"."
 msgstr ""
-"Ce paramètre définit l'hôte vers lequel le courriel est distribué. Le nom de "
-"la machine concernée est nécessaire. Les enregistrements MX ne seront pas "
-"utilisés. Généralement, les hôtes de courriel sont nommés « mail.domain.com »."
+"Ce paramÃ¨tre dÃ©finit l'hÃ´te vers lequel le courriel est distribuÃ©. Le nom de "
+"la machine concernÃ©e est nÃ©cessaire. Les enregistrements MX ne seront pas "
+"utilisÃ©s. GÃ©nÃ©ralement, les hÃ´tes de courriel sont nommÃ©s Â«Â mail.domain.comÂ Â»."
 
 #. Type: string
 #. Description
 #: ../templates:4001
 msgid "Remote SMTP port number:"
-msgstr "Numéro du port SMTP distant :"
+msgstr "NumÃ©ro du port SMTP distantÂ :"
 
 #. Type: string
 #. Description
@@ -96,16 +102,14 @@ msgid ""
 "If your remote SMTP server listens on a port other than 25 (Standard/RFC) "
 "then set it here."
 msgstr ""
-"Si votre serveur SMTP distant écoute sur un autre port que le 25 (port "
+"Si votre serveur SMTP distant Ã©coute sur un autre port que le 25 (port "
 "standard selon les RFC), veuillez l'indiquer ici."
 
 #. Type: string
 #. Description
 #: ../templates:5001
-#, fuzzy
-#| msgid "What domain to masquerade as:"
 msgid "Domain to masquerade as:"
-msgstr "Domaine de masquage (« masquerade ») :"
+msgstr "Domaine de masquage (Â«Â masqueradeÂ Â»)Â :"
 
 #. Type: string
 #. Description
@@ -114,16 +118,14 @@ msgid ""
 "ssmtp will use \"username@REWRITEDOMAIN\" as the default From: address for "
 "outgoing mail which contains only a local username."
 msgstr ""
-"Ssmtp utilisera « username@REWRITEDOMAIN » comme champ d'adresse « From: » "
+"Ssmtp utilisera Â«Â username@REWRITEDOMAINÂ Â» comme champ d'adresse Â«Â From:Â Â» "
 "pour les courriels sortants contenant uniquement un nom d'utilisateur local."
 
 #. Type: string
 #. Description
 #: ../templates:6001
-#, fuzzy
-#| msgid "What name to store in /etc/mailname:"
 msgid "Name to store in /etc/mailname:"
-msgstr "Nom d'hôte à utiliser dans /etc/mailname :"
+msgstr "Nom d'hÃ´te Ã  utiliser dans /etc/mailnameÂ :"
 
 #. Type: string
 #. Description
@@ -132,14 +134,14 @@ msgid ""
 "This is the portion of the address after the '@' sign to be shown on "
 "outgoing news and mail messages."
 msgstr ""
-"Veuillez indiquer la partie de l'adresse après le signe « @ » qui sera "
-"affichée dans les messages sortants (courriels et nouvelles)."
+"Veuillez indiquer la partie de l'adresse aprÃ¨s le signe Â«Â @Â Â» qui sera "
+"affichÃ©e dans les messages sortants (courriels et nouvelles)."
 
 #. Type: string
 #. Description
 #: ../templates:7001
 msgid "Fully qualified hostname:"
-msgstr "Nom de domaine pleinement qualifié :"
+msgstr "Nom de domaine pleinement qualifiÃ©Â :"
 
 #. Type: string
 #. Description
@@ -148,14 +150,14 @@ msgid ""
 "This should specify the real hostname of this machine, and will be sent to "
 "the mailhub when delivering mail."
 msgstr ""
-"Veuillez indiquer le nom réel de cette machine : il sera envoyé vers le "
+"Veuillez indiquer le nom rÃ©el de cette machine : il sera envoyÃ© vers le "
 "concentrateur de courriels lors de la distribution des messages."
 
 #. Type: boolean
 #. Description
 #: ../templates:8001
 msgid "Allow override of From: line in email header?"
-msgstr "Autoriser le remplacement de l'en-tête « From: » dans les messages ?"
+msgstr "Autoriser le remplacement de l'en-tÃªte Â«Â From:Â Â» dans les messagesÂ ?"
 
 #. Type: boolean
 #. Description
@@ -168,7 +170,7 @@ msgid ""
 "revaliases."
 msgstr ""
 "Cette option permettra aux utilisateurs locaux de saisir n'importe quelle "
-"ligne « From: » dans leurs messages sans qu'elle ne soit réécrite et obligera "
-"ssmtp à réécrire les en-têtes d'enveloppe avec cette adresse. Une réponse "
-"négative désactivera cela, et l'adresse par défaut ou celles définies dans /"
-"etc/ssmtp/revaliases seront utilisées."
+"ligne Â«Â From:Â Â» dans leurs messages sans qu'elle ne soit rÃ©Ã©crite et obligera "
+"ssmtp Ã  rÃ©Ã©crire les en-tÃªtes d'enveloppe avec cette adresse. Une rÃ©ponse "
+"nÃ©gative dÃ©sactivera cela, et l'adresse par dÃ©faut ou celles dÃ©finies dans /"
+"etc/ssmtp/revaliases seront utilisÃ©es."

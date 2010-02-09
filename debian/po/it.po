@@ -1,11 +1,11 @@
 # Italian (it) translation of debconf templates for ssmtp
 # Copyright (C) 2007 Free Software Foundation, Inc.
 # This file is distributed under the same license as the ssmtp package.
-# Luca Monducci <luca.mo@tiscali.it>, 2007.
-#
+# Luca Monducci <luca.mo@tiscali.it>, 2007 - 2009
+# 
 msgid ""
 msgstr ""
-"Project-Id-Version: ssmtp 2.61 italian debconf templates\n"
+"Project-Id-Version: ssmtp 2.64 italian debconf templates\n"
 "Report-Msgid-Bugs-To: ssmtp@packages.debian.org\n"
 "POT-Creation-Date: 2009-11-24 09:07+1100\n"
 "PO-Revision-Date: 2007-10-10 21:33+0200\n"
@@ -40,10 +40,8 @@ msgstr ""
 #. Type: string
 #. Description
 #: ../templates:2001
-#, fuzzy
-#| msgid "Who gets mail for userids < 1000:"
 msgid "Username who gets mail for userids < 1000:"
-msgstr "Destinatario della posta per gli UserID < 1000:"
+msgstr "Nome dell'utente che riceve la posta per gli UserID < 1000:"
 
 #. Type: string
 #. Description
@@ -95,8 +93,6 @@ msgstr ""
 #. Type: string
 #. Description
 #: ../templates:5001
-#, fuzzy
-#| msgid "What domain to masquerade as:"
 msgid "Domain to masquerade as:"
 msgstr "Dominio con cui mascherarsi:"
 
@@ -114,8 +110,6 @@ msgstr ""
 #. Type: string
 #. Description
 #: ../templates:6001
-#, fuzzy
-#| msgid "What name to store in /etc/mailname:"
 msgid "Name to store in /etc/mailname:"
 msgstr "Nome da memorizzare in /etc/mailname:"
 

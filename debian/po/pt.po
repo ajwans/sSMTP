@@ -1,14 +1,14 @@
 # Portuguese translation of ssmtp's debconf messages.
 # Copyright (C) 2007 Ricardo Silva
 # This file is distributed under the same license as the ssmtp package.
-# Ricardo Silva <ardoric@gmail.com>, 2007.
+# Ricardo Silva <ardoric@gmail.com>, 2007-2009.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: ssmtp 2.61-12\n"
 "Report-Msgid-Bugs-To: ssmtp@packages.debian.org\n"
 "POT-Creation-Date: 2009-11-24 09:07+1100\n"
-"PO-Revision-Date: 2007-04-26 23:36+0100\n"
+"PO-Revision-Date: 2009-12-04 20:49+0000\n"
 "Last-Translator: Ricardo Silva <ardoric@gmail.com>\n"
 "Language-Team: Portuguese <traduz@debianpt.org>\n"
 "MIME-Version: 1.0\n"
@@ -40,10 +40,8 @@ msgstr ""
 #. Type: string
 #. Description
 #: ../templates:2001
-#, fuzzy
-#| msgid "Who gets mail for userids < 1000:"
 msgid "Username who gets mail for userids < 1000:"
-msgstr "Quem recebe o mail de utilizadores com identificador < 1000:"
+msgstr "Utilizador que recebe o mail de utilizadores com identificador < 1000:"
 
 #. Type: string
 #. Description
@@ -95,10 +93,8 @@ msgstr ""
 #. Type: string
 #. Description
 #: ../templates:5001
-#, fuzzy
-#| msgid "What domain to masquerade as:"
 msgid "Domain to masquerade as:"
-msgstr "Que domínio a mascarar como:"
+msgstr "Domínio para usar como máscara:"
 
 #. Type: string
 #. Description
@@ -114,10 +110,8 @@ msgstr ""
 #. Type: string
 #. Description
 #: ../templates:6001
-#, fuzzy
-#| msgid "What name to store in /etc/mailname:"
 msgid "Name to store in /etc/mailname:"
-msgstr "Que nome guardar em /etc/mailname:"
+msgstr "Nome a guardar em /etc/mailname:"
 
 #. Type: string
 #. Description

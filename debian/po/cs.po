@@ -16,7 +16,7 @@ msgstr ""
 "Project-Id-Version: ssmtp\n"
 "Report-Msgid-Bugs-To: ssmtp@packages.debian.org\n"
 "POT-Creation-Date: 2009-11-24 09:07+1100\n"
-"PO-Revision-Date: 2006-09-24 14:29+0200\n"
+"PO-Revision-Date: 2009-11-28 19:30+0100\n"
 "Last-Translator: Miroslav Kure <kurem@debian.cz>\n"
 "Language-Team: Czech <debian-l10n-czech@lists.debian.org>\n"
 "MIME-Version: 1.0\n"
@@ -47,10 +47,8 @@ msgstr ""
 #. Type: string
 #. Description
 #: ../templates:2001
-#, fuzzy
-#| msgid "Who gets mail for userids < 1000:"
 msgid "Username who gets mail for userids < 1000:"
-msgstr "Kdo bude dostávat poštu pro uživatele s uid < 1000:"
+msgstr "Uživatel, který bude dostávat poštu pro uživatele s uid < 1000:"
 
 #. Type: string
 #. Description
@@ -80,7 +78,7 @@ msgid ""
 msgstr ""
 "Tímto nastavíte počítač, kterému se bude pošta doručovat. Je vyžadováno "
 "konkrétní jméno počítače, MX záznamy nejsou konzultovány. Obvyklá poštovní "
-"jména počítačů bývají \"mail.domena.cz\"."
+"jména počítačů bývají „mail.domena.cz“."
 
 #. Type: string
 #. Description
@@ -101,8 +99,6 @@ msgstr ""
 #. Type: string
 #. Description
 #: ../templates:5001
-#, fuzzy
-#| msgid "What domain to masquerade as:"
 msgid "Domain to masquerade as:"
 msgstr "Tvářit se jako doména:"
 
@@ -114,15 +110,13 @@ msgid ""
 "outgoing mail which contains only a local username."
 msgstr ""
 "Pro odchozí poštu, která obsahuje v hlavičce From: pouze místní jméno "
-"uživatele, přepíše ssmtp hlavičku do podoby \"uzivatel@PREPSANADOMENA\"."
+"uživatele, přepíše ssmtp hlavičku do podoby „uzivatel@PREPSANADOMENA“."
 
 #. Type: string
 #. Description
 #: ../templates:6001
-#, fuzzy
-#| msgid "What name to store in /etc/mailname:"
 msgid "Name to store in /etc/mailname:"
-msgstr "Jaké jméno uložit do /etc/mailname:"
+msgstr "Jméno, které se má uložit do /etc/mailname:"
 
 #. Type: string
 #. Description
@@ -131,7 +125,7 @@ msgid ""
 "This is the portion of the address after the '@' sign to be shown on "
 "outgoing news and mail messages."
 msgstr ""
-"Toto je část adresy za znakem '@', která se bude objevovat na odchozí poště "
+"Toto je část adresy za znakem „@“, která se bude objevovat na odchozí poště "
 "a news příspěvcích."
 
 #. Type: string

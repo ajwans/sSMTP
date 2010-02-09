@@ -1,5 +1,4 @@
-# translation of ssmtp_2.61-11_ru.po to Russian
-# translation of ssmtp_2.61-3_ru.po to Russian
+# translation of ssmtp_ru.po to Russian
 #
 #    Translators, if you are not familiar with the PO format, gettext
 #    documentation is worth reading, especially sections dedicated to
@@ -10,21 +9,22 @@
 #            /usr/share/doc/po-debconf/README-trans
 #         or http://www.debian.org/intl/l10n/po-debconf/README-trans#
 #    Developers do not need to manually edit POT or PO files.
+#
 # Yuriy Talakan' <yt@amur.elektra.ru>, 2006.
 # Yuriy Talakan' <yt@drsk.ru>, 2007.
-#
+# Yuri Kozlov <yuray@komyakino.ru>, 2009.
 msgid ""
 msgstr ""
-"Project-Id-Version: ssmtp_2.61-11_ru\n"
+"Project-Id-Version: ssmtp 2.64-2\n"
 "Report-Msgid-Bugs-To: ssmtp@packages.debian.org\n"
 "POT-Creation-Date: 2009-11-24 09:07+1100\n"
-"PO-Revision-Date: 2007-03-09 11:38+0900\n"
-"Last-Translator: Yuriy Talakan' <yt@drsk.ru>\n"
+"PO-Revision-Date: 2009-12-05 09:06+0300\n"
+"Last-Translator: Yuri Kozlov <yuray@komyakino.ru>\n"
 "Language-Team: Russian <debian-l10n-russian@lists.debian.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: KBabel 1.9.1\n"
+"X-Generator: KBabel 1.11.4\n"
 "Plural-Forms:  nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%"
 "10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 
@@ -45,18 +45,16 @@ msgid ""
 "never touch this file."
 msgstr ""
 "Файл почтовых настроек /etc/ssmtp/ssmtp.conf может автоматически обновляться "
-"при каждом обновлении программы на основании информации, предоставляемой "
-"базой данных debconf. Если вы не желаете, чтобы это происходило (т.е. "
-"желаете самостоятельно управлять файлом), то установите эту опцию, и "
-"программа никогда не будет трогать этот файл."
+"при каждой установке новой версии программы на основании информации, "
+"предоставляемой базой данных debconf. Если вы не хотите, чтобы это "
+"происходило (т.е. желаете самостоятельно управлять файлом), то ответьте "
+"утвердительно, и программа никогда не будет изменять этот файл."
 
 #. Type: string
 #. Description
 #: ../templates:2001
-#, fuzzy
-#| msgid "Who gets mail for userids < 1000:"
 msgid "Username who gets mail for userids < 1000:"
-msgstr "Кто получает почту для пользовательских идентификаторов < 1000:"
+msgstr "Пользователь, который будет получать почту для UID < 1000:"
 
 #. Type: string
 #. Description
@@ -66,10 +64,10 @@ msgid ""
 "here. This is useful for daemons which mail reports to root and other system "
 "UIDs. Make this empty to disable rewriting."
 msgstr ""
-"Почта, отправляемая локальным пользователям, чей UID менее 1000, будет "
-"вместо этого отправляться сюда. Это удобно для демонов, которые отправляют "
-"отчеты почтой администратору и на другие системные UIDы. Оставьте поле "
-"пустым для запрета перенаправления."
+"Почта, отправляемая локальным пользователям, чьи UID менее 1000, будет "
+"отправляться указанному пользователю. Это удобно для служб, которые "
+"отправляют отчёты почтой администратору и на другие системные UIDы. Оставьте "
+"поле пустым для запрета перенаправления."
 
 #. Type: string
 #. Description
@@ -85,15 +83,15 @@ msgid ""
 "required; no MX records are consulted. Commonly, mailhosts are named \"mail."
 "domain.com\"."
 msgstr ""
-"Здесь прописываеся машина, на которую будет доставляться почта. Необходимо "
+"Здесь указывается машина, которая будет доставлять почта. Необходимо "
 "действительное имя машины; MX-записи не учитываются. Обычно, почтовая машина "
-"зовётся \"mail.domain.com\"."
+"называется \"mail.domain.com\"."
 
 #. Type: string
 #. Description
 #: ../templates:4001
 msgid "Remote SMTP port number:"
-msgstr "Номер удаленного SMTP-порта:"
+msgstr "Номер удалённого SMTP-порта:"
 
 #. Type: string
 #. Description
@@ -102,16 +100,14 @@ msgid ""
 "If your remote SMTP server listens on a port other than 25 (Standard/RFC) "
 "then set it here."
 msgstr ""
-"Если ваш удаленный сервер SMTP слушает порт, отличающийся от 25 (Стандартный/"
+"Если ваш удалённый сервер SMTP слушает порт, отличающийся от 25 (Стандартный/"
 "RFC), то укажите его здесь."
 
 #. Type: string
 #. Description
 #: ../templates:5001
-#, fuzzy
-#| msgid "What domain to masquerade as:"
 msgid "Domain to masquerade as:"
-msgstr "Под какой домен маскарадить:"
+msgstr "Домен для подмены:"
 
 #. Type: string
 #. Description
@@ -120,17 +116,15 @@ msgid ""
 "ssmtp will use \"username@REWRITEDOMAIN\" as the default From: address for "
 "outgoing mail which contains only a local username."
 msgstr ""
-"ssmtp будет использовать \"username@REWRITEDOMAIN\" как адрес по умолчанию в "
+"ssmtp будет использовать \"username@ДОМЕН_ПОДМЕНЫ\" как адрес по умолчанию в "
 "поле From: для исходящей почты, которая содержит только локальное имя "
 "пользователя."
 
 #. Type: string
 #. Description
 #: ../templates:6001
-#, fuzzy
-#| msgid "What name to store in /etc/mailname:"
 msgid "Name to store in /etc/mailname:"
-msgstr "Какое имя хранить в /etc/mailname:"
+msgstr "Имя хранящееся в /etc/mailname:"
 
 #. Type: string
 #. Description
@@ -155,14 +149,14 @@ msgid ""
 "This should specify the real hostname of this machine, and will be sent to "
 "the mailhub when delivering mail."
 msgstr ""
-"Здесь должно быть указано реальное имя этой машины, оно будет отправлено на "
-"почтовый концентратор при доставке почты."
+"Здесь должно быть указано реальное имя этой машины, оно будет использоваться "
+"при отправке почты на почтовый концентратор."
 
 #. Type: boolean
 #. Description
 #: ../templates:8001
 msgid "Allow override of From: line in email header?"
-msgstr "Разрешить переопределение строки From: в заголовке email?"
+msgstr "Разрешить переопределение строки From: в заголовке эл. почты?"
 
 #. Type: boolean
 #. Description
@@ -174,8 +168,8 @@ msgid ""
 "this, and use only the default address or addresses set in /etc/ssmtp/"
 "revaliases."
 msgstr ""
-"\"Положительный\" ответ позволит локальным пользователям написать любое "
-"значение в строке From: их сообщений, и заставит ssmtp переписать заголовок "
-"конверта на этот адрес. \"Отрицательный\" ответ запретит такое поведение, "
-"будет использован только адрес по умолчанию или адрес, заданный в /etc/ssmtp/"
-"revaliases."
+"Если ответить утвердительно, то это позволит локальным пользователям "
+"написать любое значение в строке From: их сообщений, и заставит ssmtp "
+"переписать заголовок конверта на этот адрес. Отрицательный ответ запретит "
+"такое поведение, и будет использован только адрес по умолчанию или адрес, "
+"заданный в /etc/ssmtp/revaliases."

@@ -1,4 +1,4 @@
-# translation of ssmtp_2.61-10_de.po to German
+# translation of ssmtp_2.64-2_de.po to German
 #
 #    Translators, if you are not familiar with the PO format, gettext
 #    documentation is worth reading, especially sections dedicated to
@@ -10,13 +10,13 @@
 #         or http://www.debian.org/intl/l10n/po-debconf/README-trans#
 #    Developers do not need to manually edit POT or PO files.
 #
-# Erik Schanze <eriks@debian.org>, 2004-2006.
+# Erik Schanze <eriks@debian.org>, 2004-2009.
 msgid ""
 msgstr ""
-"Project-Id-Version: ssmtp_2.61-10_de\n"
+"Project-Id-Version: ssmtp_2.64-2_de\n"
 "Report-Msgid-Bugs-To: ssmtp@packages.debian.org\n"
 "POT-Creation-Date: 2009-11-24 09:07+1100\n"
-"PO-Revision-Date: 2006-11-18 23:04+0100\n"
+"PO-Revision-Date: 2009-12-01 21:37+0100\n"
 "Last-Translator: Erik Schanze <eriks@debian.org>\n"
 "Language-Team: German <debian-l10n-german@lists.debian.org>\n"
 "MIME-Version: 1.0\n"
@@ -42,16 +42,14 @@ msgid ""
 "never touch this file."
 msgstr ""
 "Die Konfigurationsdatei /etc/ssmtp/ssmtp.conf kann bei jeder Aktualisierung "
-"automatisch erneuert werden. Wenn Sie das nicht möchten (z.B. weil Sie diese "
-"Datei selbst anpassen wollen), dann sollten Sie diese Option nicht wählen."
+"automatisch erneuert werden. Wenn Sie das nicht möchten (z. B. weil Sie "
+"diese Datei selbst anpassen wollen), dann sollten Sie hier ablehnen."
 
 #. Type: string
 #. Description
 #: ../templates:2001
-#, fuzzy
-#| msgid "Who gets mail for userids < 1000:"
 msgid "Username who gets mail for userids < 1000:"
-msgstr "Wer erhält E-Mails für Benutzer-IDs < 1000:"
+msgstr "Benutzername, der E-Mails für Benutzer-IDs < 1000 erhält:"
 
 #. Type: string
 #. Description
@@ -103,10 +101,8 @@ msgstr ""
 #. Type: string
 #. Description
 #: ../templates:5001
-#, fuzzy
-#| msgid "What domain to masquerade as:"
 msgid "Domain to masquerade as:"
-msgstr "Als welche Domäne ausgeben:"
+msgstr "Als diese Domäne ausgeben:"
 
 #. Type: string
 #. Description
@@ -122,10 +118,8 @@ msgstr ""
 #. Type: string
 #. Description
 #: ../templates:6001
-#, fuzzy
-#| msgid "What name to store in /etc/mailname:"
 msgid "Name to store in /etc/mailname:"
-msgstr "Welchen Namen in der Datei /etc/mailname speichern:"
+msgstr "Diesen Namen in der Datei /etc/mailname speichern:"
 
 #. Type: string
 #. Description

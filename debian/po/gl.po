@@ -1,24 +1,27 @@
 # Galician translation of ssmtp's debconf templates
 # This file is distributed under the same license as the ssmtp package.
-# Jacobo Tarrio <jtarrio@debian.org>, 2007.
 #
+# Jacobo Tarrio <jtarrio@debian.org>, 2007.
+# Marce Villarino <mvillarino@gmail.com>, 2009.
 msgid ""
 msgstr ""
 "Project-Id-Version: ssmtp\n"
 "Report-Msgid-Bugs-To: ssmtp@packages.debian.org\n"
 "POT-Creation-Date: 2009-11-24 09:07+1100\n"
-"PO-Revision-Date: 2007-03-05 23:25+0100\n"
-"Last-Translator: Jacobo Tarrio <jtarrio@debian.org>\n"
+"PO-Revision-Date: 2009-11-24 21:52+0100\n"
+"Last-Translator: Marce Villarino <mvillarino@gmail.com>\n"
 "Language-Team: Galician <proxecto@trasno.net>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Lokalize 1.0\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
 
 #. Type: boolean
 #. Description
 #: ../templates:1001
 msgid "Automatically overwrite config files?"
-msgstr "¿Sobrescribir automaticamente os ficheiros de configuración?"
+msgstr "Desexa sobrescribir automaticamente os ficheiros de configuración?"
 
 #. Type: boolean
 #. Description
@@ -31,18 +34,16 @@ msgid ""
 "never touch this file."
 msgstr ""
 "O ficheiro de configuración do correo, /etc/ssmtp/ssmtp.conf, pódese "
-"actualizar automaticamente en cada actualización coa información armacenada "
+"actualizar automaticamente en cada actualización coa información almacenada "
 "na base de datos de debconf. Se non quere que ocorra (é dicir, se quere "
-"manter vostede o control deste ficheiro), estabreza esta opción para que o "
+"manter vostede o control deste ficheiro), defina esta opción para que o "
 "programa nunca toque o ficheiro."
 
 #. Type: string
 #. Description
 #: ../templates:2001
-#, fuzzy
-#| msgid "Who gets mail for userids < 1000:"
 msgid "Username who gets mail for userids < 1000:"
-msgstr "Quen recibe o correo dos usuarios de id < 1000:"
+msgstr "Nome do usuario que recibe o correo dos usuarios con id < 1000:"
 
 #. Type: string
 #. Description
@@ -53,8 +54,8 @@ msgid ""
 "UIDs. Make this empty to disable rewriting."
 msgstr ""
 "O correo enviado a un usuario local con UID menor de 1000 hase enviar aquí "
-"no seu canto. Isto é útil para os servizos que envían informes por email ao "
-"administrador e outros UIDs do sistema. Déixeo baleiro para desactivar a "
+"no seu canto. Isto é útil para os servizos que envían informes por correo ao "
+"administrador e outros UID do sistema. Déixeo baleiro para desactivar a "
 "reescritura."
 
 #. Type: string
@@ -71,9 +72,9 @@ msgid ""
 "required; no MX records are consulted. Commonly, mailhosts are named \"mail."
 "domain.com\"."
 msgstr ""
-"Isto estabrece o servidor ao que se entrega o correo. Precísase do nome real "
-"da máquina; non se consultan rexistros MX. Habitualmente, os servidores de "
-"correo chámanse \"mail.dominio.com\"."
+"Isto estabelece o servidor ao que se entrega o correo. Precísase do nome "
+"real da máquina; non se consultan rexistros MX. Habitualmente, os servidores "
+"de correo chámanse «mail.dominio.com»."
 
 #. Type: string
 #. Description
@@ -88,16 +89,14 @@ msgid ""
 "If your remote SMTP server listens on a port other than 25 (Standard/RFC) "
 "then set it here."
 msgstr ""
-"Se o seu servidor SMTP remoto escoita nun porto distinto do 25 (Estándar/"
-"RFC), indíqueo aquí."
+"Se o servidor SMTP remoto escoita nun porto distinto do 25 (Estándar/RFC), "
+"indíqueo aquí."
 
 #. Type: string
 #. Description
 #: ../templates:5001
-#, fuzzy
-#| msgid "What domain to masquerade as:"
 msgid "Domain to masquerade as:"
-msgstr "Como que dominio se enmascarar:"
+msgstr "Enmascararse como este dominio:"
 
 #. Type: string
 #. Description
@@ -106,16 +105,14 @@ msgid ""
 "ssmtp will use \"username@REWRITEDOMAIN\" as the default From: address for "
 "outgoing mail which contains only a local username."
 msgstr ""
-"ssmtp ha empregar \"usuario@DOMINIOENMASCARADO\" coma enderezo de orixe por "
-"defecto para o correo saínte que só contén un nome de usuario local."
+"ssmtp ha empregar «usuario@DOMINIOENMASCARADO» coma enderezo de orixe "
+"predeterminado para o correo saínte que só contén un nome de usuario local."
 
 #. Type: string
 #. Description
 #: ../templates:6001
-#, fuzzy
-#| msgid "What name to store in /etc/mailname:"
 msgid "Name to store in /etc/mailname:"
-msgstr "Que nome armacenar en /etc/mailname:"
+msgstr "Nome para almacenar en /etc/mailname:"
 
 #. Type: string
 #. Description
@@ -124,7 +121,7 @@ msgid ""
 "This is the portion of the address after the '@' sign to be shown on "
 "outgoing news and mail messages."
 msgstr ""
-"Esta é a parte do enderezo que hai despois do signo \"@\", para amosala nas "
+"Esta é a parte do enderezo que hai despois do signo «@», para mostrala nas "
 "mensaxes saíntes de novas e de correo."
 
 #. Type: string
@@ -141,13 +138,13 @@ msgid ""
 "the mailhub when delivering mail."
 msgstr ""
 "Isto debería especificar o nome real desta máquina, e hase enviar ao "
-"servidor de correo ao entregar o correo."
+"servidor de correo cando se entregue o correo."
 
 #. Type: boolean
 #. Description
 #: ../templates:8001
 msgid "Allow override of From: line in email header?"
-msgstr "¿Permitir substituír a liña From: nas cabeceiras dos emails?"
+msgstr "Desexa permitir substituír a liña From: nas cabeceiras dos correos?"
 
 #. Type: boolean
 #. Description
@@ -159,8 +156,8 @@ msgid ""
 "this, and use only the default address or addresses set in /etc/ssmtp/"
 "revaliases."
 msgstr ""
-"Unha resposta \"positiva\" ha permitir aos usuarios locais introducir "
+"Unha resposta «positiva» ha permitir que os usuarios locais introduzan "
 "calquera liña From: nas súas mensaxes sen que se altere, e facer que ssmtp "
-"reescriba a cabeceira do sobre con ese enderezo. Unha resposta \"negativa\" "
-"ha impedilo, polo que só se ha empregar o enderezo ou enderezos por defecto "
-"estabrecidos en /etc/ssmtp/revaliases."
+"reescriba a cabeceira do sobre con ese enderezo. Unha resposta «negativa» ha "
+"impedilo, polo que só se ha empregar o enderezo ou enderezos predeterminados "
+"estabelecidos en /etc/ssmtp/revaliases."

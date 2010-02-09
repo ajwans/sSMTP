@@ -1,4 +1,4 @@
-# translation of ssmtp_2.62-1_sv.po to Swedish
+# translation of ssmtp_sv.po to Swedish
 #
 #    Translators, if you are not familiar with the PO format, gettext
 #    documentation is worth reading, especially sections dedicated to
@@ -12,13 +12,13 @@
 #
 #    Developers do not need to manually edit POT or PO files.
 #
-# Martin Ågren <martin.agren@gmail.com>, 2008.
+# Martin Ågren <martin.agren@gmail.com>, 2008, 2009.
 msgid ""
 msgstr ""
-"Project-Id-Version: ssmtp_2.62-1_sv\n"
+"Project-Id-Version: ssmtp_sv\n"
 "Report-Msgid-Bugs-To: ssmtp@packages.debian.org\n"
 "POT-Creation-Date: 2009-11-24 09:07+1100\n"
-"PO-Revision-Date: 2008-07-23 21:06+0200\n"
+"PO-Revision-Date: 2009-11-26 19:48+0100\n"
 "Last-Translator: Martin Ågren <martin.agren@gmail.com>\n"
 "Language-Team: Swedish <debian-l10n-swedish@lists.debian.org>\n"
 "MIME-Version: 1.0\n"
@@ -51,10 +51,8 @@ msgstr ""
 #. Type: string
 #. Description
 #: ../templates:2001
-#, fuzzy
-#| msgid "Who gets mail for userids < 1000:"
 msgid "Username who gets mail for userids < 1000:"
-msgstr "Vem får e-post för användar-id:n < 1000:"
+msgstr "Användare som får e-post för användar-id:n < 1000:"
 
 #. Type: string
 #. Description
@@ -106,10 +104,8 @@ msgstr ""
 #. Type: string
 #. Description
 #: ../templates:5001
-#, fuzzy
-#| msgid "What domain to masquerade as:"
 msgid "Domain to masquerade as:"
-msgstr "Vilken domän ska post maskeras som:"
+msgstr "Domän att maskeras som:"
 
 #. Type: string
 #. Description
@@ -124,10 +120,8 @@ msgstr ""
 #. Type: string
 #. Description
 #: ../templates:6001
-#, fuzzy
-#| msgid "What name to store in /etc/mailname:"
 msgid "Name to store in /etc/mailname:"
-msgstr "Vilket namn ska lagras i /etc/mailname:"
+msgstr "Namn att lagra i /etc/mailname:"
 
 #. Type: string
 #. Description
@@ -143,7 +137,7 @@ msgstr ""
 #. Description
 #: ../templates:7001
 msgid "Fully qualified hostname:"
-msgstr "Hela kvalificerade värdnamnet:"
+msgstr "Hela det kvalificerade värdnamnet:"
 
 #. Type: string
 #. Description

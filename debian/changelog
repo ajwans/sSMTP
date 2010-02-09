@@ -1,8 +1,23 @@
-ssmtp (2.64-2) UNRELEASED; urgency=low
+ssmtp (2.64-2) unstable; urgency=low
 
-  * Priority is optional
+  [ Christian Perrier ]
+  * Fix pending l10n issues. Debconf translations:
+    - Japanese (Hideki Yamane(Debian-JP)).  Closes: #557773
+    - Galician (Marce Villarino).  Closes: #557862
+    - Swedish (Martin Ågren).  Closes: #558142
+    - Italian (Luca Monducci).  Closes: #558367
+    - Czech (Miroslav Kure).  Closes: #558415
+    - German (Erik Schanze).  Closes: #559081
+    - Spanish (Francisco Javier Cuadrado).  Closes: #559416
+    - Portuguese (Ricardo Silva).  Closes: #559494
+    - Russian (Yuri Kozlov).  Closes: #559528
+    - French (Michel Grentzinger).  Closes: #559579
+    - Finnish (Esko Arajärvi).  Closes: #564490
 
- -- Anibal Monsalve Salazar <anibal@debian.org>  Tue, 24 Nov 2009 14:49:15 +1100
+  [ Anibal Monsalve Salazar ]
+  * Fix out-of-date-standards-version
+
+ -- Anibal Monsalve Salazar <anibal@debian.org>  Tue, 09 Feb 2010 16:53:37 +1100
 
 ssmtp (2.64-1) unstable; urgency=low
 

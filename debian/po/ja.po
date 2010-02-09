@@ -1,23 +1,23 @@
-#
+# 
 #    Translators, if you are not familiar with the PO format, gettext
 #    documentation is worth reading, especially sections dedicated to
 #    this format, e.g. by running:
 #         info -n '(gettext)PO Files'
 #         info -n '(gettext)Header Entry'
-#
+# 
 #    Some information specific to po-debconf are available at
 #            /usr/share/doc/po-debconf/README-trans
 #         or http://www.debian.org/intl/l10n/po-debconf/README-trans
-#
+# 
 #    Developers do not need to manually edit POT or PO files.
-#
-#
+# 
+# 
 msgid ""
 msgstr ""
-"Project-Id-Version: ssmtp 2.61-10\n"
+"Project-Id-Version: ssmtp 2.64-2\n"
 "Report-Msgid-Bugs-To: ssmtp@packages.debian.org\n"
 "POT-Creation-Date: 2009-11-24 09:07+1100\n"
-"PO-Revision-Date: 2006-10-19 23:52+0900\n"
+"PO-Revision-Date: 2009-11-24 19:52+0900\n"
 "Last-Translator: Hideki Yamane(Debian-JP) <henrich@debian.or.jp>\n"
 "Language-Team: Japanese <debian-japanese@lists.debian.org>\n"
 "MIME-Version: 1.0\n"
@@ -48,10 +48,8 @@ msgstr ""
 #. Type: string
 #. Description
 #: ../templates:2001
-#, fuzzy
-#| msgid "Who gets mail for userids < 1000:"
 msgid "Username who gets mail for userids < 1000:"
-msgstr "ユーザ ID が 1000 未満のメールを受け取るユーザ:"
+msgstr "ユーザ ID が 1000 未満のメールを受け取るユーザ名:"
 
 #. Type: string
 #. Description
@@ -102,10 +100,8 @@ msgstr ""
 #. Type: string
 #. Description
 #: ../templates:5001
-#, fuzzy
-#| msgid "What domain to masquerade as:"
 msgid "Domain to masquerade as:"
-msgstr "どのドメインとして送信するか:"
+msgstr "成りすますドメイン名:"
 
 #. Type: string
 #. Description
@@ -120,8 +116,6 @@ msgstr ""
 #. Type: string
 #. Description
 #: ../templates:6001
-#, fuzzy
-#| msgid "What name to store in /etc/mailname:"
 msgid "Name to store in /etc/mailname:"
 msgstr "/etc/mailname に記述する名前:"
 
