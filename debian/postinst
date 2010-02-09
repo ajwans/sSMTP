@@ -53,12 +53,16 @@ then
 	touch /etc/ssmtp/ssmtp.conf.tmp
 	chmod 640 /etc/ssmtp/ssmtp.conf.tmp
 	chown root:mail /etc/ssmtp/ssmtp.conf.tmp
+	dpkg-statoverride --update --add root mail 2755 /usr/sbin/ssmtp
+
 	sed "s/^root=.*/root=$root/;s/^mailhub=.*/mailhub=$mailhub/;s/^rewriteDomain=.*/rewriteDomain=$rewritedomain/;s/^hostname=.*/hostname=$hostname/;s/^FromLineOverride=.*/FromLineOverride=$FromOverride/;s/^#FromLineOverride=.*/FromLineOverride=$FromOverride/" /etc/ssmtp/ssmtp.conf > /etc/ssmtp/ssmtp.conf.tmp
 	mv -f /etc/ssmtp/ssmtp.conf.tmp /etc/ssmtp/ssmtp.conf
 else
 	touch /etc/ssmtp/ssmtp.conf
 	chmod 640 /etc/ssmtp/ssmtp.conf
 	chown root:mail /etc/ssmtp/ssmtp.conf
+	dpkg-statoverride --update --add root mail 2755 /usr/sbin/ssmtp
+
 	exec 1>/etc/ssmtp/ssmtp.conf
 
 	echo "#"
