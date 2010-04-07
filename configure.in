@@ -30,7 +30,7 @@ AC_SEARCH_LIBS(socket, socket)
 dnl Checks for library functions.
 AC_TYPE_SIGNAL
 AC_FUNC_VPRINTF
-AC_CHECK_FUNCS(gethostname socket strdup strstr)
+AC_CHECK_FUNCS(gethostname socket strdup strndup strstr)
 
 savedCFLAGS=$CFLAGS
 AC_CHECK_DECL(isascii, [],

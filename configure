@@ -3740,7 +3740,8 @@ done
 
 
 
-for ac_func in gethostname socket strdup strstr
+
+for ac_func in gethostname socket strdup strndup strstr
 do
 as_ac_var=`echo "ac_cv_func_$ac_func" | $as_tr_sh`
 echo "$as_me:$LINENO: checking for $ac_func" >&5

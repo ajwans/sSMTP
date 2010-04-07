@@ -822,6 +822,24 @@ void header_parse(FILE *stream)
 	(void)free(p);
 }
 
+#ifndef HAVE_STRNDUP
+static char *strndup(const char *s, size_t sz)
+{
+	size_t	slen;
+	size_t	mlen;
+	char	*ret;
+
+	slen=strlen(s) + 1;
+	mlen=slen > sz ? sz : slen;
+
+	ret=malloc(mlen);
+	if (ret)
+		memcpy(ret, s, mlen);
+
+	return ret;
+}
+#endif
+
 /*
  * This is much like strtok, but does not modify the string
  * argument.
