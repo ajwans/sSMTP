@@ -2,7 +2,7 @@
  *  arpadate.c - get_arpadate() is a function returning the date in the
  *               ARPANET format (see RFC822 and RFC1123)
  *  Copyright (C) 1998 Hugo Haas
- *  
+ *
  *  Inspired by smail source code by Ronald S. Karr and Landon Curt Noll
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -26,7 +26,7 @@
 #include <stdio.h>
 #include <time.h>
 
-void 
+void
 get_arpadate (char *d_string)
 {
   struct tm *date;
@@ -76,15 +76,25 @@ get_arpadate (char *d_string)
 	   date->tm_mday, month[date->tm_mon], date->tm_year + 1900,
 	   date->tm_hour, date->tm_min, date->tm_sec, timezone);
 #else
-	time_t now;
+  time_t now;
+  const char *format;
 
-	/* RFC822 format string borrowed from GNU shellutils date.c */
-	/* Using %d instead of %_d, the second one isn't portable */
-	const char *format = "%a, %d %b %Y %H:%M:%S %z";
+  now = time(NULL);
+  date = localtime((const time_t *)&now);
 
-	now = time(NULL);
-
-	date = localtime((const time_t *)&now);
-	(void)strftime(d_string, ARPADATE_LENGTH, format, date);
+  /* RFC822 format string borrowed from GNU shellutils date.c */
+  /*
+   * Use whichever format we can to get a leading space where the
+   * monthday is a single digit.
+   */
+#ifdef HAVE_STRFTIME_UNDERSCORE_D
+  format = "%a, %_d %b %Y %H:%M:%S %z";
+#elif HAVE_STRFTIME_E
+  format = "%a, %e %b %Y %H:%M:%S %z";
+#else
+  format = date->tm_mday < 10	? "%a,  %d %b %Y %H:%M:%S %z"
+				: "%a, %d %b %Y %H:%M:%S %z";
+#endif
+  (void)strftime(d_string, ARPADATE_LENGTH, format, date);
 #endif
 }
