@@ -681,6 +681,7 @@ enable_logfile
 enable_rewrite_domain
 enable_ssl
 with_gnutls
+enable_sasl
 enable_inet6
 enable_md5auth
 enable_debug
@@ -1305,6 +1306,7 @@ Optional Features:
   --disable-rewrite-domain
                           support for rewriting the sending domain
   --enable-ssl           support for secure connection to mail server (openssl)
+  --enable-sasl          support for SASL authentication
   --enable-inet6         support for IPv6 transport
   --enable-md5auth         support for MD5 authentication
   --enable-debug          enable debug output
@@ -3915,6 +3917,58 @@ fi
 
 		LIBS="$LIBS -lgnutls-openssl"
 	fi
+fi
+enableval=""
+
+# Check whether --enable-sasl was given.
+if test "${enable_sasl+set}" = set; then :
+  enableval=$enable_sasl;
+fi
+
+if test x$enableval = xyes ; then
+	{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for sasl_decode64 in -lsasl2" >&5
+$as_echo_n "checking for sasl_decode64 in -lsasl2... " >&6; }
+if ${ac_cv_lib_sasl2_sasl_decode64+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lsasl2  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char sasl_decode64 ();
+int
+main ()
+{
+return sasl_decode64 ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+  ac_cv_lib_sasl2_sasl_decode64=yes
+else
+  ac_cv_lib_sasl2_sasl_decode64=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_sasl2_sasl_decode64" >&5
+$as_echo "$ac_cv_lib_sasl2_sasl_decode64" >&6; }
+if test "x$ac_cv_lib_sasl2_sasl_decode64" = xyes; then :
+
+			$as_echo "#define HAVE_SASL 1" >>confdefs.h
+
+			LIBS="$LIBS -lsasl2"
+fi
+
 fi
 enableval=""
 
