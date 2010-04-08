@@ -39,6 +39,11 @@
 #include <fcntl.h>
 #include "xgethostname.h"
 
+#ifdef HAVE_SASL
+#include <sasl/sasl.h>
+#include <sasl/saslutil.h>
+#endif
+
 bool_t have_date = False;
 bool_t have_from = False;
 #ifdef HASTO_OPTION
@@ -1341,6 +1346,10 @@ int smtp_read(int fd, char *response)
 		if(fd_gets(response, BUF_SZ, fd) == NULL) {
 			return(0);
 		}
+
+		if (strstr(response, "AUTH")) {
+			auth_method = strdup(&response[9]);
+		}
 	}
 	while(response[3] == '-');
 
@@ -1406,6 +1415,67 @@ ssize_t smtp_write(int fd, char *format, ...)
 	return (outbytes >= 0) ? outbytes : 0;
 }
 
+#ifdef HAVE_SASL
+int use_context(void *context, int id, const char **result, unsigned *len)
+{
+	if (log_level) {
+		log_event(LOG_INFO, "use_context: id %d", id);
+	}
+
+	if (id != SASL_CB_USER && id != SASL_CB_AUTHNAME) {
+		return SASL_BADPARAM;
+	}
+
+	*result = NULL;
+
+	if (context) {
+		*result = strdup(context);
+	}
+
+	if (len) {
+		*len = strlen(*result);
+	}
+
+	if (log_level) {
+		log_event(LOG_INFO, "use_context: %s %d%s", *result,
+				len ? *len : 0, len ? "" : " (null)");
+	}
+
+	return SASL_OK;
+}
+
+static int get_realm(
+		void		*context,
+		int		id,
+		const char	**availrealms __attribute__ ((unused)),
+		const char	**result)
+{
+	log_event(LOG_INFO, "get_realm");
+	*result = strdup(context);
+	return SASL_OK;
+}
+
+static int get_secret(
+		sasl_conn_t	*conn,
+		void		*context,
+		int		id,
+		sasl_secret_t	**psecret)
+{
+	unsigned int len = (unsigned) strlen(context);
+
+	log_event(LOG_INFO, "get_secret");
+	*psecret = malloc(sizeof(sasl_secret_t) + len);
+	(*psecret)->len = len;
+	strcpy((char *)(*psecret)->data, context);
+
+	if (log_level) {
+		log_event(LOG_INFO, "get_secret: password is '%s'", context);
+	}
+
+	return SASL_OK;
+}
+#endif
+
 /*
 handler() -- A "normal" non-portable version of an alarm handler
 			Alas, setting a flag and returning is not fully functional in
@@ -1426,7 +1496,7 @@ ssmtp() -- send the message (exactly one) from stdin to the mailhub SMTP port
 int ssmtp(char *argv[])
 {
 	char b[(BUF_SZ + 2)], *buf = b+1, *p, *q;
-#ifdef MD5AUTH
+#if defined MD5AUTH || defined HAVE_SASL
 	char challenge[(BUF_SZ + 1)];
 #endif
 	struct passwd *pw;
@@ -1505,7 +1575,114 @@ int ssmtp(char *argv[])
 
 	/* Try to log in if username was supplied */
 	if(auth_user) {
-#ifdef MD5AUTH
+#ifdef HAVE_SASL
+		sasl_conn_t	*pconn;
+		char		*mech = NULL, *clientout;
+		int		ret, pcount;
+		unsigned int	resultlen, clientoutlen;
+
+		sasl_callback_t	cb[] = {
+			{ SASL_CB_GETREALM,	&get_realm,	NULL },
+			{ SASL_CB_USER,		&use_context,	auth_user },
+			{ SASL_CB_AUTHNAME,	&use_context,	auth_user },
+			{ SASL_CB_PASS,		&get_secret,	auth_pass },
+			{ SASL_CB_LIST_END,	NULL,		NULL }
+		};
+
+		ret = sasl_client_init(cb);
+		if (ret != SASL_OK) {
+			die("sasl_client_init: SASL init failed %d", ret);
+		}
+
+		ret = sasl_client_new("smtp", mailhost, NULL, NULL, cb, 0,
+									&pconn);
+		if (ret != SASL_OK) {
+			die("sasl_client_new: SASL setup failed %d", ret);
+		}
+
+		if (log_level) {
+			char		*client_mechs;
+			unsigned	len;
+
+			log_event(LOG_INFO, "Server mechanisms '%s' %s",
+							auth_method, mailhost);
+			sasl_listmech(pconn, NULL, "", ",", "",
+						(const char **)&client_mechs,
+						&len, &pcount);
+			log_event(LOG_INFO, "Client mechanisms '%s'",
+						client_mechs);
+		}
+
+		ret = sasl_client_start(pconn, auth_method, NULL,
+				(const char **)&clientout, &clientoutlen,
+				(const char **)&mech);
+		log_event(LOG_INFO, "start client output is '%s' %d",
+						clientout, clientoutlen);
+		if (!(ret == SASL_OK || ret == SASL_CONTINUE)) {
+			die("sasl_client_start: failed %d", ret);
+		}
+
+		if (log_level) {
+			log_event(LOG_INFO, "Selected mechanism: '%s'", mech);
+		}
+
+		sprintf(buf, "AUTH %s", mech);
+
+		/*
+		 * when sasl_client_start returns PLAIN method the clientout
+		 * and clientoutlen will be set
+		 */
+		if (0 && ret == SASL_OK) {
+			int		res;
+
+			smtp_write(sock, "%s", buf);
+			smtp_read(sock, buf);
+
+			res = sasl_encode64(clientout, clientoutlen, buf,
+							BUF_SZ, NULL);
+
+			log_event(LOG_INFO, "%d writing %s as %s", res,
+								clientout, buf);
+		}
+
+		do {
+			char		buf_decode[1024];
+			unsigned	blen = 0;
+
+			memset(buf_decode, 0, sizeof(buf_decode));
+
+			smtp_write(sock, "%s", buf);
+
+			memset(buf, 0, BUF_SZ);
+			smtp_read(sock, buf);
+
+			sasl_decode64(&buf[4], strlen(buf) - 4, buf_decode,
+						sizeof(buf_decode), &blen);
+			if (log_level) {
+				log_event(LOG_INFO, "decoded '%s' (%d)",
+							buf_decode, blen);
+			}
+
+			ret = sasl_client_step(pconn, buf_decode, blen, NULL,
+						(const char **)&clientout,
+						&clientoutlen);
+
+			if (log_level) {
+				log_event(LOG_INFO, "response %d bytes '%s'",
+						clientoutlen, clientout);
+			}
+
+			sasl_encode64(clientout, clientoutlen, buf, BUF_SZ,
+									NULL);
+		} while (ret == SASL_CONTINUE);
+
+		if (ret != SASL_OK) {
+			die("SASL failed: %d", ret);
+		}
+
+		goto authorised;
+
+#elif defined MD5AUTH
 		if(auth_pass == (char *)NULL) {
 			auth_pass = strdup("");
 		}
@@ -1521,8 +1698,8 @@ int ssmtp(char *argv[])
 
 			memset(buf, 0, bufsize);
 			crammd5(challenge, auth_user, auth_pass, buf);
+			goto authorised;
 		}
-		else {
 #endif
 		memset(buf, 0, bufsize);
 		to64frombits((unsigned char *)buf, (unsigned char *)auth_user,
@@ -1549,11 +1726,12 @@ int ssmtp(char *argv[])
 		}
 		memset(buf, 0, bufsize);
 
-		to64frombits((unsigned char *)buf, (unsigned char *)auth_pass,
-														strlen(auth_pass));
 #ifdef MD5AUTH
 		}
 #endif
+		to64frombits((unsigned char *)buf, (unsigned char *)auth_pass,
+														strlen(auth_pass));
+authorised:
 		/* We do NOT want the password output to STDERR
 		 * even base64 encoded.*/
 		minus_v_save = minus_v;
