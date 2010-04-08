@@ -1,3 +1,13 @@
+ssmtp (2.64-4) unstable; urgency=low
+
+  * Set back permissions as before 2.64-1 
+    Closes: 570971, 572154, 559900, 557948, 560397
+  * Fix pending l10n issues. Debconf translations:
+    - Vietnamese (Clytie Siddall). Closes: 569003, 569654
+    - Brazilian Portuguese (Jef Lui). Closes: 576535
+
+ -- Anibal Monsalve Salazar <anibal@debian.org>  Thu, 08 Apr 2010 16:17:50 +1000
+
 ssmtp (2.64-3) unstable; urgency=low
 
   * Change ssmtp permissions
