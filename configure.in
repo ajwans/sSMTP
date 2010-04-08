@@ -14,7 +14,7 @@ AC_CHECK_HEADERS(limits.h strings.h syslog.h unistd.h)
 
 
 AC_CACHE_CHECK([for obsolete openlog],ssmtp_cv_obsolete_openlog,
-	[ AC_TRY_COMPILE([#include <syslog.h> ] , [ openlog("xx",1); ] , 
+	[ AC_TRY_COMPILE([#include <syslog.h> ] , [ openlog("xx",1); ] ,
 	ssmtp_cv_obsolete_openlog=yes, ssmtp_cv_obsolete_openlog=no)]
 )
 
@@ -43,7 +43,7 @@ CFLAGS=$savedCFLAGS
 
 
 dnl Check for optional features
-AC_ARG_ENABLE(logfile, 
+AC_ARG_ENABLE(logfile,
 [  --enable-logfile        additional logging over and above syslog])
 if test x$enableval = xyes ; then
 	AC_DEFINE(LOGFILE)
@@ -81,5 +81,40 @@ if test x$enableval = xyes ; then
 fi
 enableval=""
 AC_SUBST(SRCS)
+
+AC_MSG_CHECKING([strftime accepts %_d format])
+AC_RUN_IFELSE([
+		AC_LANG_PROGRAM([#include <time.h>], [[
+			struct tm *date;
+			char s[32];
+			time_t t;
+			time(&t);
+			date = localtime(&t);
+			date->tm_mday = 1;
+			strftime(s, 32, "%_d", date);
+			return strcmp(s, " 1"); ]])
+	],
+	[
+		AC_DEFINE(HAVE_STRFTIME_UNDERSCORE_D)
+		AC_MSG_RESULT(yes)
+	], AC_MSG_RESULT(no))
+
+AC_MSG_CHECKING([strftime accepts %e format])
+AC_RUN_IFELSE([
+		AC_LANG_PROGRAM([#include <time.h>], [[
+			struct tm *date;
+			char s[32];
+			time_t t;
+			time(&t);
+			date = localtime(&t);
+			date->tm_mday = 1;
+			strftime(s, 32, "%e", date);
+			return strcmp(s, " 1"); ]])
+	],
+	[
+		AC_DEFINE(HAVE_STRFTIME_E)
+		AC_MSG_RESULT(yes)
+	], AC_MSG_RESULT(no))
+
 
 AC_OUTPUT(Makefile)
