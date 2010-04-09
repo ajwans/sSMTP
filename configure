@@ -683,6 +683,7 @@ enable_ssl
 with_gnutls
 enable_inet6
 enable_md5auth
+enable_debug
 '
       ac_precious_vars='build_alias
 host_alias
@@ -1306,6 +1307,7 @@ Optional Features:
   --enable-ssl           support for secure connection to mail server (openssl)
   --enable-inet6         support for IPv6 transport
   --enable-md5auth         support for MD5 authentication
+  --enable-debug          enable debug output
 
 Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
@@ -3936,6 +3938,18 @@ if test x$enableval = xyes ; then
 	$as_echo "#define MD5AUTH 1" >>confdefs.h
 
 	SRCS="$SRCS md5auth/md5c.c md5auth/hmac_md5.c"
+fi
+enableval=""
+
+
+# Check whether --enable-debug was given.
+if test "${enable_debug+set}" = set; then :
+  enableval=$enable_debug;
+fi
+
+if test x$enableval = xyes ; then
+	$as_echo "#define DEBUG 1" >>confdefs.h
+
 fi
 enableval=""
 
