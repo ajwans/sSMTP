@@ -63,6 +63,7 @@ AC_ARG_ENABLE(ssl,
 if test x$enableval = xyes ; then
 	AC_DEFINE(HAVE_SSL)
 	LIBS="$LIBS -lssl"
+	AC_CHECK_LIB(crypto, X509_free, LIBS="$LIBS -lcrypto")
 fi
 enableval=""
 
