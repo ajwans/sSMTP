@@ -846,6 +846,7 @@ Optional Features:
   --enable-ssl           support for secure connection to mail server
   --enable-inet6         support for IPv6 transport
   --enable-md5auth         support for MD5 authentication
+  --enable-debug          enable debug output
 
 Some influential environment variables:
   CC          C compiler command
@@ -4016,8 +4017,8 @@ if test x$enableval = xyes ; then
 _ACEOF
 
 	LIBS="$LIBS -lssl"
-	{ echo "$as_me:$LINENO: checking for X509_free in -lcrypto" >&5
-echo $ECHO_N "checking for X509_free in -lcrypto... $ECHO_C" >&6; }
+	echo "$as_me:$LINENO: checking for X509_free in -lcrypto" >&5
+echo $ECHO_N "checking for X509_free in -lcrypto... $ECHO_C" >&6
 if test "${ac_cv_lib_crypto_X509_free+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
 else
@@ -4030,53 +4031,56 @@ cat confdefs.h >>conftest.$ac_ext
 cat >>conftest.$ac_ext <<_ACEOF
 /* end confdefs.h.  */
 
-/* Override any GCC internal prototype to avoid an error.
-   Use char because int might match the return type of a GCC
-   builtin and then its argument prototype would still apply.  */
+/* Override any gcc2 internal prototype to avoid an error.  */
 #ifdef __cplusplus
 extern "C"
 #endif
+/* We use char because int might match the return type of a gcc2
+   builtin and then its argument prototype would still apply.  */
 char X509_free ();
 int
 main ()
 {
-return X509_free ();
+X509_free ();
   ;
   return 0;
 }
 _ACEOF
 rm -f conftest.$ac_objext conftest$ac_exeext
-if { (ac_try="$ac_link"
-case "(($ac_try" in
-  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
-  *) ac_try_echo=$ac_try;;
-esac
-eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
-  (eval "$ac_link") 2>conftest.er1
+if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
+  (eval $ac_link) 2>conftest.er1
   ac_status=$?
   grep -v '^ *+' conftest.er1 >conftest.err
   rm -f conftest.er1
   cat conftest.err >&5
   echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); } && {
-	 test -z "$ac_c_werror_flag" ||
-	 test ! -s conftest.err
-       } && test -s conftest$ac_exeext &&
-       $as_test_x conftest$ac_exeext; then
+  (exit $ac_status); } &&
+	 { ac_try='test -z "$ac_c_werror_flag"
+			 || test ! -s conftest.err'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; } &&
+	 { ac_try='test -s conftest$ac_exeext'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
   ac_cv_lib_crypto_X509_free=yes
 else
   echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
 
-	ac_cv_lib_crypto_X509_free=no
+ac_cv_lib_crypto_X509_free=no
 fi
-
-rm -f core conftest.err conftest.$ac_objext conftest_ipa8_conftest.oo \
+rm -f conftest.err conftest.$ac_objext \
       conftest$ac_exeext conftest.$ac_ext
 LIBS=$ac_check_lib_save_LIBS
 fi
-{ echo "$as_me:$LINENO: result: $ac_cv_lib_crypto_X509_free" >&5
-echo "${ECHO_T}$ac_cv_lib_crypto_X509_free" >&6; }
+echo "$as_me:$LINENO: result: $ac_cv_lib_crypto_X509_free" >&5
+echo "${ECHO_T}$ac_cv_lib_crypto_X509_free" >&6
 if test $ac_cv_lib_crypto_X509_free = yes; then
   LIBS="$LIBS -lcrypto"
 fi
@@ -4108,6 +4112,20 @@ if test x$enableval = xyes ; then
 _ACEOF
 
 	SRCS="$SRCS md5auth/md5c.c md5auth/hmac_md5.c"
+fi
+enableval=""
+
+
+# Check whether --enable-debug or --disable-debug was given.
+if test "${enable_debug+set}" = set; then
+  enableval="$enable_debug"
+
+fi;
+if test x$enableval = xyes ; then
+	cat >>confdefs.h <<\_ACEOF
+#define DEBUG 1
+_ACEOF
+
 fi
 enableval=""
 
