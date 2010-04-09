@@ -66,6 +66,7 @@ if test x$enableval = xyes ; then
 	AC_DEFINE(HAVE_SSL)
 	if test "x$with_gnutls" != "xyes"; then
 		LIBS="$LIBS -lssl -lcrypto"
+		AC_CHECK_LIB(crypto, X509_free, LIBS="$LIBS -lcrypto")
 	else
 		AC_DEFINE([HAVE_GNUTLS])
 		LIBS="$LIBS -lgnutls-openssl"
