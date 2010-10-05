@@ -25,6 +25,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <netdb.h>
+#include <libgen.h>
 #ifdef HAVE_SSL
 #include <openssl/crypto.h>
 #include <openssl/x509.h>
@@ -2265,6 +2266,10 @@ int main(int argc, char **argv)
 
 	/* Set the globals */
 	prog = basename(argv[0]);
+	if (!prog) {
+		perror("basename");
+		die("Cannot run basename on %s", argv[0]);
+	}
 
 	hostname = xgethostname();
 
