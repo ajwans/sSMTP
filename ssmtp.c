@@ -1693,7 +1693,7 @@ int ssmtp(char *argv[])
 		 * when sasl_client_start returns PLAIN method the clientout
 		 * and clientoutlen will be set
 		 */
-		if (0 && ret == SASL_OK) {
+		if (!strcmp(mech, "PLAIN") && ret == SASL_OK) {
 			int		res;
 
 			smtp_write(sock, "%s", buf);
@@ -1704,6 +1704,7 @@ int ssmtp(char *argv[])
 
 			log_event(LOG_INFO, "%d writing %s as %s", res,
 								clientout, buf);
+			goto authorised;
 		}
 
 		do {
@@ -1720,8 +1721,8 @@ int ssmtp(char *argv[])
 			sasl_decode64(&buf[4], strlen(buf) - 4, buf_decode,
 						sizeof(buf_decode), &blen);
 			if (log_level) {
-				log_event(LOG_INFO, "decoded '%s' (%d)",
-							buf_decode, blen);
+				log_event(LOG_INFO, "decoded '%s' as '%s' (%d)",
+							buf, buf_decode, blen);
 			}
 
 			ret = sasl_client_step(pconn, buf_decode, blen, NULL,
