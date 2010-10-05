@@ -26,6 +26,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <netdb.h>
+#include <libgen.h>
 #ifdef HAVE_SSL
 #ifdef HAVE_GNUTLS
 #include <gnutls/openssl.h>

@@ -7,6 +7,8 @@
 if test `uname` == 'SunOS'
 then
 	syshostname='uname -n'
+elif [ x`uname -s` == 'xDarwin' ]
+	syshostname=`hostname -f`
 else
 	syshostname='hostname --fqdn'
 fi
@@ -62,7 +64,7 @@ mailhub=mail
 # Where will the mail seem to come from?
 #rewriteDomain=`echo -n $mailname`
 # The full hostname
-hostname=`hostname --fqdn`
+hostname=$syshostname
 EOF
 
 echo
