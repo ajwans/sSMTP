@@ -26,6 +26,7 @@
 #include <ctype.h>
 #include <netdb.h>
 #include <libgen.h>
+#include <errno.h>
 #ifdef HAVE_SSL
 #include <openssl/crypto.h>
 #include <openssl/x509.h>
@@ -65,20 +66,20 @@ bool_t use_oldauth = False;		/* use old AUTH LOGIN username style */
 
 #define ARPADATE_LENGTH 32		/* Current date in RFC format */
 char arpadate[ARPADATE_LENGTH];
-char *auth_user = (char)NULL;
-char *auth_pass = (char)NULL;
-char *auth_method = (char)NULL;		/* Mechanism for SMTP authentication */
-char *mail_domain = (char)NULL;
-char *from = (char)NULL;		/* Use this as the From: address */
+char *auth_user = NULL;
+char *auth_pass = NULL;
+char *auth_method = NULL;		/* Mechanism for SMTP authentication */
+char *mail_domain = NULL;
+char *from = NULL;		/* Use this as the From: address */
 char *hostname;
-char *minus_f = (char)NULL;
-char *minus_F = (char)NULL;
+char *minus_f = NULL;
+char *minus_F = NULL;
 char *gecos;
-char *prog = (char)NULL;
+char *prog = NULL;
 char *root = NULL;
 char *tls_cert = "/etc/ssl/certs/ssmtp.pem";	/* Default Certificate */
-char *uad = (char)NULL;
-char *config_file = (char)NULL;		/* alternate configuration file */
+char *uad = NULL;
+char *config_file = NULL;		/* alternate configuration file */
 
 headers_t headers, *ht;
 
@@ -273,9 +274,8 @@ char *strip_post_ws(char *str)
 	char *p;
 
 	p = (str + strlen(str));
-	while(isspace(*--p)) {
-		*p = (char)NULL;
-	}
+	while(isspace(*--p))
+		*p = 0;
 
 	return(p);
 }
@@ -299,9 +299,8 @@ char *addr_parse(char *str)
 	if((q = strchr(p, '<'))) {
 		q++;
 
-		if((p = strchr(q, '>'))) {
-			*p = (char)NULL;
-		}
+		if((p = strchr(q, '>')))
+			*p = 0;
 
 #if 0
 		(void)fprintf(stderr, "*** addr_parse(): q = [%s]\n", q);
@@ -323,7 +322,7 @@ char *addr_parse(char *str)
 	q = strip_post_ws(p);
 	if(*q == ')') {
 		while((*--q != '('));
-		*q = (char)NULL;
+		*q = 0;
 	}
 	(void)strip_post_ws(p);
 
@@ -342,15 +341,17 @@ char *append_domain(char *str)
 	char buf[(BUF_SZ + 1)];
 
 	if(strchr(str, '@') == (char *)NULL) {
-		if(snprintf(buf, BUF_SZ, "%s@%s", str,
+		int ret;
+
 #ifdef REWRITE_DOMAIN
-			rewrite_domain == True ? mail_domain : hostname
+		ret = snprintf(buf, BUF_SZ, "%s@%s", str,
+			rewrite_domain == True ? mail_domain : hostname);
 #else
-			hostname
+		ret = snprintf(buf, BUF_SZ, "%s@%s", str, hostname);
 #endif
-														) == -1) {
-				die("append_domain() -- snprintf() failed");
-		}
+		if (ret == -1)
+			die("append_domain() -- snprintf() failed");
+
 		return(strdup(buf));
 	}
 
@@ -375,7 +376,7 @@ bool_t standardise(char *str, bool_t *linestart)
 	*linestart = False;
 
 	if((p = strchr(str, '\n'))) {
-		*p = (char)NULL;
+		*p = 0;
 		*linestart = True;
 	}
 	return(leadingdot);
@@ -395,9 +396,8 @@ void revaliases(struct passwd *pw)
 		/* Search if a reverse alias is defined for the sender */
 		while(fgets(buf, sizeof(buf), fp)) {
 			/* Make comments invisible */
-			if((p = strchr(buf, '#'))) {
-				*p = (char)NULL;
-			}
+			if((p = strchr(buf, '#')))
+				*p = 0;
 
 			/* Ignore malformed lines and comments */
 			if(strchr(buf, ':') == (char *)NULL) {
@@ -531,7 +531,7 @@ void rcpt_save(char *str)
 #endif
 
 	/* Ignore missing usernames */
-	if(*str == (char)NULL) {
+	if(*str == 0) {
 		return;
 	}
 
@@ -588,7 +588,7 @@ void rcpt_parse(char *str)
 		}
 
 		/* End of string? */
-		if(*(q + 1) == (char)NULL) {
+		if(*(q + 1) == 0) {
 			got_addr = True;
 		}
 
@@ -596,7 +596,7 @@ void rcpt_parse(char *str)
 		if((*q == ',') && (in_quotes == False)) {
 			got_addr = True;
 
-			*q = (char)NULL;
+			*q = 0;
 		}
 
 		if(got_addr) {
@@ -688,7 +688,7 @@ void header_save(const char *str)
 	if(strncasecmp(ht->string, "From:", 5) == 0) {
 #if 1
 		/* Hack check for NULL From: line */
-		if(*(p + 6) == (char)NULL) {
+		if(*(p + 6) == 0) {
 			return;
 		}
 #endif
@@ -753,7 +753,7 @@ void header_parse(FILE *stream)
 	size_t size = BUF_SZ, len = 0;
 	char *p = (char *)NULL, *q = NULL;
 	bool_t in_header = True;
-	char l = (char)NULL;
+	char l = 0;
 	int c;
 
 	while(in_header && ((c = fgetc(stream)) != EOF)) {
@@ -788,9 +788,9 @@ void header_parse(FILE *stream)
 						in_header = False;
 
 				default:
-						*q = (char)NULL;
+						*q = 0;
 						if((q = strrchr(p, '\n'))) {
-							*q = (char)NULL;
+							*q = 0;
 						}
 						header_save(p);
 
@@ -821,9 +821,9 @@ void header_parse(FILE *stream)
 						in_header = False;
 
 				default:
-						*q = (char)NULL;
+						*q = 0;
 						if((q = strrchr(p, '\n'))) {
-							*q = (char)NULL;
+							*q = 0;
 						}
 						header_save(p);
 
@@ -835,24 +835,6 @@ void header_parse(FILE *stream)
 	(void)free(p);
 }
 
-#ifndef HAVE_STRNDUP
-static char *strndup(const char *s, size_t sz)
-{
-	size_t	slen;
-	size_t	mlen;
-	char	*ret;
-
-	slen=strlen(s) + 1;
-	mlen=slen > sz ? sz : slen;
-
-	ret=malloc(mlen);
-	if (ret)
-		memcpy(ret, s, mlen);
-
-	return ret;
-}
-#endif
-
 void add_config(const char *left, const char *right)
 {
 	enum type {
@@ -860,7 +842,7 @@ void add_config(const char *left, const char *right)
 		STRING,
 		INTEGER,
 		BOOLEAN,
-		FUNCTION
+		FUNCTION_HDR
 	};
 
 	typedef void (*conf_func_t)(const char *);
@@ -871,12 +853,20 @@ void add_config(const char *left, const char *right)
 		enum type	type;
 	};
 
+	/* save us from nasty casting cur->location all over the place */
+	union {
+		struct hostport	*h;
+		char		**s;
+		int		*i;
+		bool_t		*b;
+	} u;
+
 	struct conf_var *cur;
 	struct conf_var conf_vars[] = {
 		{ "Root",		&root,		STRING		},
 		{ "MailHub",		&mailhost,	HOSTPORT	},
 		{ "HostName",		&hostname,	STRING		},
-		{ "AddHeader",		header_save,	FUNCTION	},
+		{ "AddHeader",		NULL,		FUNCTION_HDR	},
 		{ "FromLineOverride",	&override_from,	BOOLEAN		},
 		{ "RemotePort",		&mailhost.port,	INTEGER 	},	
 		{ "AuthUser",		&auth_user,	STRING		},
@@ -904,14 +894,7 @@ void add_config(const char *left, const char *right)
 	if (!cur->name)
 		return;
 
-	/* save us from nasty casting cur->location all over the place */
-	union {
-		struct hostport	*h;
-		char		**s;
-		int		*i;
-		bool_t		*b;
-		conf_func_t	f;
-	} u = { cur->location };
+	u.s = cur->location;
 
 	switch (cur->type) {
 	case HOSTPORT: {
@@ -919,7 +902,7 @@ void add_config(const char *left, const char *right)
 		char *p;
 
 		v = strdup(right);
-		if (p = strchr(v, ':')) {
+		if ((p = strchr(v, ':'))) {
 			u.h->port = atoi(p+1);
 			*p = 0;
 
@@ -953,8 +936,8 @@ void add_config(const char *left, const char *right)
 		if (log_level)
 			log_event(LOG_INFO, "Set %s=\"%d\"\n", cur->name, *u.b);
 		break;
-	case FUNCTION:
-		u.f(right);
+	case FUNCTION_HDR:
+		header_save(right);
 		break;
 	}
 }
@@ -967,6 +950,7 @@ bool_t read_config()
 	int	ret;
 	FILE	*fp;
 	char	buf[BUF_SZ];
+	regex_t re;
 
 	if (!config_file)
 		config_file = CONFIGURATION_FILE;
@@ -977,7 +961,6 @@ bool_t read_config()
 		return False;
 	}
 
-	regex_t re;
 	ret = regcomp(&re, "^[[:space:]]*([[:alnum:]]+)[[:space:]]*="
 		"[[:space:]]*([[:alnum:]].*)$", REG_EXTENDED|REG_NEWLINE);
 	if (ret) {
@@ -991,9 +974,10 @@ bool_t read_config()
 	while(fgets(buf, sizeof(buf), fp)) {
 		char		*left;
 		char		*right;
-		regmatch_t	pmatch[3] = { 0 };
+		regmatch_t	pmatch[3];
 
-		ret = regexec(&re, buf, 3, pmatch, 0);
+		memset(pmatch, 0, sizeof(pmatch));
+		ret = regexec(&re, buf, ARRAY_SIZE(pmatch), pmatch, 0);
 
 		if (ret == REG_NOMATCH)
 			continue;
@@ -1234,7 +1218,7 @@ char *fd_gets(char *buf, int size, int fd)
 			buf[i++] = c;
 		}
 	}
-	buf[i] = (char)NULL;
+	buf[i] = 0;
 
 	return(buf);
 }
@@ -1318,7 +1302,11 @@ ssize_t smtp_write(int fd, char *format, ...)
 }
 
 #ifdef HAVE_SASL
-int use_context(void *context, int id, const char **result, unsigned *len)
+int use_context(
+	void		*context __attribute__((__unused__)),
+	int		id,
+	const char	**result,
+	unsigned	*len)
 {
 	if (log_level) {
 		log_event(LOG_INFO, "use_context: id %d", id);
@@ -1328,15 +1316,12 @@ int use_context(void *context, int id, const char **result, unsigned *len)
 		return SASL_BADPARAM;
 	}
 
-	*result = NULL;
+	*result = strdup(auth_user);
+	if (!result)
+		return SASL_NOMEM;
 
-	if (context) {
-		*result = strdup(context);
-	}
-
-	if (len) {
+	if (len)
 		*len = strlen(*result);
-	}
 
 	if (log_level) {
 		log_event(LOG_INFO, "use_context: %s %d%s", *result,
@@ -1348,7 +1333,7 @@ int use_context(void *context, int id, const char **result, unsigned *len)
 
 static int get_realm(
 		void		*context,
-		int		id,
+		int		id __attribute__((__unused__)),
 		const char	**availrealms __attribute__ ((unused)),
 		const char	**result)
 {
@@ -1358,20 +1343,20 @@ static int get_realm(
 }
 
 static int get_secret(
-		sasl_conn_t	*conn,
-		void		*context,
-		int		id,
+		sasl_conn_t	*conn __attribute__((__unused__)),
+		void		*context __attribute__((__unused__)),
+		int		id __attribute__((__unused__)),
 		sasl_secret_t	**psecret)
 {
-	unsigned int len = (unsigned) strlen(context);
+	unsigned int len = (unsigned) strlen(auth_pass);
 
 	log_event(LOG_INFO, "get_secret");
 	*psecret = malloc(sizeof(sasl_secret_t) + len);
 	(*psecret)->len = len;
-	strcpy((char *)(*psecret)->data, context);
+	strcpy((char *)(*psecret)->data, auth_pass);
 
 	if (log_level) {
-		log_event(LOG_INFO, "get_secret: password is '%s'", context);
+		log_event(LOG_INFO, "get_secret: password is '%s'", auth_pass);
 	}
 
 	return SASL_OK;
@@ -1398,7 +1383,7 @@ ssmtp() -- send the message (exactly one) from stdin to the mailhub SMTP port
 int ssmtp(char *argv[])
 {
 	char b[(BUF_SZ + 2)], *buf = b+1, *p, *q;
-#if defined MD5AUTH || defined HAVE_SASL
+#if defined MD5AUTH
 	char challenge[(BUF_SZ + 1)];
 #endif
 	struct passwd *pw;
@@ -1479,15 +1464,16 @@ int ssmtp(char *argv[])
 	if(auth_user) {
 #ifdef HAVE_SASL
 		sasl_conn_t	*pconn;
-		char		*mech = NULL, *clientout;
+		const char	*mech = NULL;
+		char		*clientout;
 		int		ret, pcount;
-		unsigned int	resultlen, clientoutlen;
+		unsigned int	clientoutlen;
 
 		sasl_callback_t	cb[] = {
-			{ SASL_CB_GETREALM,	&get_realm,	NULL },
-			{ SASL_CB_USER,		&use_context,	auth_user },
-			{ SASL_CB_AUTHNAME,	&use_context,	auth_user },
-			{ SASL_CB_PASS,		&get_secret,	auth_pass },
+			{ SASL_CB_GETREALM,	get_realm,	NULL },
+			{ SASL_CB_USER,		use_context,	NULL },
+			{ SASL_CB_AUTHNAME,	use_context,	NULL },
+			{ SASL_CB_PASS,		get_secret,	NULL },
 			{ SASL_CB_LIST_END,	NULL,		NULL }
 		};
 
@@ -1496,8 +1482,8 @@ int ssmtp(char *argv[])
 			die("sasl_client_init: SASL init failed %d", ret);
 		}
 
-		ret = sasl_client_new("smtp", mailhost.name, NULL, NULL, cb, 0,
-									&pconn);
+		ret = sasl_client_new("smtp", mailhost.name, NULL, NULL, NULL,
+								0, &pconn);
 		if (ret != SASL_OK) {
 			die("sasl_client_new: SASL setup failed %d", ret);
 		}
@@ -1569,8 +1555,7 @@ int ssmtp(char *argv[])
 			}
 
 			ret = sasl_client_step(pconn, buf_decode, blen, NULL,
-						(const char **)&clientout,
-						&clientoutlen);
+				(const char **)&clientout, &clientoutlen);
 
 			if (log_level) {
 				log_event(LOG_INFO, "response %d bytes '%s'",
@@ -1840,7 +1825,7 @@ char **parse_options(int argc, char *argv[])
 		j = 0;
 
 		add = 1;
-		while(argv[i][++j] != (char)NULL) {
+		while(argv[i][++j] != 0) {
 			switch(argv[i][j]) {
 #ifdef INET6
 			case '6':
