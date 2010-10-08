@@ -349,7 +349,6 @@ standardise() -- Trim off '\n's and double leading dots
 */
 bool_t standardise(char *str, bool_t *linestart)
 {
-	size_t sl;
 	char *p;
 	bool_t leadingdot = False;
 
@@ -739,7 +738,7 @@ header_parse() -- Break headers into seperate entries
 void header_parse(FILE *stream)
 {
 	size_t size = BUF_SZ, len = 0;
-	char *p = (char *)NULL, *q;
+	char *p = (char *)NULL, *q = NULL;
 	bool_t in_header = True;
 	char l = (char)NULL;
 	int c;
@@ -1189,7 +1188,7 @@ int smtp_open(char *host, int port)
 		return(-1);
 	}
 
-	if(hent->h_length > sizeof(hent->h_addr)) {
+	if((unsigned)hent->h_length > sizeof(hent->h_addr)) {
 		log_event(LOG_ERR, "Buffer overflow in gethostbyname()");
 		return(-1);
 	}
@@ -1508,7 +1507,8 @@ int ssmtp(char *argv[])
 		else {
 #endif
 		memset(buf, 0, bufsize);
-		to64frombits(buf, auth_user, strlen(auth_user));
+		to64frombits((unsigned char *)buf, (unsigned char *)auth_user,
+														strlen(auth_user));
 		if (use_oldauth) {
 			outbytes += smtp_write(sock, "AUTH LOGIN %s", buf);
 		}
@@ -1520,7 +1520,8 @@ int ssmtp(char *argv[])
 			}
 			/* we assume server asked us for Username */
 			memset(buf, 0, bufsize);
-			to64frombits(buf, auth_user, strlen(auth_user));
+			to64frombits((unsigned char *)buf, (unsigned char *)auth_user,
+														strlen(auth_user));
 			outbytes += smtp_write(sock, buf);
 		}
 
@@ -1530,7 +1531,8 @@ int ssmtp(char *argv[])
 		}
 		memset(buf, 0, bufsize);
 
-		to64frombits(buf, auth_pass, strlen(auth_pass));
+		to64frombits((unsigned char *)buf, (unsigned char *)auth_pass,
+														strlen(auth_pass));
 #ifdef MD5AUTH
 		}
 #endif
