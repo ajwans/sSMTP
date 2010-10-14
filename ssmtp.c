@@ -45,6 +45,10 @@
 #include <sasl/saslutil.h>
 #endif
 
+#include <regex.h>
+
+#define ARRAY_SIZE(x) sizeof(x) / sizeof(x[0])
+
 bool_t have_date = False;
 bool_t have_from = False;
 #ifdef HASTO_OPTION
@@ -67,7 +71,6 @@ char *auth_method = (char)NULL;		/* Mechanism for SMTP authentication */
 char *mail_domain = (char)NULL;
 char *from = (char)NULL;		/* Use this as the From: address */
 char *hostname;
-char *mailhost = "mailhub";
 char *minus_f = (char)NULL;
 char *minus_F = (char)NULL;
 char *gecos;
@@ -79,12 +82,16 @@ char *config_file = (char)NULL;		/* alternate configuration file */
 
 headers_t headers, *ht;
 
+struct hostport {
+	char	*name;	
+	int	port;
+} mailhost = { "mailhub", 25 };
+
 #ifdef DEBUG
 int log_level = 1;
 #else
 int log_level = 0;
 #endif
-int port = 25;
 #ifdef INET6
 int p_family = PF_UNSPEC;		/* Protocol family used in SMTP connection */
 #endif
@@ -406,18 +413,18 @@ void revaliases(struct passwd *pw)
 				}
 
 				if((p = strtok(NULL, " \t\r\n:"))) {
-					if((mailhost = strdup(p)) == (char *)NULL) {
+					if((mailhost.name = strdup(p)) == (char *)NULL) {
 						die("revaliases() -- strdup() failed");
 					}
 
 					if((p = strtok(NULL, " \t\r\n:"))) {
-						port = atoi(p);
+						mailhost.port = atoi(p);
 					}
 
 					if(log_level > 0) {
-						log_event(LOG_INFO, "Set MailHub=\"%s\"\n", mailhost);
+						log_event(LOG_INFO, "Set MailHub=\"%s\"\n", mailhost.name);
 						log_event(LOG_INFO,
-							"via SMTP Port Number=\"%d\"\n", port);
+							"via SMTP Port Number=\"%d\"\n", mailhost.port);
 					}
 				}
 			}
@@ -665,7 +672,7 @@ char *rcpt_remap(char *str)
 /*
 header_save() -- Store entry into header list
 */
-void header_save(char *str)
+void header_save(const char *str)
 {
 	char *p;
 
@@ -846,33 +853,110 @@ static char *strndup(const char *s, size_t sz)
 }
 #endif
 
-/*
- * This is much like strtok, but does not modify the string
- * argument.
- * Args: 
- * 	char **s:
- * 		Address of the pointer to the string we are looking at.
- * 	const char *delim:
- * 		The set of delimiters.
- * Return value:
- *	The first token, copied by strndup (caller have to free it),
- * 	if a token is found, or NULL if isn't (os strndup fails)
- * 	*s points to the rest of the string
- */
-char *firsttok(char **s, const char *delim)
+void add_config(const char *left, const char *right)
 {
-	char *tok;
-	char *rest;
-	rest=strpbrk(*s,delim);
-	if (!rest) {
-		return NULL;
+	enum type {
+		HOSTPORT,
+		STRING,
+		INTEGER,
+		BOOLEAN,
+		FUNCTION
+	};
+
+	typedef void (*conf_func_t)(const char *);
+
+	struct conf_var {
+		char		*name;
+		void		*location;
+		enum type	type;
+	};
+
+	struct conf_var *cur;
+	struct conf_var conf_vars[] = {
+		{ "Root",		&root,		STRING		},
+		{ "MailHub",		&mailhost,	HOSTPORT	},
+		{ "HostName",		&hostname,	STRING		},
+		{ "AddHeader",		header_save,	FUNCTION	},
+		{ "FromLineOverride",	&override_from,	BOOLEAN		},
+		{ "RemotePort",		&mailhost.port,	INTEGER 	},	
+		{ "AuthUser",		&auth_user,	STRING		},
+		{ "AuthPass",		&auth_pass,	STRING		},
+		{ "AuthMethod",		&auth_method,	STRING		},
+		{ "UseOldAuth",		&use_oldauth,	BOOLEAN		},
+		{ "Debug",		&log_level,	BOOLEAN		},
+#ifdef REWRITE_DOMAIN
+		{ "RewriteDomain", 	&mail_domain,	STRING		},
+#endif
+#ifdef HAVE_SSL
+		{ "UseTLS",		&use_tls,	BOOLEAN 	},
+		{ "UseSTARTTLS",	&use_starttls,	BOOLEAN		},
+		{ "UseTLSCert",		&use_cert,	BOOLEAN		},
+		{ "TLSCert",		&tls_cert,	STRING		},
+#endif
+		{ NULL,			NULL,		0		}
+	};
+
+	for (cur = conf_vars; cur->name; cur++) {
+		if (!strcasecmp(cur->name, left))
+			break;
+	}	
+
+	if (!cur->name)
+		return;
+
+	/* save us from nasty casting cur->location all over the place */
+	union {
+		struct hostport	*h;
+		char		**s;
+		int		*i;
+		bool_t		*b;
+		conf_func_t	f;
+	} u = { cur->location };
+
+	switch (cur->type) {
+	case HOSTPORT: {
+		char *v;
+		char *p;
+
+		v = strdup(right);
+		if (p = strchr(v, ':')) {
+			u.h->port = atoi(p+1);
+			*p = 0;
+
+			if (log_level)
+				log_event(LOG_INFO, "Set %s.port=\"%d\"\n",
+							cur->name, u.h->port);
+		}
+
+		u.h->name = strdup(v);
+		free(v);
+
+		if (log_level)
+			log_event(LOG_INFO, "Set %s.name=\"%s\"\n",
+							cur->name, u.h->name);
+		
+
+		} break;
+	case STRING:
+		*u.s = strdup(right);
+		if (log_level)
+			log_event(LOG_INFO, "Set %s=\"%s\"\n", cur->name, *u.s);
+			
+		break;
+	case INTEGER:
+		*u.i = atoi(right);
+		if (log_level)
+			log_event(LOG_INFO, "Set %s=\"%d\"\n", cur->name, *u.i);
+		break;
+	case BOOLEAN:
+		*u.b = strcasecmp(right, "YES") ? False : True;
+		if (log_level)
+			log_event(LOG_INFO, "Set %s=\"%d\"\n", cur->name, *u.b);
+		break;
+	case FUNCTION:
+		u.f(right);
+		break;
 	}
-	tok=strndup(*s,rest-(*s));
-	if (!tok) {
-		die("firsttok() -- strndup() failed");
-	}
-	*s=rest+1;
-	return tok;
 }
 
 /*
@@ -880,246 +964,63 @@ read_config() -- Open and parse config file and extract values of variables
 */
 bool_t read_config()
 {
-	char buf[(BUF_SZ + 1)], *p, *q, *r;
-	FILE *fp;
+	int	ret;
+	FILE	*fp;
+	char	buf[BUF_SZ];
 
-	if(config_file == (char *)NULL) {
-		config_file = strdup(CONFIGURATION_FILE);
-		if(config_file == (char *)NULL) {
-			die("parse_config() -- strdup() failed");
-		}
+	if (!config_file)
+		config_file = CONFIGURATION_FILE;
+
+	if(!(fp = fopen(config_file, "r"))) {
+		log_event(LOG_ERR, "fopen %s: %s\n", config_file,
+							strerror(errno));
+		return False;
 	}
 
-	if((fp = fopen(config_file, "r")) == NULL) {
-		return(False);
+	regex_t re;
+	ret = regcomp(&re, "^[[:space:]]*([[:alnum:]]+)[[:space:]]*="
+		"[[:space:]]*([[:alnum:]].*)$", REG_EXTENDED|REG_NEWLINE);
+	if (ret) {
+		char errbuf[64];
+		regerror(ret, &re, errbuf, sizeof(errbuf));
+		log_event(LOG_ERR, "regcomp failed: %s\n", errbuf);
+		fclose(fp);
+		return False;
 	}
 
 	while(fgets(buf, sizeof(buf), fp)) {
-		char *begin=buf;
-		char *rightside;
-		/* Make comments invisible */
-		if((p = strchr(buf, '#'))) {
-			*p = (char)NULL;
+		char		*left;
+		char		*right;
+		regmatch_t	pmatch[3] = { 0 };
+
+		ret = regexec(&re, buf, 3, pmatch, 0);
+
+		if (ret == REG_NOMATCH)
+			continue;
+
+		if (ret) {
+			char errbuf[64];
+			regerror(ret, &re, errbuf, sizeof(errbuf));
+			log_event(LOG_ERR, "regexec: %s\n", errbuf);
+			continue;
 		}
 
-		/* Ignore malformed lines and comments */
-		if(strchr(buf, '=') == (char *)NULL) continue;
+		buf[pmatch[1].rm_eo] = 0;
+		left = &buf[pmatch[1].rm_so];
 
-		/* Parse out keywords */
-		p=firsttok(&begin, "= \t\n");
-		if(p){
-			rightside=begin;
-			q = firsttok(&begin, "= \t\n");
-		}
-		if(p && q) {
-			if(strcasecmp(p, "Root") == 0) {
-				if((root = strdup(q)) == (char *)NULL) {
-					die("parse_config() -- strdup() failed");
-				}
+		buf[pmatch[2].rm_eo] = 0;
+		right = &buf[pmatch[2].rm_so];
 
-				if(log_level > 0) {
-					log_event(LOG_INFO, "Set Root=\"%s\"\n", root);
-				}
-			}
-			else if(strcasecmp(p, "MailHub") == 0) {
-				if((r = strchr(q, ':')) != NULL) {
-					*r++ = '\0';
-					port = atoi(r);
-				}
-
-				if((mailhost = strdup(q)) == (char *)NULL) {
-					die("parse_config() -- strdup() failed");
-				}
-
-				if(log_level > 0) {
-					log_event(LOG_INFO, "Set MailHub=\"%s\"\n", mailhost);
-					log_event(LOG_INFO, "Set RemotePort=\"%d\"\n", port);
-				}
-			}
-			else if(strcasecmp(p, "HostName") == 0) {
-				free(hostname);
-				hostname = strdup(q);
-				if (!hostname) {
-					die("parse_config() -- strdup() failed");
-				}
-
-				if(log_level > 0) {
-					log_event(LOG_INFO, "Set HostName=\"%s\"\n", hostname);
-				}
-			}
-			else if(strcasecmp(p,"AddHeader") == 0) {
-				if((r = firsttok(&rightside, "\n#")) != NULL) {
-					header_save(r);
-					free(r);
-				} else {
-					die("cannot AddHeader");
-				}
-				if(log_level > 0 ) {
-					log_event(LOG_INFO, "Set AddHeader=\"%s\"\n", q);
-				}
-			}
-#ifdef REWRITE_DOMAIN
-			else if(strcasecmp(p, "RewriteDomain") == 0) {
-				if((p = strrchr(q, '@'))) {
-					mail_domain = strdup(++p);
-
-					log_event(LOG_ERR,
-						"Set RewriteDomain=\"%s\" is invalid\n", q);
-					log_event(LOG_ERR,
-						"Set RewriteDomain=\"%s\" used\n", mail_domain);
-				}
-				else {
-					mail_domain = strdup(q);
-				}
-
-				if(mail_domain == (char *)NULL) {
-					die("parse_config() -- strdup() failed");
-				}
-				rewrite_domain = True;
-
-				if(log_level > 0) {
-					log_event(LOG_INFO,
-						"Set RewriteDomain=\"%s\"\n", mail_domain);
-				}
-			}
-#endif
-			else if(strcasecmp(p, "FromLineOverride") == 0) {
-				if(strcasecmp(q, "YES") == 0) {
-					override_from = True;
-				}
-				else {
-					override_from = False;
-				}
-
-				if(log_level > 0) {
-					log_event(LOG_INFO,
-						"Set FromLineOverride=\"%s\"\n",
-						override_from ? "True" : "False");
-				}
-			}
-			else if(strcasecmp(p, "RemotePort") == 0) {
-				port = atoi(q);
-
-				if(log_level > 0) {
-					log_event(LOG_INFO, "Set RemotePort=\"%d\"\n", port);
-				}
-			}
-#ifdef HAVE_SSL
-			else if(strcasecmp(p, "UseTLS") == 0) {
-				if(strcasecmp(q, "YES") == 0) {
-					use_tls = True;
-				}
-				else {
-					use_tls = False;
-					use_starttls = False;
-				}
-
-				if(log_level > 0) { 
-					log_event(LOG_INFO,
-						"Set UseTLS=\"%s\"\n", use_tls ? "True" : "False");
-				}
-			}
-			else if(strcasecmp(p, "UseSTARTTLS") == 0) {
-				if(strcasecmp(q, "YES") == 0) {
-					use_starttls = True;
-					use_tls = True;
-				}
-				else {
-					use_starttls = False;
-				}
-
-				if(log_level > 0) { 
-					log_event(LOG_INFO,
-						"Set UseSTARTTLS=\"%s\"\n", use_tls ? "True" : "False");
-				}
-			}
-			else if(strcasecmp(p, "UseTLSCert") == 0) {
-				if(strcasecmp(q, "YES") == 0) {
-					use_cert = True;
-				}
-				else {
-					use_cert = False;
-				}
-
-				if(log_level > 0) {
-					log_event(LOG_INFO,
-						"Set UseTLSCert=\"%s\"\n",
-						use_cert ? "True" : "False");
-				}
-			}
-			else if(strcasecmp(p, "TLSCert") == 0) {
-				if((tls_cert = strdup(q)) == (char *)NULL) {
-					die("parse_config() -- strdup() failed");
-				}
-
-				if(log_level > 0) {
-					log_event(LOG_INFO, "Set TLSCert=\"%s\"\n", tls_cert);
-				}
-			}
-#endif
-			/* Command-line overrides these */
-			else if(strcasecmp(p, "AuthUser") == 0 && !auth_user) {
-				if((auth_user = strdup(q)) == (char *)NULL) {
-					die("parse_config() -- strdup() failed");
-				}
-
-				if(log_level > 0) {
-					log_event(LOG_INFO, "Set AuthUser=\"%s\"\n", auth_user);
-				}
-			}
-			else if(strcasecmp(p, "AuthPass") == 0 && !auth_pass) {
-				if((auth_pass = strdup(q)) == (char *)NULL) {
-					die("parse_config() -- strdup() failed");
-				}
-
-				if(log_level > 0) {
-					log_event(LOG_INFO, "Set AuthPass=\"%s\"\n", auth_pass);
-				}
-			}
-			else if(strcasecmp(p, "AuthMethod") == 0 && !auth_method) {
-				if((auth_method = strdup(q)) == (char *)NULL) {
-					die("parse_config() -- strdup() failed");
-				}
-
-				if(log_level > 0) {
-					log_event(LOG_INFO, "Set AuthMethod=\"%s\"\n", auth_method);
-				}
-			}
-			else if(strcasecmp(p, "UseOldAUTH") == 0) {
-				if(strcasecmp(q, "YES") == 0) {
-					use_oldauth = True;
-				}
-				else {
-					use_oldauth = False;
-				}
- 
-				if(log_level > 0) {
-					log_event(LOG_INFO,
-						"Set UseOldAUTH=\"%s\"\n",
-						use_oldauth ? "True" : "False");
-				}
-			}
-			else if (strcasecmp(p, "Debug") == 0)
-			{
-				if (strcasecmp(q, "YES") == 0)
-				{
-					log_level = 1;
-				}
-				else
-				{
-					log_level = 0;
-				}
-			}
-			else {
-				log_event(LOG_INFO, "Unable to set %s=\"%s\"\n", p, q);
-			}
-			free(p);
-			free(q);
-		} 
+		add_config(left, right);
 	}
-	(void)fclose(fp);
+	regfree(&re);
+	fclose(fp);
 
-	return(True);
+	/* STARTTLS implies TLS */
+	if (use_starttls == True)
+		use_tls = True;
+
+	return (True);
 }
 
 /*
@@ -1552,8 +1453,8 @@ int ssmtp(char *argv[])
 		die("Connection lost in middle of processing");
 	}
 
-	if((sock = smtp_open(mailhost, port)) == -1) {
-		die("Cannot open %s:%d", mailhost, port);
+	if((sock = smtp_open(mailhost.name, mailhost.port)) == -1) {
+		die("Cannot open %s:%d", mailhost.name, mailhost.port);
 	}
 	else if (use_starttls == False) /* no initial response after STARTTLS */
 	{
@@ -1595,7 +1496,7 @@ int ssmtp(char *argv[])
 			die("sasl_client_init: SASL init failed %d", ret);
 		}
 
-		ret = sasl_client_new("smtp", mailhost, NULL, NULL, cb, 0,
+		ret = sasl_client_new("smtp", mailhost.name, NULL, NULL, cb, 0,
 									&pconn);
 		if (ret != SASL_OK) {
 			die("sasl_client_new: SASL setup failed %d", ret);
@@ -1606,7 +1507,7 @@ int ssmtp(char *argv[])
 			unsigned	len;
 
 			log_event(LOG_INFO, "Server mechanisms '%s' %s",
-							auth_method, mailhost);
+						auth_method, mailhost.name);
 			sasl_listmech(pconn, NULL, "", ",", "",
 						(const char **)&client_mechs,
 						&len, &pcount);
@@ -1615,10 +1516,12 @@ int ssmtp(char *argv[])
 		}
 
 		ret = sasl_client_start(pconn, auth_method, NULL,
-				(const char **)&clientout, &clientoutlen,
-				(const char **)&mech);
-		log_event(LOG_INFO, "start client output is '%s' %d",
-						clientout, clientoutlen);
+			(const char **)&clientout, &clientoutlen, &mech);
+		if (log_level) {
+			log_event(LOG_INFO, "start client output is '%s' %d "
+					"(%s)", clientout, clientoutlen,
+					sasl_errstring(ret, NULL, NULL));
+		}
 		if (!(ret == SASL_OK || ret == SASL_CONTINUE)) {
 			die("sasl_client_start: failed %d", ret);
 		}

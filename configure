@@ -4013,12 +4013,151 @@ if test "${enable_ssl+set}" = set; then
 
 fi;
 if test x$enableval = xyes ; then
-	cat >>confdefs.h <<\_ACEOF
+	if test "${ac_cv_header_openssl_crypto_h+set}" = set; then
+  echo "$as_me:$LINENO: checking for openssl/crypto.h" >&5
+echo $ECHO_N "checking for openssl/crypto.h... $ECHO_C" >&6
+if test "${ac_cv_header_openssl_crypto_h+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+fi
+echo "$as_me:$LINENO: result: $ac_cv_header_openssl_crypto_h" >&5
+echo "${ECHO_T}$ac_cv_header_openssl_crypto_h" >&6
+else
+  # Is the header compilable?
+echo "$as_me:$LINENO: checking openssl/crypto.h usability" >&5
+echo $ECHO_N "checking openssl/crypto.h usability... $ECHO_C" >&6
+cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+$ac_includes_default
+#include <openssl/crypto.h>
+_ACEOF
+rm -f conftest.$ac_objext
+if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
+  (eval $ac_compile) 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } &&
+	 { ac_try='test -z "$ac_c_werror_flag"
+			 || test ! -s conftest.err'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; } &&
+	 { ac_try='test -s conftest.$ac_objext'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+  ac_header_compiler=yes
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+ac_header_compiler=no
+fi
+rm -f conftest.err conftest.$ac_objext conftest.$ac_ext
+echo "$as_me:$LINENO: result: $ac_header_compiler" >&5
+echo "${ECHO_T}$ac_header_compiler" >&6
+
+# Is the header present?
+echo "$as_me:$LINENO: checking openssl/crypto.h presence" >&5
+echo $ECHO_N "checking openssl/crypto.h presence... $ECHO_C" >&6
+cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+#include <openssl/crypto.h>
+_ACEOF
+if { (eval echo "$as_me:$LINENO: \"$ac_cpp conftest.$ac_ext\"") >&5
+  (eval $ac_cpp conftest.$ac_ext) 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } >/dev/null; then
+  if test -s conftest.err; then
+    ac_cpp_err=$ac_c_preproc_warn_flag
+    ac_cpp_err=$ac_cpp_err$ac_c_werror_flag
+  else
+    ac_cpp_err=
+  fi
+else
+  ac_cpp_err=yes
+fi
+if test -z "$ac_cpp_err"; then
+  ac_header_preproc=yes
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+  ac_header_preproc=no
+fi
+rm -f conftest.err conftest.$ac_ext
+echo "$as_me:$LINENO: result: $ac_header_preproc" >&5
+echo "${ECHO_T}$ac_header_preproc" >&6
+
+# So?  What about this header?
+case $ac_header_compiler:$ac_header_preproc:$ac_c_preproc_warn_flag in
+  yes:no: )
+    { echo "$as_me:$LINENO: WARNING: openssl/crypto.h: accepted by the compiler, rejected by the preprocessor!" >&5
+echo "$as_me: WARNING: openssl/crypto.h: accepted by the compiler, rejected by the preprocessor!" >&2;}
+    { echo "$as_me:$LINENO: WARNING: openssl/crypto.h: proceeding with the compiler's result" >&5
+echo "$as_me: WARNING: openssl/crypto.h: proceeding with the compiler's result" >&2;}
+    ac_header_preproc=yes
+    ;;
+  no:yes:* )
+    { echo "$as_me:$LINENO: WARNING: openssl/crypto.h: present but cannot be compiled" >&5
+echo "$as_me: WARNING: openssl/crypto.h: present but cannot be compiled" >&2;}
+    { echo "$as_me:$LINENO: WARNING: openssl/crypto.h:     check for missing prerequisite headers?" >&5
+echo "$as_me: WARNING: openssl/crypto.h:     check for missing prerequisite headers?" >&2;}
+    { echo "$as_me:$LINENO: WARNING: openssl/crypto.h: see the Autoconf documentation" >&5
+echo "$as_me: WARNING: openssl/crypto.h: see the Autoconf documentation" >&2;}
+    { echo "$as_me:$LINENO: WARNING: openssl/crypto.h:     section \"Present But Cannot Be Compiled\"" >&5
+echo "$as_me: WARNING: openssl/crypto.h:     section \"Present But Cannot Be Compiled\"" >&2;}
+    { echo "$as_me:$LINENO: WARNING: openssl/crypto.h: proceeding with the preprocessor's result" >&5
+echo "$as_me: WARNING: openssl/crypto.h: proceeding with the preprocessor's result" >&2;}
+    { echo "$as_me:$LINENO: WARNING: openssl/crypto.h: in the future, the compiler will take precedence" >&5
+echo "$as_me: WARNING: openssl/crypto.h: in the future, the compiler will take precedence" >&2;}
+    (
+      cat <<\_ASBOX
+## ------------------------------------------ ##
+## Report this to the AC_PACKAGE_NAME lists.  ##
+## ------------------------------------------ ##
+_ASBOX
+    ) |
+      sed "s/^/$as_me: WARNING:     /" >&2
+    ;;
+esac
+echo "$as_me:$LINENO: checking for openssl/crypto.h" >&5
+echo $ECHO_N "checking for openssl/crypto.h... $ECHO_C" >&6
+if test "${ac_cv_header_openssl_crypto_h+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  ac_cv_header_openssl_crypto_h=$ac_header_preproc
+fi
+echo "$as_me:$LINENO: result: $ac_cv_header_openssl_crypto_h" >&5
+echo "${ECHO_T}$ac_cv_header_openssl_crypto_h" >&6
+
+fi
+if test $ac_cv_header_openssl_crypto_h = yes; then
+
+		cat >>confdefs.h <<\_ACEOF
 #define HAVE_SSL 1
 _ACEOF
 
-	LIBS="$LIBS -lssl"
-	echo "$as_me:$LINENO: checking for X509_free in -lcrypto" >&5
+		LIBS="$LIBS -lssl"
+		echo "$as_me:$LINENO: checking for X509_free in -lcrypto" >&5
 echo $ECHO_N "checking for X509_free in -lcrypto... $ECHO_C" >&6
 if test "${ac_cv_lib_crypto_X509_free+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
@@ -4087,15 +4226,159 @@ if test $ac_cv_lib_crypto_X509_free = yes; then
 fi
 
 fi
+
+
+fi
 enableval=""
 
+savedLIBS=$LIBS
+LIBS=
 # Check whether --enable-sasl or --disable-sasl was given.
 if test "${enable_sasl+set}" = set; then
   enableval="$enable_sasl"
 
 fi;
 if test x$enableval = xyes ; then
-	echo "$as_me:$LINENO: checking for sasl_decode64 in -lsasl2" >&5
+	if test "${ac_cv_header_sasl_sasl_h+set}" = set; then
+  echo "$as_me:$LINENO: checking for sasl/sasl.h" >&5
+echo $ECHO_N "checking for sasl/sasl.h... $ECHO_C" >&6
+if test "${ac_cv_header_sasl_sasl_h+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+fi
+echo "$as_me:$LINENO: result: $ac_cv_header_sasl_sasl_h" >&5
+echo "${ECHO_T}$ac_cv_header_sasl_sasl_h" >&6
+else
+  # Is the header compilable?
+echo "$as_me:$LINENO: checking sasl/sasl.h usability" >&5
+echo $ECHO_N "checking sasl/sasl.h usability... $ECHO_C" >&6
+cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+$ac_includes_default
+#include <sasl/sasl.h>
+_ACEOF
+rm -f conftest.$ac_objext
+if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
+  (eval $ac_compile) 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } &&
+	 { ac_try='test -z "$ac_c_werror_flag"
+			 || test ! -s conftest.err'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; } &&
+	 { ac_try='test -s conftest.$ac_objext'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+  ac_header_compiler=yes
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+ac_header_compiler=no
+fi
+rm -f conftest.err conftest.$ac_objext conftest.$ac_ext
+echo "$as_me:$LINENO: result: $ac_header_compiler" >&5
+echo "${ECHO_T}$ac_header_compiler" >&6
+
+# Is the header present?
+echo "$as_me:$LINENO: checking sasl/sasl.h presence" >&5
+echo $ECHO_N "checking sasl/sasl.h presence... $ECHO_C" >&6
+cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+#include <sasl/sasl.h>
+_ACEOF
+if { (eval echo "$as_me:$LINENO: \"$ac_cpp conftest.$ac_ext\"") >&5
+  (eval $ac_cpp conftest.$ac_ext) 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } >/dev/null; then
+  if test -s conftest.err; then
+    ac_cpp_err=$ac_c_preproc_warn_flag
+    ac_cpp_err=$ac_cpp_err$ac_c_werror_flag
+  else
+    ac_cpp_err=
+  fi
+else
+  ac_cpp_err=yes
+fi
+if test -z "$ac_cpp_err"; then
+  ac_header_preproc=yes
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+  ac_header_preproc=no
+fi
+rm -f conftest.err conftest.$ac_ext
+echo "$as_me:$LINENO: result: $ac_header_preproc" >&5
+echo "${ECHO_T}$ac_header_preproc" >&6
+
+# So?  What about this header?
+case $ac_header_compiler:$ac_header_preproc:$ac_c_preproc_warn_flag in
+  yes:no: )
+    { echo "$as_me:$LINENO: WARNING: sasl/sasl.h: accepted by the compiler, rejected by the preprocessor!" >&5
+echo "$as_me: WARNING: sasl/sasl.h: accepted by the compiler, rejected by the preprocessor!" >&2;}
+    { echo "$as_me:$LINENO: WARNING: sasl/sasl.h: proceeding with the compiler's result" >&5
+echo "$as_me: WARNING: sasl/sasl.h: proceeding with the compiler's result" >&2;}
+    ac_header_preproc=yes
+    ;;
+  no:yes:* )
+    { echo "$as_me:$LINENO: WARNING: sasl/sasl.h: present but cannot be compiled" >&5
+echo "$as_me: WARNING: sasl/sasl.h: present but cannot be compiled" >&2;}
+    { echo "$as_me:$LINENO: WARNING: sasl/sasl.h:     check for missing prerequisite headers?" >&5
+echo "$as_me: WARNING: sasl/sasl.h:     check for missing prerequisite headers?" >&2;}
+    { echo "$as_me:$LINENO: WARNING: sasl/sasl.h: see the Autoconf documentation" >&5
+echo "$as_me: WARNING: sasl/sasl.h: see the Autoconf documentation" >&2;}
+    { echo "$as_me:$LINENO: WARNING: sasl/sasl.h:     section \"Present But Cannot Be Compiled\"" >&5
+echo "$as_me: WARNING: sasl/sasl.h:     section \"Present But Cannot Be Compiled\"" >&2;}
+    { echo "$as_me:$LINENO: WARNING: sasl/sasl.h: proceeding with the preprocessor's result" >&5
+echo "$as_me: WARNING: sasl/sasl.h: proceeding with the preprocessor's result" >&2;}
+    { echo "$as_me:$LINENO: WARNING: sasl/sasl.h: in the future, the compiler will take precedence" >&5
+echo "$as_me: WARNING: sasl/sasl.h: in the future, the compiler will take precedence" >&2;}
+    (
+      cat <<\_ASBOX
+## ------------------------------------------ ##
+## Report this to the AC_PACKAGE_NAME lists.  ##
+## ------------------------------------------ ##
+_ASBOX
+    ) |
+      sed "s/^/$as_me: WARNING:     /" >&2
+    ;;
+esac
+echo "$as_me:$LINENO: checking for sasl/sasl.h" >&5
+echo $ECHO_N "checking for sasl/sasl.h... $ECHO_C" >&6
+if test "${ac_cv_header_sasl_sasl_h+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  ac_cv_header_sasl_sasl_h=$ac_header_preproc
+fi
+echo "$as_me:$LINENO: result: $ac_cv_header_sasl_sasl_h" >&5
+echo "${ECHO_T}$ac_cv_header_sasl_sasl_h" >&6
+
+fi
+if test $ac_cv_header_sasl_sasl_h = yes; then
+
+		echo "$as_me:$LINENO: checking for sasl_decode64 in -lsasl2" >&5
 echo $ECHO_N "checking for sasl_decode64 in -lsasl2... $ECHO_C" >&6
 if test "${ac_cv_lib_sasl2_sasl_decode64+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
@@ -4165,11 +4448,15 @@ if test $ac_cv_lib_sasl2_sasl_decode64 = yes; then
 #define HAVE_SASL 1
 _ACEOF
 
-			LIBS="$LIBS -lsasl2"
+			savedLIBS="$savedLIBS -lsasl2"
 fi
 
 fi
+
+
+fi
 enableval=""
+LIBS=$savedLIBS
 
 # Check whether --enable-inet6 or --disable-inet6 was given.
 if test "${enable_inet6+set}" = set; then
@@ -4198,7 +4485,6 @@ _ACEOF
 fi
 enableval=""
 
-
 # Check whether --enable-debug or --disable-debug was given.
 if test "${enable_debug+set}" = set; then
   enableval="$enable_debug"
@@ -4211,7 +4497,6 @@ _ACEOF
 
 fi
 enableval=""
-
 
 echo "$as_me:$LINENO: checking strftime accepts %_d format" >&5
 echo $ECHO_N "checking strftime accepts %_d format... $ECHO_C" >&6
@@ -4342,6 +4627,7 @@ echo "${ECHO_T}no" >&6
 fi
 rm -f core *.core gmon.out bb.out conftest$ac_exeext conftest.$ac_objext conftest.$ac_ext
 fi
+
 
 
           ac_config_files="$ac_config_files Makefile"
