@@ -3868,11 +3868,17 @@ if test "${with_gnutls+set}" = set; then :
 fi
 
 if test x$enableval = xyes ; then
+<<<<<<< HEAD
 	$as_echo "#define HAVE_SSL 1" >>confdefs.h
 
 	if test "x$with_gnutls" != "xyes"; then
-		LIBS="$LIBS -lssl -lcrypto"
-		{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for X509_free in -lcrypto" >&5
+		ac_fn_c_check_header_mongrel "$LINENO" "openssl/crypto.h" "ac_cv_header_openssl_crypto_h" "$ac_includes_default"
+if test "x$ac_cv_header_openssl_crypto_h" = xyes; then :
+
+			$as_echo "#define HAVE_SSL 1" >>confdefs.h
+
+			LIBS="$LIBS -lssl"
+			{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for X509_free in -lcrypto" >&5
 $as_echo_n "checking for X509_free in -lcrypto... " >&6; }
 if ${ac_cv_lib_crypto_X509_free+:} false; then :
   $as_echo_n "(cached) " >&6
@@ -3912,6 +3918,9 @@ if test "x$ac_cv_lib_crypto_X509_free" = xyes; then :
   LIBS="$LIBS -lcrypto"
 fi
 
+fi
+
+
 	else
 		$as_echo "#define HAVE_GNUTLS 1" >>confdefs.h
 
@@ -3920,13 +3929,18 @@ fi
 fi
 enableval=""
 
+savedLIBS=$LIBS
+LIBS=
 # Check whether --enable-sasl was given.
 if test "${enable_sasl+set}" = set; then :
   enableval=$enable_sasl;
 fi
 
 if test x$enableval = xyes ; then
-	{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for sasl_decode64 in -lsasl2" >&5
+	ac_fn_c_check_header_mongrel "$LINENO" "sasl/sasl.h" "ac_cv_header_sasl_sasl_h" "$ac_includes_default"
+if test "x$ac_cv_header_sasl_sasl_h" = xyes; then :
+
+		{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for sasl_decode64 in -lsasl2" >&5
 $as_echo_n "checking for sasl_decode64 in -lsasl2... " >&6; }
 if ${ac_cv_lib_sasl2_sasl_decode64+:} false; then :
   $as_echo_n "(cached) " >&6
@@ -3966,11 +3980,15 @@ if test "x$ac_cv_lib_sasl2_sasl_decode64" = xyes; then :
 
 			$as_echo "#define HAVE_SASL 1" >>confdefs.h
 
-			LIBS="$LIBS -lsasl2"
+			savedLIBS="$savedLIBS -lsasl2"
 fi
 
 fi
+
+
+fi
 enableval=""
+LIBS=$savedLIBS
 
 # Check whether --enable-inet6 was given.
 if test "${enable_inet6+set}" = set; then :
@@ -3995,7 +4013,6 @@ if test x$enableval = xyes ; then
 fi
 enableval=""
 
-
 # Check whether --enable-debug was given.
 if test "${enable_debug+set}" = set; then :
   enableval=$enable_debug;
@@ -4006,7 +4023,6 @@ if test x$enableval = xyes ; then
 
 fi
 enableval=""
-
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking strftime accepts %_d format" >&5
 $as_echo_n "checking strftime accepts %_d format... " >&6; }
@@ -4096,6 +4112,7 @@ fi
 rm -f core *.core core.conftest.* gmon.out bb.out conftest$ac_exeext \
   conftest.$ac_objext conftest.beam conftest.$ac_ext
 fi
+
 
 
 
