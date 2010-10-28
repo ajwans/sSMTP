@@ -1343,14 +1343,14 @@ ssize_t smtp_write(int fd, char *format, ...)
 }
 
 #ifdef HAVE_SASL
-int use_context(
+int get_user(
 	void		*context __attribute__((__unused__)),
 	int		id,
 	const char	**result,
 	unsigned	*len)
 {
 	if (log_level) {
-		log_event(LOG_INFO, "use_context: id %d", id);
+		log_event(LOG_INFO, "get_user: id %d", id);
 	}
 
 	if (id != SASL_CB_USER && id != SASL_CB_AUTHNAME) {
@@ -1365,7 +1365,7 @@ int use_context(
 		*len = strlen(*result);
 
 	if (log_level) {
-		log_event(LOG_INFO, "use_context: %s %d%s", *result,
+		log_event(LOG_INFO, "get_user: %s %d%s", *result,
 				len ? *len : 0, len ? "" : " (null)");
 	}
 
@@ -1373,13 +1373,13 @@ int use_context(
 }
 
 static int get_realm(
-		void		*context,
+		void		*context __attribute__((__unused__)),
 		int		id __attribute__((__unused__)),
 		const char	**availrealms __attribute__ ((unused)),
 		const char	**result)
 {
 	log_event(LOG_INFO, "get_realm");
-	*result = strdup(context);
+	*result = "";
 	return SASL_OK;
 }
 
@@ -1399,6 +1399,17 @@ static int get_secret(
 	if (log_level) {
 		log_event(LOG_INFO, "get_secret: password is '%s'", auth_pass);
 	}
+
+	return SASL_OK;
+}
+
+static int
+log_for_sasl(
+	void		*context __attribute__((__unused__)),
+	int		level,
+	const char	*message)
+{
+	log_event(level, "SASL: %s", message);
 
 	return SASL_OK;
 }
@@ -1512,9 +1523,10 @@ int ssmtp(char *argv[])
 		unsigned int	clientoutlen;
 
 		sasl_callback_t	cb[] = {
+			{ SASL_CB_LOG,		log_for_sasl,	NULL },
 			{ SASL_CB_GETREALM,	get_realm,	NULL },
-			{ SASL_CB_USER,		use_context,	NULL },
-			{ SASL_CB_AUTHNAME,	use_context,	NULL },
+			{ SASL_CB_USER,		get_user,	NULL },
+			{ SASL_CB_AUTHNAME,	get_user,	NULL },
 			{ SASL_CB_PASS,		get_secret,	NULL },
 			{ SASL_CB_LIST_END,	NULL,		NULL }
 		};
@@ -1559,25 +1571,13 @@ int ssmtp(char *argv[])
 		}
 
 		sprintf(buf, "AUTH %s", mech);
-
-		/*
-		 * when sasl_client_start returns PLAIN method the clientout
-		 * and clientoutlen will be set
-		 */
-		if (!strcmp(mech, "PLAIN") && ret == SASL_OK) {
-			int		res;
-
-			smtp_write(sock, "%s", buf);
-			smtp_read(sock, buf);
-
-			res = sasl_encode64(clientout, clientoutlen, buf,
-							BUF_SZ, NULL);
-
-			log_event(LOG_INFO, "%d writing %s as %s", res,
-								clientout, buf);
-			goto authorised;
+		if (clientoutlen) {
+			ret = strlen(buf);
+			buf[ret++] = ' ';
+			sasl_encode64(clientout, clientoutlen, &buf[ret],
+						BUF_SZ - ret, NULL);
 		}
-
+	
 		do {
 			char		buf_decode[1024];
 			unsigned	blen = 0;
@@ -1587,7 +1587,10 @@ int ssmtp(char *argv[])
 			smtp_write(sock, "%s", buf);
 
 			memset(buf, 0, BUF_SZ);
-			smtp_read(sock, buf);
+			if (smtp_read(sock, buf) == 2) {
+				memset(buf, 0, BUF_SZ);
+				goto finished;
+			}
 
 			sasl_decode64(&buf[4], strlen(buf) - 4, buf_decode,
 						sizeof(buf_decode), &blen);
@@ -1600,8 +1603,8 @@ int ssmtp(char *argv[])
 				(const char **)&clientout, &clientoutlen);
 
 			if (log_level) {
-				log_event(LOG_INFO, "response %d bytes '%s'",
-						clientoutlen, clientout);
+				log_event(LOG_INFO, "response %d: %d '%s'",
+						ret, clientoutlen, clientout);
 			}
 
 			sasl_encode64(clientout, clientoutlen, buf, BUF_SZ,
@@ -1609,7 +1612,8 @@ int ssmtp(char *argv[])
 		} while (ret == SASL_CONTINUE);
 
 		if (ret != SASL_OK) {
-			die("SASL failed: %d", ret);
+			log_event(LOG_INFO, "%s", sasl_errdetail(pconn));
+			die("SASL failed: %s", sasl_errstring(ret, NULL, NULL));
 		}
 
 		goto authorised;
@@ -1675,6 +1679,11 @@ authorised:
 		if(smtp_okay(sock, buf) == False) {
 			die("Authorization failed (%s)", buf);
 		}
+
+finished:
+		sasl_dispose(&pconn);
+		sasl_done();
+
 	}
 
 	/* Send "MAIL FROM:" line */
