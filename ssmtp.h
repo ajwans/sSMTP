@@ -40,6 +40,20 @@ typedef struct string_list rcpt_t;
 /* arpadate.c */
 void get_arpadate(char *);
 
+#ifdef HAVE_SASL
+#define B64DEC(in, inlen, out, outmax, outlen) \
+	sasl_decode64(in, inlen, out, outmax, outlen)
+#define B64ENC(in, inlen, out, outmax, outlen) \
+	sasl_encode64(in, inlen, out, outmax, outlen)
+#else
+#define B64DEC(in, inlen, out, outmax, outlen) do {	\
+		*outlen = from64tobits(out, in)		\
+	} while (0)
+#define B64ENC(in, inlen, out, outmax, outlen) \
+	to64frombits(out, in, inlen)
+
 /* base64.c */
 void to64frombits(unsigned char *, const unsigned char *, int);
 int from64tobits(char *, const char *);
+#endif /* HAVE_SASL */
+

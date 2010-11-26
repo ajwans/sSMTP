@@ -662,7 +662,7 @@ void rcpt_parse(char *str)
 
 #ifdef MD5AUTH
 int crammd5(char *challengeb64, char *username, char *password,
-		char *responseb64)
+		char *responseb64, int responselen)
 {
 	int i;
 	unsigned char digest[MD5_DIGEST_LEN];
@@ -676,7 +676,7 @@ int crammd5(char *challengeb64, char *username, char *password,
 	strncpy (secret, password, sizeof(secret));
 	if (!challengeb64 || strlen(challengeb64) > sizeof(challenge) * 3 / 4)
 		return 0;
-	from64tobits(challenge, challengeb64);
+	B64DEC(challengeb64, strlen(challengeb64), challenge, BUF_SZ, &i);
 
 	hmac_md5(challenge, strlen(challenge), secret, strlen(secret), digest);
 
@@ -692,7 +692,7 @@ int crammd5(char *challengeb64, char *username, char *password,
 	strncpy (response, username, sizeof(response) - sizeof(digascii) - 2);
 	strcat (response, " ");
 	strcat (response, digascii);
-	to64frombits(responseb64, response, strlen(response));
+	B64ENC(response, strlen(response), responseb64, responselen, NULL);
 
 	return 1;
 }
@@ -1611,7 +1611,7 @@ int ssmtp(char *argv[])
 		if (clientoutlen) {
 			ret = strlen(buf);
 			buf[ret++] = ' ';
-			sasl_encode64(clientout, clientoutlen, &buf[ret],
+			B64ENC(clientout, clientoutlen, &buf[ret],
 						BUF_SZ - ret, NULL);
 		}
 
@@ -1629,7 +1629,7 @@ int ssmtp(char *argv[])
 				goto finished;
 			}
 
-			sasl_decode64(&buf[4], strlen(buf) - 4, buf_decode,
+			B64DEC(&buf[4], strlen(buf) - 4, buf_decode,
 						sizeof(buf_decode), &blen);
 			if (log_level) {
 				log_event(LOG_INFO, "decoded '%s' as '%s' (%d)",
@@ -1644,8 +1644,7 @@ int ssmtp(char *argv[])
 						ret, clientoutlen, clientout);
 			}
 
-			sasl_encode64(clientout, clientoutlen, buf, BUF_SZ,
-									NULL);
+			B64ENC(clientout, clientoutlen, buf, BUF_SZ, &blen);
 		} while (ret == SASL_CONTINUE);
 
 		if (ret != SASL_OK) {
@@ -1671,14 +1670,14 @@ int ssmtp(char *argv[])
 					sizeof(challenge));
 
 			memset(buf, 0, bufsize);
-			crammd5(challenge, auth_user, auth_pass, buf);
+			crammd5(challenge, auth_user, auth_pass, buf, bufsize);
 			goto authorised;
 		}
 #endif
-		memset(buf, 0, bufsize);
-		to64frombits((unsigned char *)buf, (unsigned char *)auth_user,
-							strlen(auth_user));
 		if (use_oldauth) {
+			memset(buf, 0, bufsize);
+			B64ENC(auth_user, strlen(auth_user), buf, bufsize,
+								NULL);
 			outbytes += smtp_write(sock, "AUTH LOGIN %s", buf);
 		}
 		else {
@@ -1690,8 +1689,8 @@ int ssmtp(char *argv[])
 			}
 			/* we assume server asked us for Username */
 			memset(buf, 0, bufsize);
-			to64frombits((unsigned char *)buf,
-				(unsigned char *)auth_user, strlen(auth_user));
+			B64ENC(auth_user, strlen(auth_user), buf, bufsize,
+								NULL);
 			outbytes += smtp_write(sock, buf);
 		}
 
@@ -1704,8 +1703,7 @@ int ssmtp(char *argv[])
 #ifdef MD5AUTH
 		}
 #endif
-		to64frombits((unsigned char *)buf, (unsigned char *)auth_pass,
-							strlen(auth_pass));
+		B64ENC(auth_pass, strlen(auth_pass), buf, bufsize, NULL);
 authorised:
 		/* We do NOT want the password output to STDERR
 		 * even base64 encoded.*/
@@ -1723,8 +1721,9 @@ finished:
 #ifdef HAVE_SASL
 		sasl_dispose(&pconn);
 		sasl_done();
-#endif
+#else
 		;
+#endif
 	}
 
 	/* Send "MAIL FROM:" line */
