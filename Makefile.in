@@ -24,7 +24,7 @@ INSTALLED_REVALIASES_FILE=$(REVALIASES_FILE)
 # Programs
 GEN_CONFIG=$(srcdir)/generate_config
 
-SRCS=ssmtp.c arpadate.c base64.c xgethostname.c @SRCS@
+SRCS=ssmtp.c arpadate.c xgethostname.c @SRCS@
 
 OBJS=$(SRCS:.c=.o)
 
@@ -92,3 +92,6 @@ distclean: clean docclean
 .PHONY: docclean
 docclean:
 	$(RM) *.dvi *.log *.aux
+
+%.o: %.c %.h
+	$(CC) $(CFLAGS) -c -o $@ $<

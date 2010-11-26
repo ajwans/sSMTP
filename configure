@@ -4814,6 +4814,10 @@ fi
 enableval=""
 LIBS=$savedLIBS
 
+if test "x$ac_cv_lib_sasl2_sasl_decode64" != xyes ; then
+	SRCS="$SRCS base64.c"
+fi
+
 # Check whether --enable-inet6 was given.
 if test "${enable_inet6+set}" = set; then
   enableval=$enable_inet6;

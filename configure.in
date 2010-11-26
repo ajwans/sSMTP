@@ -81,6 +81,10 @@ fi
 enableval=""
 LIBS=$savedLIBS
 
+if test "x$ac_cv_lib_sasl2_sasl_decode64" != xyes ; then
+	SRCS="$SRCS base64.c"
+fi
+
 AC_ARG_ENABLE(inet6,
 [  --enable-inet6         support for IPv6 transport])
 if test x$enableval = xyes ; then
