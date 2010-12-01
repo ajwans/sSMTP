@@ -5,3 +5,5 @@ config.log
 config.status
 config.cache
 ssmtp
+*~
+.project
