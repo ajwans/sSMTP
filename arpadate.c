@@ -1,9 +1,10 @@
 /*
- *  arpadate.c - get_arpadate() is a function returning the date in the
- *               ARPANET format (see RFC822 and RFC1123)
- *  Copyright (C) 1998 Hugo Haas
+ *  arpadate.c - arpadate functions for sSMTP
  *
- *  Inspired by smail source code by Ronald S. Karr and Landon Curt Noll
+ *  Copyright (C) 2010 Brane F. Gracnar
+ *
+ *  Inspired by smail source code by Ronald S. Karr and
+ *  Landon Curt Noll and original arpadate.c by Hugo Haas
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -20,81 +21,52 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#define ARPADATE_LENGTH	32
+/**
+ * NOTE: original functions were removed becouse every
+ *       UNIX system supports proper implementation of
+ *       strftime(3) in libc. New ones are just more
+ *       handy to use.
+ */
 
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
+#include <string.h>
+#include "arpadate.h"
 
-void
-get_arpadate (char *d_string)
-{
-  struct tm *date;
-#ifdef USE_OLD_ARPADATE
-  static char *week_day[] =
-  {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
-  static char *month[] =
-  {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul",
-   "Aug", "Sep", "Oct", "Nov", "Dec"};
-  static char timezone[3];
+#define DATE_FORMAT "%a, %e %b %Y %H:%M:%S %z"
+#define DATE_FORMAT_TZ "%a, %e %b %Y %H:%M:%S %z (%Z)"
 
-  time_t current;
-  int offset, gmt_yday, gmt_hour, gmt_min;
+#define DATE_BUF_LEN 50
+char date_buf[DATE_BUF_LEN];
 
-  /* Get current time */
-  (void) time (&current);
+char *get_arpadate (char *dst, size_t max, time_t *t, int with_tz) {
+	struct tm *date;
+	date = localtime(t);
 
-  /* Get GMT and then local dates */
-  date = gmtime ((const time_t *) &current);
-  gmt_yday = date->tm_yday;
-  gmt_hour = date->tm_hour;
-  gmt_min = date->tm_min;
-  date = localtime ((const time_t *) &current);
+	/** select format */
+	char *format = DATE_FORMAT;
+	if (with_tz)
+		format = DATE_FORMAT_TZ;
 
-  /* Calculates offset */
+	/** sanitize destination buffer */
+	memset(dst, '\0', max);
 
-  offset = (date->tm_hour - gmt_hour) * 60 + (date->tm_min - gmt_min);
-  /* Be careful, there can be problems if the day has changed between the
-     evaluation of local and gmt's one */
-  if (date->tm_yday != gmt_yday)
-    {
-      if (date->tm_yday == (gmt_yday + 1))
-	offset += 1440;
-      else if (date->tm_yday == (gmt_yday - 1))
-	offset -= 1440;
-      else
-	offset += (date->tm_yday > gmt_yday) ? -1440 : 1440;
-    }
+	/** just format the goddamn string... */
+	strftime(dst, max, format, date);
 
-  if (offset >= 0)
-    sprintf (timezone, "+%02d%02d", offset / 60, offset % 60);
-  else
-    sprintf (timezone, "-%02d%02d", -offset / 60, -offset % 60);
+	/** return destination buffer */
+	return dst;
+}
 
-  sprintf (d_string, "%s, %d %s %04d %02d:%02d:%02d %s",
-	   week_day[date->tm_wday],
-	   date->tm_mday, month[date->tm_mon], date->tm_year + 1900,
-	   date->tm_hour, date->tm_min, date->tm_sec, timezone);
-#else
-  time_t now;
-  const char *format;
+char *get_arpadate_now (void) {
+	time_t now;
+	now = time(NULL);
+	return get_arpadate(date_buf, sizeof(date_buf), &now, 0);
+}
 
-  now = time(NULL);
-  date = localtime((const time_t *)&now);
-
-  /* RFC822 format string borrowed from GNU shellutils date.c */
-  /*
-   * Use whichever format we can to get a leading space where the
-   * monthday is a single digit.
-   */
-#ifdef HAVE_STRFTIME_UNDERSCORE_D
-  format = "%a, %_d %b %Y %H:%M:%S %z";
-#elif HAVE_STRFTIME_E
-  format = "%a, %e %b %Y %H:%M:%S %z";
-#else
-  format = date->tm_mday < 10	? "%a,  %d %b %Y %H:%M:%S %z"
-				: "%a, %d %b %Y %H:%M:%S %z";
-#endif
-  (void)strftime(d_string, ARPADATE_LENGTH, format, date);
-#endif
+char *get_arpadate_now_tz (void) {
+	time_t now;
+	now = time(NULL);
+	return get_arpadate(date_buf, sizeof(date_buf), &now, 1);
 }

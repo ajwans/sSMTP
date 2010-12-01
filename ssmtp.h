@@ -37,9 +37,6 @@ typedef struct string_list headers_t;
 typedef struct string_list rcpt_t;
 
 
-/* arpadate.c */
-void get_arpadate(char *);
-
 #ifdef HAVE_SASL
 #define B64DEC(in, inlen, out, outmax, outlen) \
 	sasl_decode64(in, inlen, out, outmax, outlen)

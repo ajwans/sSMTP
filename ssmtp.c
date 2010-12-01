@@ -18,6 +18,7 @@
 #include <netinet/in.h>
 #include <sys/param.h>
 #include <unistd.h>
+#include <sys/types.h>
 #include <stdlib.h>
 #include <stdarg.h>
 #include <syslog.h>
@@ -45,6 +46,7 @@
 #include "ssmtp.h"
 #include <fcntl.h>
 #include "xgethostname.h"
+#include "arpadate.h"
 
 /* Warning removal by defining defaults */
 #ifndef REVALIASES_FILE
@@ -92,6 +94,8 @@ char *root = NULL;
 char *tls_cert = "/etc/ssl/certs/ssmtp.pem";	/* Default Certificate */
 char *uad = '\0';
 char *config_file = '\0';		/* alternate configuration file */
+
+FILE *input_tmpf = NULL;		/* temporary input filehandle - used only by dead_letter() */
 
 headers_t headers, *ht;
 
@@ -223,8 +227,12 @@ void dead_letter(void)
 	if((fp = fopen(path, "a")) == (FILE *)NULL) {
 		/* Perhaps the person doesn't have a homedir... */
 		if(log_level > 0) {
-			log_event(LOG_ERR, "Can't open %s failing horribly!",
-					path);
+			log_event(
+				LOG_ERR,
+				"Can't open %s: %s; failing horribly!",
+				path,
+				strerror(errno)
+			);
 		}
 		free(path);
 		return;
@@ -233,15 +241,23 @@ void dead_letter(void)
 	/* We start on a new line with a blank line separating messages */
 	(void)fprintf(fp, "\n\n");
 
-	while(fgets(buf, sizeof(buf), stdin)) {
+	FILE *input = input_tmpf;
+	if (input == NULL) {
+		input = stdin;
+	} else {
+		// rewind handle to beginning...
+		rewind(input);
+	}
+
+	while(fgets(buf, sizeof(buf), input)) {
 		(void)fputs(buf, fp);
 	}
 
 	if(fclose(fp) == -1) {
 		if(log_level > 0) {
 			log_event(LOG_ERR,
-				"Can't close %s/dead.letter, possibly truncated"
-				, pw->pw_dir);
+				"Can't close %s/dead.letter: %s"
+				, pw->pw_dir, strerror(errno));
 		}
 	}
 	free(path);
@@ -1133,7 +1149,7 @@ int smtp_open(char *host, int port)
 
 	/* Check we can reach the host */
 	if (getaddrinfo(host, servname, &hints, &ai0)) {
-		log_event(LOG_ERR, "Unable to locate %s", host);
+		log_event(LOG_ERR, "Unable to locate %s: %s", host, strerror(errno));
 		return(-1);
 	}
 
@@ -1153,14 +1169,14 @@ int smtp_open(char *host, int port)
 
 	if(s < 0) {
 		log_event (LOG_ERR,
-			"Unable to connect to \"%s\" port %d.\n", host, port);
+			"Unable to connect to \"%s\" port %d: \n", host, port, strerror(errno));
 
 		return(-1);
 	}
 #else
 	/* Check we can reach the host */
 	if((hent = gethostbyname(host)) == (struct hostent *)NULL) {
-		log_event(LOG_ERR, "Unable to locate %s", host);
+		log_event(LOG_ERR, "Unable to resolve %s: %s", host, strerror(errno));
 		return(-1);
 	}
 
@@ -1171,14 +1187,14 @@ int smtp_open(char *host, int port)
 
 	/* Create a socket for the connection */
 	if((s = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP)) < 0) {
-		log_event(LOG_ERR, "Unable to create a socket");
+		log_event(LOG_ERR, "Unable to create a socket: %s", strerror(errno));
 		return(-1);
 	}
 
 	for (i = 0; ; ++i) {
 		if (!hent->h_addr_list[i]) {
-			log_event(LOG_ERR, "Unable to connect to %s:%d", host,
-					port);
+			log_event(LOG_ERR, "Unable to connect to %s port %d: %s", host,
+					port, strerror(errno));
 			return(-1);
 		}
 
@@ -1480,6 +1496,46 @@ int ssmtp(char *argv[])
 	int timeout = 0;
 	int bufsize = sizeof(b)-1;
 
+	// create temporary file in which we're going
+	// to store stdin
+	FILE *input = tmpfile();
+
+	// do we have tmpfile?
+	if (input == NULL) {
+		log_event(
+			LOG_ERR,
+			"Unable to create temporary file for stdin storage: %s; falling back to direct stdin usage.",
+			strerror(errno)
+		);
+		input = stdin;
+	} else {
+		// Add X-Start-Date to message
+		fprintf(input, "X-Start-Date: %s\r\n", get_arpadate_now());
+
+		// read from stdin, write to tmpfile
+		char tmpbuf[257];
+		while (fgets(tmpbuf, sizeof(tmpbuf), stdin) != NULL) {
+			if (fputs(tmpbuf, input) == EOF) {
+				int err = errno;
+				log_event(
+					LOG_ERR,
+					"Unable to write stdin buffer [%d of max %d bytes] to temporary file: %s\n",
+					strlen(tmpbuf),
+					sizeof(tmpbuf),
+					strerror(err)
+				);
+			}
+		}
+
+		// rewind tmpfile back to beginning...
+		// we'll use tmpf later instead of stdin...
+		rewind(input);
+
+		// store tmp fd to global too...
+		// maybe we'll have to write a dead.letter
+		input_tmpf = input;
+	}
+
 	b[0] = '.';
 	outbytes = 0;
 	ht = &headers;
@@ -1488,7 +1544,6 @@ int ssmtp(char *argv[])
 	if((pw = getpwuid(uid)) == (struct passwd *)NULL) {
 		die("Could not find password entry for UID %d", uid);
 	}
-	get_arpadate(arpadate);
 
 	if(read_config() == False) {
 		log_event(LOG_INFO, "%s not found", config_file);
@@ -1508,7 +1563,7 @@ int ssmtp(char *argv[])
 
 	rt = &rcpt_list;
 
-	header_parse(stdin);
+	header_parse(input);
 
 #if 1
 	/*
@@ -1784,9 +1839,13 @@ finished:
 		die("%s", buf);
 	}
 
-	outbytes += smtp_write(sock,
-		"Received: by %s (sSMTP sendmail emulation); %s", hostname,
-		arpadate);
+	outbytes += smtp_write(
+		sock,
+		"Received: by %s (sSMTP, from userid %d);\r\n\t%s",
+		hostname,
+		getuid(),
+		get_arpadate_now_tz()
+	);
 
 	if(have_from == False) {
 		outbytes += smtp_write(sock, "From: %s", from);
@@ -1798,7 +1857,7 @@ finished:
 	}
 
 	if(have_date == False) {
-		outbytes += smtp_write(sock, "Date: %s", arpadate);
+		outbytes += smtp_write(sock, "Date: %s", get_arpadate_now());
 	}
 
 #ifdef HASTO_OPTION
@@ -1822,26 +1881,27 @@ finished:
 	 * prevent blocking on pipes, we really shouldnt be using stdio
 	 * functions like fgets in the first place
 	 */
-	fcntl(STDIN_FILENO,F_SETFL,O_NONBLOCK);
+	if (fileno(input) == fileno(stdin))
+		fcntl(fileno(input), F_SETFL,O_NONBLOCK);
 
-	while(!feof(stdin)) {
-		if (!fgets(buf, bufsize, stdin)) {
+	while(!feof(input)) {
+		if (!fgets(buf, bufsize, input)) {
 			/* if nothing was received, then no transmission
 			 * over smtp should be done */
 			sleep(1);
-			/* don't hang forever when reading from stdin */
+			/* don't hang forever when reading from input */
 			if (++timeout >= MEDWAIT) {
-				log_event(LOG_ERR, "killed: timeout on stdin "
+				log_event(LOG_ERR, "killed: timeout on input "
 						"while reading body -- message "
 						"saved to dead.letter.");
-				die("Timeout on stdin while reading body");
+				die("Timeout on input while reading body");
 			}
 			continue;
 		}
 		/* Trim off \n, double leading .'s */
 		leadingdot = standardise(buf, &linestart);
 
-		if (linestart || feof(stdin)) {
+		if (linestart || feof(input)) {
 			linestart = True;
 			outbytes += smtp_write(sock, "%s",
 					leadingdot ? b : buf);
