@@ -20,6 +20,5 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-char *get_arpadate (char *dst, size_t max, time_t *t, int with_tz);
 char *get_arpadate_now (void);
 char *get_arpadate_now_tz (void);
