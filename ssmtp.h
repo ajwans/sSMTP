@@ -50,7 +50,7 @@ typedef struct string_list rcpt_t;
 	to64frombits(out, in, inlen)
 
 /* base64.c */
-void to64frombits(unsigned char *, const unsigned char *, int);
+void to64frombits(char *, const char *, int);
 int from64tobits(char *, const char *);
 #endif /* HAVE_SASL */
 

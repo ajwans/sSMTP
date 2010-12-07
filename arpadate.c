@@ -42,12 +42,11 @@ char date_buf[DATE_BUF_LEN];
 
 char *get_arpadate (char *dst, size_t max, time_t *t, int with_tz) {
 	struct tm *date;
+	char *format = NULL;
 	date = localtime(t);
 
 	/** select format */
-	char *format = DATE_FORMAT;
-	if (with_tz)
-		format = DATE_FORMAT_TZ;
+	format = (with_tz) ? DATE_FORMAT_TZ : DATE_FORMAT;
 
 	/** sanitize destination buffer */
 	memset(dst, '\0', max);
