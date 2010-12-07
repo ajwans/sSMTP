@@ -162,7 +162,7 @@ void dead_letter(void)
 	char buf[(BUF_SZ + 1)];
 	struct passwd *pw;
 	uid_t uid;
-	FILE *fp;
+	FILE *fp, *input;
 
 	uid = getuid();
 	pw = getpwuid(uid);
@@ -212,11 +212,11 @@ void dead_letter(void)
 	/* We start on a new line with a blank line separating messages */
 	(void)fprintf(fp, "\n\n");
 
-	FILE *input = input_tmpf;
+	input = input_tmpf;
 	if (input == NULL) {
 		input = stdin;
 	} else {
-		// rewind handle to beginning...
+		/* rewind handle to beginning... */
 		rewind(input);
 	}
 
@@ -1067,7 +1067,6 @@ int smtp_open(char *host, int port)
 
 	/* Init SSL stuff */
 	SSL_CTX *ctx;
-	SSL_METHOD *meth;
 	X509 *server_cert;
 
 	SSL_load_error_strings();
@@ -1451,12 +1450,14 @@ int ssmtp(char *argv[])
 	bool_t minus_v_save, leadingdot, linestart = True;
 	int timeout = 0;
 	int bufsize = sizeof(b)-1;
+	char tmpbuf[257];
+	FILE *input = NULL;
 
-	// create temporary file in which we're going
-	// to store stdin
-	FILE *input = tmpfile();
+	/* create temporary file in which we're going */
+	/* to store stdin */
+	input = tmpfile();
 
-	// do we have tmpfile?
+	/* do we have tmpfile? */
 	if (input == NULL) {
 		log_event(
 			LOG_ERR,
@@ -1465,11 +1466,10 @@ int ssmtp(char *argv[])
 		);
 		input = stdin;
 	} else {
-		// Add X-Start-Date to message
+		/* Add X-Start-Date to message */
 		fprintf(input, "X-Start-Date: %s\r\n", get_arpadate_now());
 
-		// read from stdin, write to tmpfile
-		char tmpbuf[257];
+		/* read from stdin, write to tmpfile */
 		while (fgets(tmpbuf, sizeof(tmpbuf), stdin) != NULL) {
 			if (fputs(tmpbuf, input) == EOF) {
 				int err = errno;
@@ -1483,12 +1483,12 @@ int ssmtp(char *argv[])
 			}
 		}
 
-		// rewind tmpfile back to beginning...
-		// we'll use tmpf later instead of stdin...
+		/* rewind tmpfile back to beginning... */
+		/* we'll use tmpf later instead of stdin... */
 		rewind(input);
 
-		// store tmp fd to global too...
-		// maybe we'll have to write a dead.letter
+		/* store tmp fd to global too... */
+		/* maybe we'll have to write a dead.letter */
 		input_tmpf = input;
 	}
 
@@ -1715,7 +1715,10 @@ int ssmtp(char *argv[])
 		}
 #endif
 		B64ENC(auth_pass, strlen(auth_pass), buf, bufsize, NULL);
+
+#if defined(HAVE_SASL) || defined(MD5AUTH)
 authorised:
+#endif
 		/* We do NOT want the password output to STDERR
 		 * even base64 encoded.*/
 		minus_v_save = minus_v;
@@ -1728,12 +1731,10 @@ authorised:
 			die("Authorization failed (%s)", buf);
 		}
 
-finished:
 #ifdef HAVE_SASL
+finished:
 		sasl_dispose(&pconn);
 		sasl_done();
-#else
-		;
 #endif
 
 	}
