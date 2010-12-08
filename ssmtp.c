@@ -116,7 +116,7 @@ ssize_t outbytes;
 /*
  * log_event() -- Write event to syslog (or log file if defined)
  */
-void log_event(int priority, char *format, ...)
+static void log_event(int priority, char *format, ...)
 {
 	char buf[(BUF_SZ + 1)];
 	va_list ap;
@@ -650,21 +650,22 @@ void rcpt_parse(char *str)
 int crammd5(char *challengeb64, char *username, char *password,
 		char *responseb64, int responselen)
 {
-	int i;
+	unsigned int i;
 	unsigned char digest[MD5_DIGEST_LEN];
 	unsigned char digascii[MD5_DIGEST_LEN * 2];
-	unsigned char challenge[(BUF_SZ + 1)];
-	unsigned char response[(BUF_SZ + 1)];
-	unsigned char secret[(MD5_BLOCK_LEN + 1)];
+	char challenge[(BUF_SZ + 1)];
+	char response[(BUF_SZ + 1)];
+	char secret[(MD5_BLOCK_LEN + 1)];
 
 	memset (secret,0,sizeof(secret));
 	memset (challenge,0,sizeof(challenge));
-	strncpy (secret, password, sizeof(secret));
+	strncpy ((char *)secret, password, sizeof(secret));
 	if (!challengeb64 || strlen(challengeb64) > sizeof(challenge) * 3 / 4)
 		return 0;
 	B64DEC(challengeb64, strlen(challengeb64), challenge, BUF_SZ, &i);
 
-	hmac_md5(challenge, strlen(challenge), secret, strlen(secret), digest);
+	hmac_md5((unsigned char *)challenge, strlen(challenge),
+			(unsigned char *)secret, strlen(secret), digest);
 
 	for (i = 0; i < MD5_DIGEST_LEN; i++) {
 		digascii[2 * i] = hextab[digest[i] >> 4];
@@ -677,7 +678,7 @@ int crammd5(char *challengeb64, char *username, char *password,
 
 	strncpy (response, username, sizeof(response) - sizeof(digascii) - 2);
 	strcat (response, " ");
-	strcat (response, digascii);
+	strcat (response, (char *)digascii);
 	B64ENC(response, strlen(response), responseb64, responselen, NULL);
 
 	return 1;
@@ -1441,9 +1442,6 @@ void handler(void)
 int ssmtp(char *argv[])
 {
 	char b[(BUF_SZ + 2)], *buf = b+1, *p, *q;
-#if defined MD5AUTH
-	char challenge[(BUF_SZ + 1)];
-#endif
 	struct passwd *pw;
 	int i, sock;
 	uid_t uid;
@@ -1711,9 +1709,6 @@ int ssmtp(char *argv[])
 		}
 		memset(buf, 0, bufsize);
 
-#ifdef MD5AUTH
-		}
-#endif
 		B64ENC(auth_pass, strlen(auth_pass), buf, bufsize, NULL);
 
 #if defined(HAVE_SASL) || defined(MD5AUTH)
