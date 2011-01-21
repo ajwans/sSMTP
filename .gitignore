@@ -11,5 +11,8 @@ core
 Makefile
 configure
 ssmtp
+test
+ssmtp.dSYM
+test.dSYM
 *~
 .project

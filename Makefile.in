@@ -11,9 +11,11 @@ LDFLAGS=@LDFLAGS@
 LIBS=@LIBS@
 
 LIBRARY_PATH=@LIBRARY_PATH@
-ifneq ($(LIBRARY_PATH),)
+ifneq ("$(LIBRARY_PATH)","")
 	LIBPATH=$(subst :, -L,-L$(LIBRARY_PATH))
 endif
+
+TEST=@TEST@
 
 etcdir=@sysconfdir@
 SSMTPCONFDIR=$(etcdir)/ssmtp
@@ -29,7 +31,7 @@ INSTALLED_REVALIASES_FILE=$(REVALIASES_FILE)
 # Programs
 GEN_CONFIG=$(srcdir)/generate_config
 
-SRCS=ssmtp.c arpadate.c xgethostname.c @SRCS@
+SRCS=arpadate.c xgethostname.c @SRCS@
 
 OBJS=$(SRCS:.c=.o)
 
@@ -80,8 +82,15 @@ uninstall-sendmail: uninstall
 	$(RM)  $(mandir)/sendmail.8
 
 # Binaries:
-ssmtp: $(OBJS)
-	$(CC) -o ssmtp $(OBJS) $(LIBPATH) $(LIBS) $(CFLAGS) $(LDFLAGS)
+ssmtp: $(OBJS) ssmtp.o
+	$(CC) -o $@ $@.c $(OBJS) $(LIBPATH) $(LIBS) $(CFLAGS)
+
+test: test.o
+	if [ x"$(TEST)" != x"" ];					\
+	then								\
+		$(CC) -o $@ $@.c $(OBJS) $(LIBPATH) $(LIBS) $(CFLAGS);	\
+		./test;							\
+	fi
 
 .PHONY: clean
 clean:
@@ -93,3 +102,4 @@ distclean: clean
 
 %.o: %.c %.h
 	$(CC) $(CFLAGS) -c -o $@ $<
+
