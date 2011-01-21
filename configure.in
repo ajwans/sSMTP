@@ -26,6 +26,7 @@ AC_STRUCT_TM
 dnl Checks for libraries.
 AC_SEARCH_LIBS(gethostname, nsl)
 AC_SEARCH_LIBS(socket, socket)
+AC_SEARCH_LIBS(CU_get_error, cunit)
 
 dnl Checks for library functions.
 AC_TYPE_SIGNAL
@@ -40,7 +41,6 @@ AC_CHECK_DECL(isascii, [],
 		[AC_ERROR(no isascii)], [#include <ctype.h>]),
 	[#include <ctype.h>])
 CFLAGS=$savedCFLAGS
-
 
 dnl Check for optional features
 AC_ARG_ENABLE(logfile,
@@ -107,5 +107,6 @@ if test x$enableval = xyes ; then
 fi
 enableval=""
 
+AC_SUBST(LIBRARY_PATH)
 AC_SUBST(SRCS)
 AC_OUTPUT(Makefile)

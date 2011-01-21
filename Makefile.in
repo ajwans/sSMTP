@@ -1,5 +1,3 @@
-
-
 srcdir= @srcdir@
 prefix=@prefix@
 exec_prefix=@exec_prefix@
@@ -9,6 +7,11 @@ mandir=$(prefix)/man/man8
 
 LN_S=@LN_S@
 CC=@CC@
+
+LIBRARY_PATH=@LIBRARY_PATH@
+ifneq ($(LIBRARY_PATH),)
+	LIBPATH=$(subst :, -L,-L$(LIBRARY_PATH))
+endif
 
 etcdir=@sysconfdir@
 SSMTPCONFDIR=$(etcdir)/ssmtp
@@ -76,7 +79,7 @@ uninstall-sendmail: uninstall
 
 # Binaries:
 ssmtp: $(OBJS)
-	$(CC) -o ssmtp $(OBJS) @LIBS@ $(CFLAGS)
+	$(CC) -o ssmtp $(OBJS) $(LIBPATH) @LIBS@ $(CFLAGS)
 
 .PHONY: clean
 clean:
