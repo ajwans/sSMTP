@@ -44,6 +44,8 @@
 #ifdef HAVE_SASL
 #include <sasl/sasl.h>
 #include <sasl/saslutil.h>
+#else
+#include "base64.h"
 #endif
 
 #include <regex.h>

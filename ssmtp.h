@@ -48,10 +48,6 @@ typedef struct string_list rcpt_t;
 	} while (0)
 #define B64ENC(in, inlen, out, outmax, outlen) \
 	to64frombits(out, in, inlen)
-
-/* base64.c */
-void to64frombits(char *, const char *, int);
-int from64tobits(char *, const char *);
 #endif /* HAVE_SASL */
 
 char **parse_options(int argc, char **argv);
