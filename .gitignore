@@ -9,6 +9,7 @@ config.log
 config.status
 core
 Makefile
+configure
 ssmtp
 *~
 .project
