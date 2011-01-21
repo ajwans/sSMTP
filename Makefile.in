@@ -29,7 +29,7 @@ INSTALLED_REVALIASES_FILE=$(REVALIASES_FILE)
 # Programs
 GEN_CONFIG=$(srcdir)/generate_config
 
-SRCS=arpadate.c xgethostname.c @SRCS@
+SRCS=ssmtp.c arpadate.c xgethostname.c @SRCS@
 
 OBJS=$(SRCS:.c=.o)
 
@@ -80,13 +80,13 @@ uninstall-sendmail: uninstall
 	$(RM)  $(mandir)/sendmail.8
 
 # Binaries:
-ssmtp: $(OBJS) ssmtp.o
-	$(CC) -o $@ $@.c $(OBJS) $(LIBPATH) @LIBS@ $(CFLAGS)
+ssmtp: main.o $(OBJS)
+	$(CC) -o $@ $< $(OBJS) $(LIBPATH) @LIBS@ $(CFLAGS)
 
-test: test.o
+test: test.o $(OBJS)
 	if [ x"$(TEST)" != x"" ];					\
 	then								\
-		$(CC) -o $@ $@.c $(OBJS) $(LIBPATH) @LIBS@ $(CFLAGS);	\
+		$(CC) -o $@ $< $(OBJS) $(LIBPATH) @LIBS@ $(CFLAGS);	\
 		./test;							\
 	fi
 

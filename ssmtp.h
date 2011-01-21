@@ -54,3 +54,5 @@ void to64frombits(char *, const char *, int);
 int from64tobits(char *, const char *);
 #endif /* HAVE_SASL */
 
+char **parse_options(int argc, char **argv);
+int ssmtp(char **argv);

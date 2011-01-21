@@ -21,7 +21,6 @@
 #include <stdlib.h>
 #include <stdarg.h>
 #include <syslog.h>
-#include <signal.h>
 #include <setjmp.h>
 #include <string.h>
 #include <ctype.h>
@@ -1439,7 +1438,7 @@ void handler(void)
 /*
  * ssmtp() -- send the message (exactly one) from stdin to the mailhub SMTP port
  */
-int ssmtp(char *argv[])
+int ssmtp(char **argv)
 {
 	char b[(BUF_SZ + 2)], *buf = b+1, *p, *q;
 	struct passwd *pw;
@@ -1450,6 +1449,12 @@ int ssmtp(char *argv[])
 	int bufsize = sizeof(b)-1;
 	char tmpbuf[257];
 	FILE *input = NULL;
+
+	hostname = xgethostname();
+	if(!hostname) {
+		perror("xgethostname");
+		die("Cannot get the name of this machine");
+	}
 
 	/* create temporary file in which we're going */
 	/* to store stdin */
@@ -1903,14 +1908,14 @@ void paq(char *format, ...)
 	(void)vfprintf(stderr, format, ap);
 	va_end(ap);
 
-	exit(0);
+	exit(1);
 }
 
 /*
  * parse_options() -- Pull the options out of the command-line
  *	Process them (special-case calls to mailq, etc) and return the rest
  */
-char **parse_options(int argc, char *argv[])
+char **parse_options(int argc, char **argv)
 {
 	static char Version[] = VERSION;
 	static char *new_argv[MAXARGS];
@@ -1918,6 +1923,13 @@ char **parse_options(int argc, char *argv[])
 
 	new_argv[0] = argv[0];
 	new_argc = 1;
+
+	/* Set the globals */
+	prog = basename(argv[0]);
+	if (!prog) {
+		perror("basename");
+		paq("Cannot run basename on %s", argv[0]);
+	}
 
 	if(strcmp(prog, "mailq") == 0) {
 		/* Someone wants to know the queue state... */
@@ -2268,35 +2280,4 @@ exit:
 	}
 
 	return(&new_argv[0]);
-}
-
-/*
- * main() -- make the program behave like sendmail, then call ssmtp
- */
-int main(int argc, char **argv)
-{
-	char **new_argv;
-
-	/* Try to be bulletproof :-) */
-	(void)signal(SIGHUP, SIG_IGN);
-	(void)signal(SIGINT, SIG_IGN);
-	(void)signal(SIGTTIN, SIG_IGN);
-	(void)signal(SIGTTOU, SIG_IGN);
-
-	/* Set the globals */
-	prog = basename(argv[0]);
-	if (!prog) {
-		perror("basename");
-		die("Cannot run basename on %s", argv[0]);
-	}
-
-	hostname = xgethostname();
-
-	if(!hostname) {
-		perror("xgethostname");
-		die("Cannot get the name of this machine");
-	}
-	new_argv = parse_options(argc, argv);
-
-	exit(ssmtp(new_argv));
 }
