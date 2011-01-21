@@ -1998,7 +1998,7 @@ char **parse_options(int argc, char *argv[])
 
 			case '4':
 				p_family = PF_INET;
-			continue;
+				continue;
 #endif
 
 			case 'a':
@@ -2305,7 +2305,7 @@ char **parse_options(int argc, char *argv[])
 			}
 		}
 
-		exit:
+exit:
 		i += add;
 	}
 	new_argv[new_argc] = NULL;
