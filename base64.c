@@ -48,7 +48,7 @@ void to64frombits(
     if (inlen > 0)
     {
 	unsigned char fragment;
-    
+
 	*out++ = base64digits[in[0] >> 2];
 	fragment = (in[0] << 4) & 0x30;
 	if (inlen > 1)
@@ -80,7 +80,7 @@ int from64tobits(char *out, const char *in)
 	    return(-1);
 	digit3 = in[2];
 	if (digit3 != '=' && DECODE64(digit3) == BAD)
-	    return(-1); 
+	    return(-1);
 	digit4 = in[3];
 	if (digit4 != '=' && DECODE64(digit4) == BAD)
 	    return(-1);
@@ -97,7 +97,7 @@ int from64tobits(char *out, const char *in)
 		++len;
 	    }
 	}
-    } while 
+    } while
 	(*in && *in != '\r' && digit4 != '=');
 
     return (len);
