@@ -41,9 +41,6 @@ CFLAGS=@DEFS@ $(EXTRADEFS) @CFLAGS@
 .PHONY: all
 all: ssmtp
 
-%.dvi: %.tex
-	latex $<
-
 .PHONY: install
 install: ssmtp $(GEN_CONFIG)
 	$(INSTALL) -d -m 755 $(bindir)
@@ -86,12 +83,8 @@ clean:
 	$(RM) ssmtp *.o md5auth/*.o core
 
 .PHONY: distclean
-distclean: clean docclean
+distclean: clean
 	$(RM) config.* Makefile
-
-.PHONY: docclean
-docclean:
-	$(RM) *.dvi *.log *.aux
 
 %.o: %.c %.h
 	$(CC) $(CFLAGS) -c -o $@ $<
