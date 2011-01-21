@@ -1,15 +1,14 @@
 /*
-
- sSMTP -- send messages via SMTP to a mailhub for local delivery or forwarding.
- This program is used in place of /usr/sbin/sendmail, called by "mail" (et all).
- sSMTP does a selected subset of sendmail's standard tasks (including exactly
- one rewriting task), and explains if you ask it to do something it can't. It
- then sends the mail to the mailhub via an SMTP connection. Believe it or not,
- this is nothing but a filter
-
- See COPYRIGHT for the license
-
-*/
+ * sSMTP -- send messages via SMTP to a mailhub for local delivery or forwarding.
+ * This program is used in place of /usr/sbin/sendmail, called by "mail" (et al).
+ * sSMTP does a selected subset of sendmail's standard tasks (including exactly
+ * one rewriting task), and explains if you ask it to do something it can't. It
+ * then sends the mail to the mailhub via an SMTP connection. Believe it or not,
+ * this is nothing but a filter
+ * 
+ * See COPYRIGHT for the license
+ * 
+ */
 #define VERSION "2.65"
 #define _GNU_SOURCE
 
@@ -144,7 +143,8 @@ char *strndup(char const *s, size_t n)
 /*
  * log_event() -- Write event to syslog (or log file if defined)
  */
-static void log_event(int priority, char *format, ...)
+static void
+log_event(int priority, char *format, ...)
 {
 	char buf[(BUF_SZ + 1)];
 	va_list ap;
@@ -176,15 +176,11 @@ static void log_event(int priority, char *format, ...)
 #endif
 }
 
-ssize_t smtp_write(int fd, char *format, ...);
-int smtp_read(int fd, char *response);
-int smtp_read_all(int fd, char *response);
-int smtp_okay(int fd, char *response);
-
 /*
  * dead_letter() -- Save stdin to ~/dead.letter if possible
  */
-void dead_letter(void)
+static void
+dead_letter(void)
 {
 	char *path;
 	char buf[(BUF_SZ + 1)];
@@ -265,7 +261,8 @@ void dead_letter(void)
 /*
  * die() -- Write error message, dead.letter and exit
  */
-void die(char *format, ...)
+static void
+die(char *format, ...)
 {
 	char buf[(BUF_SZ + 1)];
 	va_list ap;
@@ -301,7 +298,8 @@ char *xbasename(char *str)
 /*
  * strip_pre_ws() -- Return pointer to first non-whitespace character
  */
-char *strip_pre_ws(char *str)
+static char *
+strip_pre_ws(char *str)
 {
 	char *p;
 
@@ -314,7 +312,8 @@ char *strip_pre_ws(char *str)
 /*
  * strip_post_ws() -- Return pointer to last non-whitespace character
  */
-char *strip_post_ws(char *str)
+static char *
+strip_post_ws(char *str)
 {
 	char *p;
 
@@ -329,7 +328,8 @@ char *strip_post_ws(char *str)
 /*
  * addr_parse() -- Parse <user@domain.com> from full email address
  */
-char *addr_parse(char *str)
+static char *
+addr_parse(char *str)
 {
 	char *p, *q;
 
@@ -383,7 +383,8 @@ char *addr_parse(char *str)
 /*
  * append_domain() -- Fix up address with @domain.com
  */
-char *append_domain(char *str)
+static char *
+append_domain(char *str)
 {
 	char buf[(BUF_SZ + 1)];
 
@@ -408,7 +409,8 @@ char *append_domain(char *str)
 /*
  * standardise() -- Trim off '\n's and double leading dots
  */
-bool_t standardise(char *str, bool_t *linestart)
+static bool_t
+standardise(char *str, bool_t *linestart)
 {
 	char *p;
 	bool_t leadingdot = False;
@@ -435,7 +437,8 @@ bool_t standardise(char *str, bool_t *linestart)
  * revaliases() -- Parse the reverse alias file
  * 	Fix globals to use any entry for sender
  */
-void revaliases(struct passwd *pw)
+static void
+revaliases(struct passwd *pw)
 {
 	char buf[(BUF_SZ + 1)], *p;
 	FILE *fp;
@@ -496,7 +499,8 @@ void revaliases(struct passwd *pw)
  * from_strip() -- Transforms "Name <login@host>" into "login@host" or
  * "login@host (Real name)"
  */
-char *from_strip(char *str)
+static char *
+from_strip(char *str)
 {
 	char *p;
 
@@ -522,7 +526,8 @@ char *from_strip(char *str)
 /*
  * from_format() -- Generate standard From: line
  */
-char *from_format(char *str, bool_t override_from)
+static char *
+from_format(char *str, bool_t override_from)
 {
 	char buf[(BUF_SZ + 1)] = "";
 
@@ -573,7 +578,8 @@ char *from_format(char *str, bool_t override_from)
 /*
  * rcpt_save() -- Store entry into RCPT list
  */
-void rcpt_save(char *str)
+static void
+rcpt_save(char *str)
 {
 	char *p;
 
@@ -612,7 +618,8 @@ void rcpt_save(char *str)
 /*
  * rcpt_parse() -- Break To|Cc|Bcc into individual addresses
  */
-void rcpt_parse(char *str)
+static void
+rcpt_parse(char *str)
 {
 	bool_t in_quotes = False, got_addr = False;
 	char *p, *q, *r;
@@ -676,8 +683,13 @@ void rcpt_parse(char *str)
 }
 
 #ifdef MD5AUTH
-int crammd5(char *challengeb64, char *username, char *password,
-		char *responseb64, int responselen)
+static int
+crammd5(
+	char	*challengeb64,
+	char	*username,
+	char	*password,
+	char	*responseb64,
+	int	responselen)
 {
 	unsigned int i;
 	unsigned char digest[MD5_DIGEST_LEN];
@@ -715,12 +727,13 @@ int crammd5(char *challengeb64, char *username, char *password,
 #endif
 
 /*
-rcpt_remap() -- Alias systems-level users to the person who
-	reads their mail. This is variously the owner of a workstation,
-	the sysadmin of a group of stations and the postmaster otherwise.
-	We don't just mail stuff off to root on the mailhub :-)
-*/
-char *rcpt_remap(char *str)
+ * rcpt_remap() -- Alias systems-level users to the person who
+ *	reads their mail. This is variously the owner of a workstation,
+ * 	the sysadmin of a group of stations and the postmaster otherwise.
+ *	We don't just mail stuff off to root on the mailhub :-)
+ */
+static char *
+rcpt_remap(char *str)
 {
 	struct passwd *pw;
 	if((root==NULL) || strlen(root)==0 || strchr(str, '@') ||
@@ -735,7 +748,8 @@ char *rcpt_remap(char *str)
 /*
  * header_save() -- Store entry into header list
  */
-void header_save(const char *str)
+static void
+header_save(const char *str)
 {
 	char *p;
 
@@ -811,7 +825,8 @@ void header_save(const char *str)
 /*
  * header_parse() -- Break headers into seperate entries
  */
-void header_parse(FILE *stream)
+static void
+header_parse(FILE *stream)
 {
 	size_t size = BUF_SZ, len = 0;
 	char *p = (char *)NULL, *q = NULL;
@@ -904,7 +919,8 @@ void header_parse(FILE *stream)
 	(void)free(p);
 }
 
-void add_config(const char *left, const char *right)
+static void
+add_config(const char *left, const char *right)
 {
 	enum type {
 		HOSTPORT,
@@ -1013,7 +1029,8 @@ void add_config(const char *left, const char *right)
 /*
  * read_config() -- Open and parse config file and extract values of variables
  */
-bool_t read_config()
+static bool_t
+read_config()
 {
 	int	ret;
 	FILE	*fp;
@@ -1076,9 +1093,130 @@ bool_t read_config()
 }
 
 /*
+ * fd_getc() -- Read a character from an fd
+ */
+static ssize_t
+fd_getc(int fd, void *c)
+{
+#ifdef HAVE_SSL
+	if(use_tls == True) {
+		return(SSL_read(ssl, c, 1));
+	}
+#endif
+	return(read(fd, c, 1));
+}
+
+/*
+ * fd_gets() -- Get characters from a fd instead of an fp
+ */
+static char *
+fd_gets(char *buf, int size, int fd)
+{
+	int i = 0;
+	char c;
+
+	while((i < size) && (fd_getc(fd, &c) == 1)) {
+		if(c == '\r');	/* Strip <CR> */
+		else if(c == '\n') {
+			break;
+		}
+		else {
+			buf[i++] = c;
+		}
+	}
+	buf[i] = 0;
+
+	return(buf);
+}
+
+/*
+ * fd_puts() -- Write characters to fd
+ */
+static ssize_t
+fd_puts(int fd, const void *buf, size_t count)
+{
+#ifdef HAVE_SSL
+	if(use_tls == True) {
+		return(SSL_write(ssl, buf, count));
+	}
+#endif
+	return(write(fd, buf, count));
+}
+
+/*
+ * smtp_write() -- A printf to an fd and append <CR/LF>
+ */
+static ssize_t
+smtp_write(int fd, char *format, ...)
+{
+	char buf[(BUF_SZ + 2)];
+	va_list ap;
+	ssize_t outbytes = 0;
+
+	va_start(ap, format);
+	if(vsnprintf(buf, (BUF_SZ - 1), format, ap) == -1) {
+		die("smtp_write() -- vsnprintf() failed");
+	}
+	va_end(ap);
+
+	if(log_level > 0) {
+		log_event(LOG_INFO, "%s\n", buf);
+	}
+
+	if(minus_v) {
+		(void)fprintf(stderr, "[->] %s\n", buf);
+	}
+	(void)strcat(buf, "\r\n");
+
+	outbytes = fd_puts(fd, buf, strlen(buf));
+
+	return (outbytes >= 0) ? outbytes : 0;
+}
+
+/*
+ * smtp_read() -- Get a line and return the initial digit
+ */
+static int
+smtp_read(int fd, char *response)
+{
+	do {
+		if(fd_gets(response, BUF_SZ, fd) == NULL) {
+			return(0);
+		}
+
+		if (strstr(response, "AUTH")) {
+			auth_method = strdup(&response[9]);
+		}
+	}
+	while(response[3] == '-');
+
+	if(log_level > 0) {
+		log_event(LOG_INFO, "%s\n", response);
+	}
+
+	if(minus_v) {
+		(void)fprintf(stderr, "[<-] %s\n", response);
+	}
+
+	return(atoi(response) / 100);
+}
+
+/*
+ * smtp_okay() -- Get a line and test the three-number string at the beginning
+ *				If it starts with a 2, it's OK
+ */
+static int
+smtp_okay(int fd, char *response)
+{
+	return((smtp_read(fd, response) == 2) ? 1 : 0);
+}
+
+
+/*
  * smtp_open() -- Open connection to a remote SMTP listener
  */
-int smtp_open(char *host, int port)
+static int
+smtp_open(char *host, int port)
 {
 #ifdef INET6
 	struct addrinfo hints, *ai0, *ai;
@@ -1279,121 +1417,9 @@ int smtp_open(char *host, int port)
 	return(s);
 }
 
-/*
- * fd_getc() -- Read a character from an fd
- */
-ssize_t fd_getc(int fd, void *c)
-{
-#ifdef HAVE_SSL
-	if(use_tls == True) {
-		return(SSL_read(ssl, c, 1));
-	}
-#endif
-	return(read(fd, c, 1));
-}
-
-/*
- * fd_gets() -- Get characters from a fd instead of an fp
- */
-char *fd_gets(char *buf, int size, int fd)
-{
-	int i = 0;
-	char c;
-
-	while((i < size) && (fd_getc(fd, &c) == 1)) {
-		if(c == '\r');	/* Strip <CR> */
-		else if(c == '\n') {
-			break;
-		}
-		else {
-			buf[i++] = c;
-		}
-	}
-	buf[i] = '\0';
-
-	return(buf);
-}
-
-/*
- * smtp_read() -- Get a line and return the initial digit
- */
-int smtp_read(int fd, char *response)
-{
-	do {
-		if(fd_gets(response, BUF_SZ, fd) == NULL) {
-			return(0);
-		}
-
-		if (strstr(response, "AUTH")) {
-			auth_method = strdup(&response[9]);
-		}
-	}
-	while(response[3] == '-');
-
-	if(log_level > 0) {
-		log_event(LOG_INFO, "%s\n", response);
-	}
-
-	if(minus_v) {
-		(void)fprintf(stderr, "[<-] %s\n", response);
-	}
-
-	return(atoi(response) / 100);
-}
-
-/*
- * smtp_okay() -- Get a line and test the three-number string at the beginning
-				If it starts with a 2, it's OK
- */
-int smtp_okay(int fd, char *response)
-{
-	return((smtp_read(fd, response) == 2) ? 1 : 0);
-}
-
-/*
- * fd_puts() -- Write characters to fd
- */
-ssize_t fd_puts(int fd, const void *buf, size_t count)
-{
-#ifdef HAVE_SSL
-	if(use_tls == True) {
-		return(SSL_write(ssl, buf, count));
-	}
-#endif
-	return(write(fd, buf, count));
-}
-
-/*
- * smtp_write() -- A printf to an fd and append <CR/LF>
- */
-ssize_t smtp_write(int fd, char *format, ...)
-{
-	char buf[(BUF_SZ + 2)];
-	va_list ap;
-	ssize_t outbytes = 0;
-
-	va_start(ap, format);
-	if(vsnprintf(buf, (BUF_SZ - 1), format, ap) == -1) {
-		die("smtp_write() -- vsnprintf() failed");
-	}
-	va_end(ap);
-
-	if(log_level > 0) {
-		log_event(LOG_INFO, "%s\n", buf);
-	}
-
-	if(minus_v) {
-		(void)fprintf(stderr, "[->] %s\n", buf);
-	}
-	(void)strcat(buf, "\r\n");
-
-	outbytes = fd_puts(fd, buf, strlen(buf));
-
-	return (outbytes >= 0) ? outbytes : 0;
-}
-
 #ifdef HAVE_SASL
-int get_user(
+static int
+get_user(
 	void		*context __attribute__((__unused__)),
 	int		id,
 	const char	**result,
@@ -1472,7 +1498,8 @@ log_for_sasl(
  * longjump instead, which is erronious on a small number of machines and
  * ill-defined in the language
  */
-void handler(void)
+static void
+handler(void)
 {
 	extern jmp_buf TimeoutJmpBuf;
 
@@ -1482,7 +1509,8 @@ void handler(void)
 /*
  * ssmtp() -- send the message (exactly one) from stdin to the mailhub SMTP port
  */
-int ssmtp(char **argv)
+int
+ssmtp(char **argv)
 {
 	char b[(BUF_SZ + 2)], *buf = b+1, *p, *q;
 	char *remote_addr;
@@ -1952,7 +1980,8 @@ finished:
 /*
  * paq() - Write error message and exit
  */
-void paq(char *format, ...)
+static void
+paq(char *format, ...)
 {
 	va_list ap;
 
