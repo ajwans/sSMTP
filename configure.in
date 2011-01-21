@@ -26,7 +26,7 @@ AC_STRUCT_TM
 dnl Checks for libraries.
 AC_SEARCH_LIBS(gethostname, nsl)
 AC_SEARCH_LIBS(socket, socket)
-AC_SEARCH_LIBS(CU_get_error, cunit)
+AC_SEARCH_LIBS(initscr, ncurses)
 
 dnl Checks for library functions.
 AC_TYPE_SIGNAL
@@ -57,6 +57,24 @@ if test x$enableval != xno ; then
 	AC_DEFINE(REWRITE_DOMAIN)
 fi
 enableval=""
+
+# CUnit requires ncurses
+if test x$ac_cv_search_initscr != xno ; then
+	AC_ARG_ENABLE([cunit], [  --enable-cunit=<path> support cunit testing],[
+		savedCFLAGS=$CFLAGS
+		CFLAGS="$CFLAGS -L$enableval/lib -I$enableval/include"
+		AC_CHECK_LIB([cunit], [CU_get_error], [
+			AC_CHECK_HEADER([CUnit/CUnit.h], [
+				savedCFLAGS=$CFLAGS
+				TEST=1
+				AC_SUBST(TEST)
+				LIBS="$LIBS -lcunit"
+			])
+		])
+		enableval=""
+		CFLAGS=$savedCFLAGS
+	])
+fi
 
 AC_ARG_ENABLE(ssl,
 [  --enable-ssl           support for secure connection to mail server])
@@ -107,6 +125,8 @@ if test x$enableval = xyes ; then
 fi
 enableval=""
 
+AC_SUBST(TEST)
 AC_SUBST(LIBRARY_PATH)
 AC_SUBST(SRCS)
+AC_SUBST(LIBS)
 AC_OUTPUT(Makefile)
