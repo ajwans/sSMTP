@@ -6,6 +6,7 @@
 #include <sys/types.h>
 #include <stdio.h>
 #include <pwd.h>
+#include "ccan/list/list.h"
 
 #define BUF_SZ  (1024 * 2)	/* A pretty large buffer, but not outrageous */
 
@@ -28,14 +29,10 @@
 
 typedef enum {False, True} bool_t;
 
-struct string_list {
-	char *string;
-	struct string_list *next;
+struct string_node {
+	struct list_node	list;
+	char			*string;
 };
-
-typedef struct string_list headers_t;
-typedef struct string_list rcpt_t;
-
 
 #ifdef HAVE_SASL
 #define B64DEC(in, inlen, out, outmax, outlen) \
@@ -52,3 +49,4 @@ typedef struct string_list rcpt_t;
 
 char **parse_options(int argc, char **argv);
 int ssmtp(char **argv);
+void header_parse(int, struct list_head *, struct list_head *, bool_t);
