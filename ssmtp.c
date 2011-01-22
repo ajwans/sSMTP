@@ -26,6 +26,7 @@
 #include <netdb.h>
 #include <libgen.h>
 #include <errno.h>
+#include <fcntl.h>
 #ifdef HAVE_SSL
 #include <openssl/crypto.h>
 #include <openssl/x509.h>
@@ -37,9 +38,9 @@
 #include "md5auth/hmac_md5.h"
 #endif
 #include "ssmtp.h"
-#include <fcntl.h>
 #include "xgethostname.h"
 #include "arpadate.h"
+#include "ccan/list/list.h"
 
 #ifdef HAVE_SASL
 #include <sasl/sasl.h>
@@ -83,8 +84,6 @@ char *config_file = NULL;		/* alternate configuration file */
 
 FILE *input_tmpf = NULL;		/* temporary input filehandle - used only by dead_letter() */
 
-headers_t headers, *ht;
-
 struct hostport {
 	char	*name;
 	int	port;
@@ -101,7 +100,8 @@ int p_family = PF_UNSPEC;		/* Protocol family used in SMTP connection */
 
 jmp_buf TimeoutJmpBuf;			/* Timeout waiting for input from network */
 
-rcpt_t rcpt_list, *rt;
+static struct list_head rcpt_list = LIST_HEAD_INIT(rcpt_list);
+static struct list_head header_list = LIST_HEAD_INIT(header_list);
 
 #ifdef HAVE_SSL
 SSL *ssl;
@@ -551,9 +551,10 @@ from_format(char *str, bool_t override_from)
  * rcpt_save() -- Store entry into RCPT list
  */
 static void
-rcpt_save(char *str)
+rcpt_save(char *str, struct list_head *recips)
 {
-	char *p;
+	char			*p;
+	struct string_node	*node;
 
 # if 1
 	/* Horrible botch for group stuff */
@@ -574,27 +575,25 @@ rcpt_save(char *str)
 		return;
 	}
 
-	if((rt->string = strdup(str)) == (char *)NULL) {
+	if ((node = malloc(sizeof(*node))) == NULL)
+		die("rcpt_save() -- malloc() failed");
+
+	if((node->string = strdup(str)) == (char *)NULL) {
 		die("rcpt_save() -- strdup() failed");
 	}
 
-	rt->next = (rcpt_t *)malloc(sizeof(rcpt_t));
-	if(rt->next == (rcpt_t *)NULL) {
-		die("rcpt_save() -- malloc() failed");
-	}
-	rt = rt->next;
-
-	rt->next = (rcpt_t *)NULL;
+	list_add_tail(recips, &node->list);
 }
 
 /*
  * rcpt_parse() -- Break To|Cc|Bcc into individual addresses
  */
 static void
-rcpt_parse(char *str)
+rcpt_parse(char *str, struct list_head *recips)
 {
 	bool_t in_quotes = False, got_addr = False;
 	char *p, *q, *r;
+	struct string_node *node;
 
 #if 0
 	(void)fprintf(stderr, "*** rcpt_parse(): str = [%s]\n", str);
@@ -642,7 +641,7 @@ rcpt_parse(char *str)
 		if(got_addr) {
 			while(*r && isspace(*r)) r++;
 
-			rcpt_save(addr_parse(r));
+			rcpt_save(addr_parse(r), recips);
 			r = (q + 1);
 #if 0
 			(void)fprintf(stderr, "*** rcpt_parse(): r = [%s]\n", r);
@@ -721,20 +720,31 @@ rcpt_remap(char *str)
  * header_save() -- Store entry into header list
  */
 static void
-header_save(const char *str)
+header_save(
+	const char		*str,
+	struct list_head	*headers,
+	struct list_head	*recips,
+	bool_t			minus_t_set)
 {
-	char *p;
+	char			*p;
+	struct string_node	*node;
+
 
 #if 0
 	(void)fprintf(stderr, "header_save(): str = [%s]\n", str);
 #endif
-
 	if((p = strdup(str)) == (char *)NULL) {
 		die("header_save() -- strdup() failed");
 	}
-	ht->string = p;
 
-	if(strncasecmp(ht->string, "From:", 5) == 0) {
+	if ((node = malloc(sizeof(*node))) == NULL) {
+		die("header_save() -- malloc() failed");
+	}
+
+	node->string = p;
+	list_add_tail(headers, &node->list);
+
+	if(strncasecmp(node->string, "From:", 5) == 0) {
 #if 1
 		/* Hack check for NULL From: line */
 		if(*(p + 6) == 0) {
@@ -744,7 +754,7 @@ header_save(const char *str)
 
 #ifdef REWRITE_DOMAIN
 		if(override_from == True) {
-			uad = from_strip(ht->string);
+			uad = from_strip(node->string);
 		}
 		else {
 			return;
@@ -753,60 +763,57 @@ header_save(const char *str)
 		have_from = True;
 	}
 #ifdef HASTO_OPTION
-	else if(strncasecmp(ht->string, "To:" ,3) == 0) {
+	else if(strncasecmp(node->string, "To:" ,3) == 0) {
 		have_to = True;
 	}
 #endif
-	else if(strncasecmp(ht->string, "Date:", 5) == 0) {
+	else if(strncasecmp(node->string, "Date:", 5) == 0) {
 		have_date = True;
 	}
 
-	if(minus_t) {
+	if(minus_t_set) {
 		/* Need to figure out recipients from the e-mail */
-		if(strncasecmp(ht->string, "To:", 3) == 0) {
-			p = (ht->string + 3);
-			rcpt_parse(p);
+		if(strncasecmp(node->string, "To:", 3) == 0) {
+			p = (node->string + 3);
+			rcpt_parse(p, recips);
 		}
-		else if(strncasecmp(ht->string, "Bcc:", 4) == 0) {
-			p = (ht->string + 4);
-			rcpt_parse(p);
+		else if(strncasecmp(node->string, "Bcc:", 4) == 0) {
+			p = (node->string + 4);
+			rcpt_parse(p, recips);
                         /* Undo adding the header to the list: */
-                        free(ht->string);
-                        ht->string = NULL;
+                        free(node->string);
+                        node->string = NULL;
+			list_del(&node->list);
                         return;
 		}
-		else if(strncasecmp(ht->string, "CC:", 3) == 0) {
-			p = (ht->string + 3);
-			rcpt_parse(p);
+		else if(strncasecmp(node->string, "CC:", 3) == 0) {
+			p = (node->string + 3);
+			rcpt_parse(p, recips);
 		}
 	}
 
 #if 0
-	(void)fprintf(stderr, "header_save(): ht->string = [%s]\n", ht->string);
+	(void)fprintf(stderr, "header_save(): node->string = [%s]\n", node->string);
 #endif
-
-	ht->next = (headers_t *)malloc(sizeof(headers_t));
-	if(ht->next == (headers_t *)NULL) {
-		die("header_save() -- malloc() failed");
-	}
-	ht = ht->next;
-
-	ht->next = (headers_t *)NULL;
 }
 
 /*
  * header_parse() -- Break headers into seperate entries
  */
-static void
-header_parse(FILE *stream)
+void
+header_parse(
+	int			fd,
+	struct list_head	*headers,
+	struct list_head	*recips,
+	bool_t			minus_t_set)
 {
 	size_t size = BUF_SZ, len = 0;
 	char *p = (char *)NULL, *q = NULL;
 	bool_t in_header = True;
 	char l = 0;
-	int c;
+	char c;
 
-	while(in_header && ((c = fgetc(stream)) != EOF)) {
+	while(in_header && read(fd, &c, 1) > 0) {
 		/* Must have space for up to two more characters, since we
 			may need to insert a '\r' */
 		if((p == (char *)NULL) || (len >= (size - 1))) {
@@ -845,7 +852,7 @@ header_parse(FILE *stream)
 				if((q = strrchr(p, '\n'))) {
 					*q = 0;
 				}
-				header_save(p);
+				header_save(p, headers, recips, minus_t_set);
 
 				q = p;
 				len = 0;
@@ -881,7 +888,7 @@ header_parse(FILE *stream)
 				if((q = strrchr(p, '\n'))) {
 					*q = 0;
 				}
-				header_save(p);
+				header_save(p, headers, recips, minus_t_set);
 
 				q = p;
 				len = 0;
@@ -892,7 +899,11 @@ header_parse(FILE *stream)
 }
 
 static void
-add_config(const char *left, const char *right)
+add_config(
+	const char		*left,
+	const char		*right,
+	struct list_head	*headers,
+	struct list_head	*recips)
 {
 	enum type {
 		HOSTPORT,
@@ -994,7 +1005,7 @@ add_config(const char *left, const char *right)
 			log_event(LOG_INFO, "Set %s=\"%d\"\n", cur->name, *u.b);
 		break;
 	case FUNCTION_HDR:
-		header_save(right);
+		header_save(right, headers, recips, minus_t);
 		break;
 	}
 }
@@ -1053,7 +1064,7 @@ read_config()
 		buf[pmatch[2].rm_eo] = 0;
 		right = &buf[pmatch[2].rm_so];
 
-		add_config(left, right);
+		add_config(left, right, &header_list, &rcpt_list);
 	}
 	regfree(&re);
 	fclose(fp);
@@ -1479,6 +1490,7 @@ ssmtp(char **argv)
 	int bufsize = sizeof(b)-1;
 	char tmpbuf[257];
 	FILE *input = NULL;
+	struct string_node *node;
 
 	hostname = xgethostname();
 	if(!hostname) {
@@ -1486,8 +1498,7 @@ ssmtp(char **argv)
 		die("Cannot get the name of this machine");
 	}
 
-	/* create temporary file in which we're going */
-	/* to store stdin */
+	/* create temporary file in which we're going to store stdin */
 	input = tmpfile();
 
 	/* do we have tmpfile? */
@@ -1516,6 +1527,8 @@ ssmtp(char **argv)
 			}
 		}
 
+		fsync(fileno(input));
+
 		/* rewind tmpfile back to beginning... */
 		/* we'll use tmpf later instead of stdin... */
 		rewind(input);
@@ -1527,7 +1540,6 @@ ssmtp(char **argv)
 
 	b[0] = '.';
 	outbytes = 0;
-	ht = &headers;
 
 	uid = getuid();
 	if((pw = getpwuid(uid)) == (struct passwd *)NULL) {
@@ -1550,9 +1562,7 @@ ssmtp(char **argv)
 		uad = append_domain(pw->pw_name);
 	}
 
-	rt = &rcpt_list;
-
-	header_parse(input);
+	header_parse(fileno(input), &header_list, &rcpt_list, minus_t);
 
 #if 1
 	/*
@@ -1781,13 +1791,13 @@ finished:
 	/* Send all the To: adresses */
 	/* Either we're using the -t option, or we're using the arguments */
 	if(minus_t) {
-		if(rcpt_list.next == (rcpt_t *)NULL) {
-			die("No recipients specified although -t option used");
-		}
-		rt = &rcpt_list;
+		struct string_node *node;
 
-		while(rt->next) {
-			p = rcpt_remap(rt->string);
+		if (list_empty(&rcpt_list))
+			die("No recipients specified although -t option used");
+
+		list_for_each(&rcpt_list, node, list) {
+			p = rcpt_remap(node->string);
 			outbytes += smtp_write(sock, "RCPT TO:<%s>", p);
 
 			(void)alarm((unsigned)MEDWAIT);
@@ -1795,8 +1805,6 @@ finished:
 			if(smtp_okay(sock, buf) == 0) {
 				die("RCPT TO:<%s> (%s)", p, buf);
 			}
-
-			rt = rt->next;
 		}
 	}
 	else {
@@ -1849,10 +1857,8 @@ finished:
 	}
 #endif
 
-	ht = &headers;
-	while(ht->next) {
-		outbytes += smtp_write(sock, "%s", ht->string);
-		ht = ht->next;
+	list_for_each(&header_list, node, list) {
+		outbytes += smtp_write(sock, "%s", node->string);
 	}
 
 	(void)alarm((unsigned) MEDWAIT);
