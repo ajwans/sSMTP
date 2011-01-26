@@ -593,7 +593,6 @@ rcpt_parse(char *str, struct list_head *recips)
 {
 	bool_t in_quotes = False, got_addr = False;
 	char *p, *q, *r;
-	struct string_node *node;
 
 #if 0
 	(void)fprintf(stderr, "*** rcpt_parse(): str = [%s]\n", str);
@@ -1256,7 +1255,8 @@ smtp_open(char *host, int port)
 
 	/* Check we can reach the host */
 	if (getaddrinfo(host, servname, &hints, &ai0)) {
-		log_event(LOG_ERR, "Unable to locate %s: %s", host, strerror(errno));
+		log_event(LOG_ERR, "Unable to locate %s: %s", host,
+							strerror(errno));
 		return(-1);
 	}
 
@@ -1276,15 +1276,16 @@ smtp_open(char *host, int port)
 	}
 
 	if(s < 0) {
-		log_event (LOG_ERR,
-			"Unable to connect to \"%s\" port %d: \n", host, port, strerror(errno));
+		log_event (LOG_ERR, "Unable to connect to \"%s\" port %d: \n",
+						host, port, strerror(errno));
 
 		return(-1);
 	}
 #else
 	/* Check we can reach the host */
 	if((hent = gethostbyname(host)) == (struct hostent *)NULL) {
-		log_event(LOG_ERR, "Unable to resolve %s: %s", host, strerror(errno));
+		log_event(LOG_ERR, "Unable to resolve %s: %s", host,
+							strerror(errno));
 		return(-1);
 	}
 
@@ -1295,27 +1296,28 @@ smtp_open(char *host, int port)
 
 	/* Create a socket for the connection */
 	if((s = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP)) < 0) {
-		log_event(LOG_ERR, "Unable to create a socket: %s", strerror(errno));
+		log_event(LOG_ERR, "Unable to create a socket: %s",
+							strerror(errno));
 		return(-1);
 	}
 
 	for (i = 0; ; ++i) {
 		if (!hent->h_addr_list[i]) {
-			log_event(LOG_ERR, "Unable to connect to %s port %d: %s", host,
-					port, strerror(errno));
+			log_event(LOG_ERR, "Unable to connect to %s "
+				"port %d: %s", host, port, strerror(errno));
 			return(-1);
 		}
 
-	/* This SHOULD already be in Network Byte Order from gethostbyname() */
-	name.sin_addr.s_addr =
-		((struct in_addr *)(hent->h_addr_list[i]))->s_addr;
-	name.sin_family = hent->h_addrtype;
-	name.sin_port = htons(port);
+		/* This SHOULD already be in Network Byte Order from gethostbyname() */
+		name.sin_addr.s_addr =
+			((struct in_addr *)(hent->h_addr_list[i]))->s_addr;
+		name.sin_family = hent->h_addrtype;
+		name.sin_port = htons(port);
 
-	namelen = sizeof(struct sockaddr_in);
-	if(connect(s, (struct sockaddr *)&name, namelen) < 0)
-		continue;
-	break;
+		namelen = sizeof(struct sockaddr_in);
+		if(connect(s, (struct sockaddr *)&name, namelen) < 0)
+			continue;
+		break;
 	}
 #endif
 
@@ -1476,132 +1478,86 @@ handler(void)
 	longjmp(TimeoutJmpBuf, (int)1);
 }
 
-/*
- * ssmtp() -- send the message (exactly one) from stdin to the mailhub SMTP port
- */
-int
-ssmtp(char **argv)
+static int
+read_to_tmpfile(FILE **input)
 {
-	char b[(BUF_SZ + 2)], *buf = b+1, *p, *q;
-	struct passwd *pw;
-	int i, sock;
-	uid_t uid;
-	bool_t minus_v_save, leadingdot, linestart = True;
-	int timeout = 0;
-	int bufsize = sizeof(b)-1;
-	char tmpbuf[257];
-	FILE *input = NULL;
-	struct string_node *node;
-
-	hostname = xgethostname();
-	if(!hostname) {
-		perror("xgethostname");
-		die("Cannot get the name of this machine");
-	}
+	char tmpbuf[1024];
 
 	/* create temporary file in which we're going to store stdin */
-	input = tmpfile();
-
-	/* do we have tmpfile? */
-	if (input == NULL) {
-		log_event(
-			LOG_ERR,
-			"Unable to create temporary file for stdin storage: %s; falling back to direct stdin usage.",
+	*input = tmpfile();
+	if (!*input) {
+		log_event(LOG_ERR, "Unable to create temporary file for stdin "
+			"storage: %s; falling back to direct stdin usage.",
 			strerror(errno)
 		);
-		input = stdin;
+		*input = stdin;
 	} else {
 		/* Add X-Start-Date to message */
-		fprintf(input, "X-Start-Date: %s\r\n", get_arpadate_now());
+		fprintf(*input, "X-Start-Date: %s\r\n", get_arpadate_now());
 
 		/* read from stdin, write to tmpfile */
 		while (fgets(tmpbuf, sizeof(tmpbuf), stdin) != NULL) {
-			if (fputs(tmpbuf, input) == EOF) {
-				int err = errno;
-				log_event(
-					LOG_ERR,
-					"Unable to write stdin buffer [%d of max %d bytes] to temporary file: %s\n",
-					strlen(tmpbuf),
-					sizeof(tmpbuf),
-					strerror(err)
-				);
-			}
+			if (fputs(tmpbuf, *input) != EOF)
+				continue;
+
+			log_event(LOG_ERR, "Unable to write stdin buffer "
+				"[%d of max %d bytes] to temporary file: %s\n",
+				strlen(tmpbuf), sizeof(tmpbuf),
+				strerror(errno));
 		}
 
-		fsync(fileno(input));
+		fsync(fileno(*input));
 
 		/* rewind tmpfile back to beginning... */
 		/* we'll use tmpf later instead of stdin... */
-		rewind(input);
+		rewind(*input);
 
 		/* store tmp fd to global too... */
 		/* maybe we'll have to write a dead.letter */
-		input_tmpf = input;
+		input_tmpf = *input;
 	}
 
+	return 0;
+}
+
+static int
+start_smtp(int input_fd, int output, char **argv, char *pw_name)
+{
+	char			b[(BUF_SZ + 2)], *buf = b+1, *p, *q;
+	int			bufsize = sizeof(b)-1, i;
+	bool_t			minus_v_save;
+	struct string_node	*node;
+	int			timeout = 0;
+	bool_t			linestart = True;
+	FILE			*input;
+	int			ret;
+
+	input = fdopen(input_fd, "r");
+	if (input == NULL) {
+		ret = errno;
+		log_event(LOG_ERR, "fdopen: %s", strerror(ret));
+		return ret;
+	}
+
+	/* setup buffer with leading dot */
 	b[0] = '.';
-	outbytes = 0;
 
-	uid = getuid();
-	if((pw = getpwuid(uid)) == (struct passwd *)NULL) {
-		die("Could not find password entry for UID %d", uid);
-	}
-
-	if(read_config() == False) {
-		log_event(LOG_INFO, "%s not found", config_file);
-	}
-
-	if((p = strtok(pw->pw_gecos, ";,"))) {
-		if((gecos = strdup(p)) == (char *)NULL) {
-			die("ssmtp() -- strdup() failed");
-		}
-	}
-	revaliases(pw);
-
-	/* revaliases() may have defined this */
-	if(uad == (char *)NULL) {
-		uad = append_domain(pw->pw_name);
-	}
-
-	header_parse(fileno(input), &header_list, &rcpt_list, minus_t);
-
-#if 1
-	/*
-	 * With FromLineOverride=YES set, try to recover sane MAIL FROM
-	 * address
-	 */
-	uad = append_domain(uad);
-#endif
-
-	from = from_format(uad, override_from);
-
-	/* Now to the delivery of the message */
-	(void)signal(SIGALRM, (void(*)())handler);	/* Catch SIGALRM */
-	(void)alarm((unsigned) MAXWAIT);		/* Set initial timer */
-	if(setjmp(TimeoutJmpBuf) != 0) {
-		/* Then the timer has gone off and we bail out */
-		die("Connection lost in middle of processing");
-	}
-
-	if((sock = smtp_open(mailhost.name, mailhost.port)) == -1) {
-		die("Cannot open %s:%d", mailhost.name, mailhost.port);
-	}
-	else if (use_starttls == False) /* no initial response after STARTTLS */
-	{
-		if(smtp_okay(sock, buf) == False)
+	/* no initial response after STARTTLS */
+	if (use_starttls == False) {
+		if(smtp_okay(output, buf) == False)
 			die("Invalid response SMTP server");
 	}
 
 	/* If user supplied username and password, then try ELHO */
 	if(auth_user) {
-		outbytes += smtp_write(sock, "EHLO %s", hostname);
+		outbytes += smtp_write(output, "EHLO %s", hostname);
 	}
 	else {
-		outbytes += smtp_write(sock, "HELO %s", hostname);
+		outbytes += smtp_write(output, "HELO %s", hostname);
 	}
 	(void)alarm((unsigned) MEDWAIT);
 
-	if(smtp_okay(sock, buf) == False) {
+	if(smtp_okay(output, buf) == False) {
 		die("%s (%s)", buf, hostname);
 	}
 
@@ -1676,10 +1632,10 @@ ssmtp(char **argv)
 
 			memset(buf_decode, 0, sizeof(buf_decode));
 
-			smtp_write(sock, "%s", buf);
+			smtp_write(output, "%s", buf);
 
 			memset(buf, 0, BUF_SZ);
-			if (smtp_read(sock, buf) == 2) {
+			if (smtp_read(output, buf) == 2) {
 				memset(buf, 0, BUF_SZ);
 				goto finished;
 			}
@@ -1715,10 +1671,10 @@ ssmtp(char **argv)
 		}
 
 		if(auth_method && strcasecmp(auth_method, "cram-md5") == 0) {
-			outbytes += smtp_write(sock, "AUTH CRAM-MD5");
+			outbytes += smtp_write(output, "AUTH CRAM-MD5");
 			(void)alarm((unsigned) MEDWAIT);
 
-			if(smtp_read(sock, buf) != 3) {
+			if(smtp_read(output, buf) != 3) {
 				die("Server rejected AUTH CRAM-MD5 (%s)", buf);
 			}
 			strncpy(challenge, strchr(buf,' ') + 1,
@@ -1733,12 +1689,12 @@ ssmtp(char **argv)
 			memset(buf, 0, bufsize);
 			B64ENC(auth_user, strlen(auth_user), buf, bufsize,
 								NULL);
-			outbytes += smtp_write(sock, "AUTH LOGIN %s", buf);
+			outbytes += smtp_write(output, "AUTH LOGIN %s", buf);
 		}
 		else {
-			outbytes += smtp_write(sock, "AUTH LOGIN");
+			outbytes += smtp_write(output, "AUTH LOGIN");
 			(void)alarm((unsigned) MEDWAIT);
-			if(smtp_read(sock, buf) != 3) {
+			if(smtp_read(output, buf) != 3) {
 				die("Server didn't like our AUTH LOGIN (%s)",
 						buf);
 			}
@@ -1746,11 +1702,11 @@ ssmtp(char **argv)
 			memset(buf, 0, bufsize);
 			B64ENC(auth_user, strlen(auth_user), buf, bufsize,
 								NULL);
-			outbytes += smtp_write(sock, buf);
+			outbytes += smtp_write(output, buf);
 		}
 
 		(void)alarm((unsigned) MEDWAIT);
-		if(smtp_read(sock, buf) != 3) {
+		if(smtp_read(output, buf) != 3) {
 			die("Server didn't accept AUTH LOGIN (%s)", buf);
 		}
 		memset(buf, 0, bufsize);
@@ -1764,11 +1720,11 @@ authorised:
 		 * even base64 encoded.*/
 		minus_v_save = minus_v;
 		minus_v = False;
-		outbytes += smtp_write(sock, "%s", buf);
+		outbytes += smtp_write(output, "%s", buf);
 		minus_v = minus_v_save;
 		(void)alarm((unsigned) MEDWAIT);
 
-		if(smtp_okay(sock, buf) == False) {
+		if(smtp_okay(output, buf) == False) {
 			die("Authorization failed (%s)", buf);
 		}
 
@@ -1781,11 +1737,11 @@ finished:
 	}
 
 	/* Send "MAIL FROM:" line */
-	outbytes += smtp_write(sock, "MAIL FROM:<%s>", uad);
+	outbytes += smtp_write(output, "MAIL FROM:<%s>", uad);
 
 	(void)alarm((unsigned) MEDWAIT);
 
-	if(smtp_okay(sock, buf) == 0) {
+	if(smtp_okay(output, buf) == 0) {
 		die("%s", buf);
 	}
 
@@ -1799,11 +1755,11 @@ finished:
 
 		list_for_each(&rcpt_list, node, list) {
 			p = rcpt_remap(node->string);
-			outbytes += smtp_write(sock, "RCPT TO:<%s>", p);
+			outbytes += smtp_write(output, "RCPT TO:<%s>", p);
 
 			(void)alarm((unsigned)MEDWAIT);
 
-			if(smtp_okay(sock, buf) == 0) {
+			if(smtp_okay(output, buf) == 0) {
 				die("RCPT TO:<%s> (%s)", p, buf);
 			}
 		}
@@ -1814,11 +1770,12 @@ finished:
 			while(p) {
 				/* RFC822 Address -> "foo@bar" */
 				q = rcpt_remap(addr_parse(p));
-				outbytes += smtp_write(sock, "RCPT TO:<%s>", q);
+				outbytes += smtp_write(output,
+							"RCPT TO:<%s>", q);
 
 				(void)alarm((unsigned) MEDWAIT);
 
-				if(smtp_okay(sock, buf) == 0) {
+				if(smtp_okay(output, buf) == 0) {
 					die("RCPT TO:<%s> (%s)", q, buf);
 				}
 
@@ -1828,16 +1785,16 @@ finished:
 	}
 
 	/* Send DATA */
-	outbytes += smtp_write(sock, "DATA");
+	outbytes += smtp_write(output, "DATA");
 	(void)alarm((unsigned) MEDWAIT);
 
-	if(smtp_read(sock, buf) != 3) {
+	if(smtp_read(output, buf) != 3) {
 		/* Oops, we were expecting "354 send your data" */
 		die("%s", buf);
 	}
 
 	outbytes += smtp_write(
-		sock,
+		output,
 		"Received: by %s (sSMTP, from userid %d);\r\n\t%s",
 		hostname,
 		getuid(),
@@ -1845,27 +1802,27 @@ finished:
 	);
 
 	if(have_from == False) {
-		outbytes += smtp_write(sock, "From: %s", from);
+		outbytes += smtp_write(output, "From: %s", from);
 	}
 
 	if(have_date == False) {
-		outbytes += smtp_write(sock, "Date: %s", get_arpadate_now());
+		outbytes += smtp_write(output, "Date: %s", get_arpadate_now());
 	}
 
 #ifdef HASTO_OPTION
 	if(have_to == False) {
-		outbytes += smtp_write(sock, "To: postmaster");
+		outbytes += smtp_write(output, "To: postmaster");
 	}
 #endif
 
 	list_for_each(&header_list, node, list) {
-		outbytes += smtp_write(sock, "%s", node->string);
+		outbytes += smtp_write(output, "%s", node->string);
 	}
 
 	(void)alarm((unsigned) MEDWAIT);
 
 	/* End of headers, start body */
-	outbytes += smtp_write(sock, "");
+	outbytes += smtp_write(output, "");
 
 	/*
 	 * prevent blocking on pipes, we really shouldnt be using stdio
@@ -1875,6 +1832,8 @@ finished:
 		fcntl(fileno(input), F_SETFL,O_NONBLOCK);
 
 	while(!feof(input)) {
+		bool_t leadingdot;
+
 		if (!fgets(buf, bufsize, input)) {
 			/* if nothing was received, then no transmission
 			 * over smtp should be done */
@@ -1893,7 +1852,7 @@ finished:
 
 		if (linestart || feof(input)) {
 			linestart = True;
-			outbytes += smtp_write(sock, "%s",
+			outbytes += smtp_write(output, "%s",
 					leadingdot ? b : buf);
 		} else {
 			if (log_level > 0) {
@@ -1901,37 +1860,114 @@ finished:
 						"chunks");
 			}
 			if (leadingdot) {
-				outbytes += fd_puts(sock, b, sizeof(b));
+				/* FIXME: XXX: strlen(b) ???? */
+				outbytes += fd_puts(output, b, sizeof(b));
 			} else {
-				outbytes += fd_puts(sock, buf, bufsize);
+				outbytes += fd_puts(output, buf, bufsize);
 			}
 		}
 		(void)alarm((unsigned) MEDWAIT);
 	}
 	if(!linestart) {
-		smtp_write(sock, "");
+		smtp_write(output, "");
 	}
 	/* End of body */
 
-	outbytes += smtp_write(sock, ".");
+	outbytes += smtp_write(output, ".");
 	(void)alarm((unsigned) MAXWAIT);
 
-	if(smtp_okay(sock, buf) == 0) {
+	if(smtp_okay(output, buf) == 0) {
 		die("%s", buf);
 	}
 
 	/* Close connection */
 	(void)signal(SIGALRM, SIG_IGN);
 
-	outbytes += smtp_write(sock, "QUIT");
-	(void)smtp_okay(sock, buf);
-	(void)close(sock);
+	outbytes += smtp_write(output, "QUIT");
+	(void)smtp_okay(output, buf);
+	(void)close(output);
 
 	log_event(LOG_INFO, "Sent mail for %s (%s) uid=%d username=%s "
 			"outbytes=%d",
-			from_strip(uad), buf, uid, pw->pw_name, outbytes);
+			from_strip(uad), buf, getuid(), pw_name, outbytes);
 
-	return(0);
+	return 0;
+}
+
+/*
+ * ssmtp() -- send the message (exactly one) from stdin to the mailhub SMTP port
+ */
+int
+ssmtp(char **argv)
+{
+	char		*p;
+	struct passwd	*pw;
+	int		sock, ret;
+	FILE		*input = NULL;
+
+	hostname = xgethostname();
+	if(!hostname) {
+		perror("xgethostname");
+		die("Cannot get the name of this machine");
+	}
+
+	ret = read_to_tmpfile(&input);
+	if (ret) {
+		log_event(LOG_ERR, "read_to_tmpfile: %s\n", strerror(ret));
+		return -1;
+	}
+
+	outbytes = 0;
+
+	if((pw = getpwuid(getuid())) == (struct passwd *)NULL) {
+		die("Could not find password entry for UID %d", getuid());
+	}
+
+	if(read_config() == False) {
+		log_event(LOG_INFO, "%s not found", config_file);
+	}
+
+	if((p = strtok(pw->pw_gecos, ";,"))) {
+		if((gecos = strdup(p)) == (char *)NULL) {
+			die("ssmtp() -- strdup() failed");
+		}
+	}
+	revaliases(pw);
+
+	/* revaliases() may have defined this */
+	if(uad == (char *)NULL) {
+		uad = append_domain(pw->pw_name);
+	}
+
+	header_parse(fileno(input), &header_list, &rcpt_list, minus_t);
+
+#if 1
+	/*
+	 * With FromLineOverride=YES set, try to recover sane MAIL FROM
+	 * address
+	 */
+	uad = append_domain(uad);
+#endif
+
+	from = from_format(uad, override_from);
+
+	/* Now to the delivery of the message */
+	(void)signal(SIGALRM, (void(*)())handler);	/* Catch SIGALRM */
+	(void)alarm((unsigned) MAXWAIT);		/* Set initial timer */
+	if(setjmp(TimeoutJmpBuf) != 0) {
+		/* Then the timer has gone off and we bail out */
+		die("Connection lost in middle of processing");
+	}
+
+	if((sock = smtp_open(mailhost.name, mailhost.port)) == -1) {
+		die("Cannot open %s:%d", mailhost.name, mailhost.port);
+	}
+
+	ret = start_smtp(fileno(input), sock, argv, pw->pw_name);
+	if (ret)
+		log_event(LOG_ERR, "start_smtp: %s\n", strerror(ret));
+
+	return ret;
 }
 
 /*

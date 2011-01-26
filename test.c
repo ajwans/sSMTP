@@ -1,4 +1,5 @@
 #include <CUnit/Basic.h>
+#include <unistd.h>
 
 #include "ssmtp.h"
 #include "ccan/list/list.h"
@@ -15,8 +16,11 @@ clean_header_tests(void)
 	return 0;
 }
 
+/*
+ * 
+ */
 static void
-test_crlf(void)
+test_duplicate_recipient(void)
 {
 	char *msg = "From: root\r\nTo: root\r\nSubject: ssmtp test - another recipicient taken from the body\r\n\r\nHello, world.\r\nTo: cbiedl\r\n^^^^^^^^^^ this guy will receive mail\r\nFrom: cbiedl (This line will be stripped)\r\nHello, world.\r\n.\r\n";
 
@@ -30,7 +34,7 @@ test_crlf(void)
 	list_head_init(&header_list);
 
 	CU_ASSERT_FATAL(pipe(fds) != -1);
-	CU_ASSERT(write(fds[1], msg, strlen(msg)) == strlen(msg));
+	CU_ASSERT((unsigned)write(fds[1], msg, strlen(msg)) == strlen(msg));
 
 	close(fds[1]);
 
@@ -44,8 +48,23 @@ test_crlf(void)
 	CU_ASSERT(strcmp(node->string, "root") == 0);
 }
 
+static void
+test_long_indented_paragraph(void)
+{
+	char *msg = "From: root\r\nTo: root\r\nSubject: ssmtp test: long block of indented test\r\n\r\n1\r\n 6 0 abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef\r\n 2 1 6789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcd\r\n 2 2 6789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcd\r\n 2 3 6789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcd\r\n 2 4 6789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcd\r\n 2 5 6789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcd\r\n 2 6 6789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcd\r\n 2 7 6789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcd\r\n 2 8 6789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcd\r\n 2 9 6789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcd\r\n 2 a 6789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcd\r\n 2 b 6789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcd\r\n 2 c 6789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcd\r\n 2 d 6789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcd\r\n 2 e 6789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcd\r\n 2 f 6789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcd\r\n 2 0 6789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcd\r\n 2 1 6789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcd\r\n 2 2 6789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcd\r\n 2 3 6789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcd\r\n 2 4 6789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcd\r\n 2 5 6789abcdef0123456789ab+ --- all characters following the + are stripped ...\r\n 2 6 6789abcdef0123456789abcdef0123456789abcde+0123456789abcdef0123456789abcdef0123456789abcd\r\n 2 7 6789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcd\r\n 2 8 6789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcd\r\n until here\r\n";
+	CU_ASSERT(msg != NULL);
+}
+
+static void
+test_lost_last_line(void)
+{
+	char *msg = "From: root\r\nTo: root\r\nSubject: ssmtp test - last lines are stripped\r\n\r\nHello, world.\r\nYou\r\n will not see these two lines.\r\n";
+
+	CU_ASSERT(msg != NULL);
+}
+
 int
-main(int argc, char **argv)
+main(void)
 {
 	CU_pSuite	pSuite = NULL;
 	unsigned int	ret;
@@ -55,7 +74,12 @@ main(int argc, char **argv)
 
 	pSuite = CU_add_suite("headers", init_header_tests, clean_header_tests);
 
-	if (NULL == CU_add_test(pSuite, "test with \\r\\n", test_crlf)) {
+	if (NULL == CU_add_test(pSuite, "test for duplicate recipient",
+				test_duplicate_recipient)		||
+	    NULL == CU_add_test(pSuite, "test for long indented paragraph",
+				test_long_indented_paragraph)		||
+	    NULL == CU_add_test(pSuite, "test for lost last line",
+				test_lost_last_line)) {
 		CU_cleanup_registry();
 		return CU_get_error();
 	}
