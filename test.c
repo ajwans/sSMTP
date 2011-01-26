@@ -47,7 +47,8 @@ test_crlf(void)
 int
 main(int argc, char **argv)
 {
-	CU_pSuite pSuite = NULL;
+	CU_pSuite	pSuite = NULL;
+	unsigned int	ret;
 
 	if (CUE_SUCCESS != CU_initialize_registry())
 		return CU_get_error();
@@ -61,7 +62,7 @@ main(int argc, char **argv)
 
 	CU_basic_set_mode(CU_BRM_VERBOSE);
 	CU_basic_run_tests();
+	ret = CU_get_number_of_tests_failed();
 	CU_cleanup_registry();
-
-	return CU_get_error();
+	return ret;
 }
