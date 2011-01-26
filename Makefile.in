@@ -80,9 +80,10 @@ uninstall-sendmail: uninstall
 	$(RM)  $(mandir)/sendmail.8
 
 # Binaries:
-ssmtp: main.o $(OBJS)
+ssmtp: main.o $(OBJS) test
 	$(CC) -o $@ $< $(OBJS) $(LIBPATH) @LIBS@ $(CFLAGS)
 
+.PHONY: test
 test: test.o $(OBJS)
 	if [ x"$(TEST)" != x"" ];					\
 	then								\
