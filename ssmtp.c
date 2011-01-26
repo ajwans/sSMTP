@@ -1268,6 +1268,7 @@ smtp_open(char *host, int port)
 		}
 
 		if (connect(s, ai->ai_addr, ai->ai_addrlen) < 0) {
+			close(s);
 			s = -1;
 			continue;
 		}
