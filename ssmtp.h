@@ -50,3 +50,4 @@ struct string_node {
 char **parse_options(int argc, char **argv);
 int ssmtp(char **argv);
 void header_parse(int, struct list_head *, struct list_head *, bool_t);
+int start_smtp(FILE *, int, char **, char *);

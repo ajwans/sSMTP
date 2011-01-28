@@ -1,5 +1,6 @@
 #include <CUnit/Basic.h>
 #include <unistd.h>
+#include <sys/socket.h>
 
 #include "ssmtp.h"
 #include "ccan/list/list.h"
@@ -58,9 +59,33 @@ test_long_indented_paragraph(void)
 static void
 test_lost_last_line(void)
 {
-	char *msg = "From: root\r\nTo: root\r\nSubject: ssmtp test - last lines are stripped\r\n\r\nHello, world.\r\nYou\r\n will not see these two lines.\r\n";
+	char	*msg = "From: root\r\nTo: root\r\nSubject: ssmtp test - last lines are stripped\r\n\r\nHello, world.\r\nYou\r\n will not see these two lines.\r\n";
+	char	*argv[] = { NULL, NULL };
+	char	*pw_name = "root";
+	int	in_fds[2];
+	int	out_fds[2];
+	char	buf[4096];
+	int	ret;
+	FILE	*input;
 
-	CU_ASSERT(msg != NULL);
+	CU_ASSERT_FATAL(pipe(in_fds) != -1);
+	CU_ASSERT_FATAL(socketpair(PF_UNIX, SOCK_STREAM, 0, out_fds) != -1);
+
+	CU_ASSERT((unsigned)write(in_fds[1], msg, strlen(msg)) == strlen(msg));
+
+	input = fdopen(in_fds[0], "r");
+	ret = start_smtp(input, out_fds[1], argv, pw_name);
+	CU_ASSERT(ret == 0);
+	close(in_fds[1]);
+
+	while (read(out_fds[0], buf, 1) != 0) {
+		printf("%c 0x%x\n", buf[0], buf[0]);
+		fflush(stdout);
+	}
+
+	read(out_fds[0], buf, sizeof(buf));
+
+	printf("%s", buf);
 }
 
 int

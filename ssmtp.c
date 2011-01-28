@@ -1325,13 +1325,11 @@ smtp_open(char *host, int port)
 	if(use_tls == True) {
 		log_event(LOG_INFO, "Creating SSL connection to host");
 
-		if (use_starttls == True)
-		{
+		if (use_starttls == True) {
 			/* need to write plain text for a while */
 			use_tls=False;
 
-			if (smtp_okay(s, buf))
-			{
+			if (smtp_okay(s, buf)) {
 				smtp_write(s, "EHLO %s", hostname);
 				if (smtp_okay(s, buf)) {
 					/* assume STARTTLS regardless */
@@ -1342,14 +1340,12 @@ smtp_open(char *host, int port)
 						return(-1);
 					}
 				}
-				else
-				{
+				else {
 					log_event(LOG_ERR, "Invalid response: "
 						"%s (%s)", buf, hostname);
 				}
 			}
-			else
-			{
+			else {
 				log_event(LOG_ERR, "Invalid response SMTP "
 						"Server (STARTTLS)");
 				return(-1);
@@ -1479,7 +1475,7 @@ handler(void)
 }
 
 static int
-read_to_tmpfile(FILE **input)
+try_tmpfile(FILE **input)
 {
 	char tmpbuf[1024];
 
@@ -1520,8 +1516,8 @@ read_to_tmpfile(FILE **input)
 	return 0;
 }
 
-static int
-start_smtp(int input_fd, int output, char **argv, char *pw_name)
+int
+start_smtp(FILE *input, int output, char **argv, char *pw_name)
 {
 	char			b[(BUF_SZ + 2)], *buf = b+1, *p, *q;
 	int			bufsize = sizeof(b)-1, i;
@@ -1529,15 +1525,7 @@ start_smtp(int input_fd, int output, char **argv, char *pw_name)
 	struct string_node	*node;
 	int			timeout = 0;
 	bool_t			linestart = True;
-	FILE			*input;
 	int			ret;
-
-	input = fdopen(input_fd, "r");
-	if (input == NULL) {
-		ret = errno;
-		log_event(LOG_ERR, "fdopen: %s", strerror(ret));
-		return ret;
-	}
 
 	/* setup buffer with leading dot */
 	b[0] = '.';
@@ -1891,6 +1879,7 @@ finished:
 			"outbytes=%d",
 			from_strip(uad), buf, getuid(), pw_name, outbytes);
 
+	fclose(input);
 	return 0;
 }
 
@@ -1911,9 +1900,9 @@ ssmtp(char **argv)
 		die("Cannot get the name of this machine");
 	}
 
-	ret = read_to_tmpfile(&input);
+	ret = try_tmpfile(&input);
 	if (ret) {
-		log_event(LOG_ERR, "read_to_tmpfile: %s\n", strerror(ret));
+		log_event(LOG_ERR, "try_tmpfile: %s\n", strerror(ret));
 		return -1;
 	}
 
@@ -1963,7 +1952,7 @@ ssmtp(char **argv)
 		die("Cannot open %s:%d", mailhost.name, mailhost.port);
 	}
 
-	ret = start_smtp(fileno(input), sock, argv, pw->pw_name);
+	ret = start_smtp(input, sock, argv, pw->pw_name);
 	if (ret)
 		log_event(LOG_ERR, "start_smtp: %s\n", strerror(ret));
 
