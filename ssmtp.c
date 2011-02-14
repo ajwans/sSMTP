@@ -129,7 +129,7 @@ log_event(int priority, char *format, ...)
 #ifdef LOGFILE
 	FILE *fp;
 
-	if((fp = fopen("/tmp/ssmtp.log", "a")) != (FILE *)NULL) {
+	if ((fp = fopen("/tmp/ssmtp.log", "a")) != (FILE *)NULL) {
 		(void)fprintf(fp, "%s\n", buf);
 		(void)fclose(fp);
 	} else {
@@ -163,8 +163,8 @@ dead_letter(void)
 	uid = getuid();
 	pw = getpwuid(uid);
 
-	if(isatty(fileno(stdin))) {
-		if(log_level > 0) {
+	if (isatty(fileno(stdin))) {
+		if (log_level > 0) {
 			log_event(LOG_ERR,
 				"stdin is a TTY - not saving to %s/dead.letter",
 				pw->pw_dir);
@@ -172,9 +172,9 @@ dead_letter(void)
 		return;
 	}
 
-	if(pw == (struct passwd *)NULL) {
+	if (pw == (struct passwd *)NULL) {
 		/* Far to early to save things */
-		if(log_level > 0)
+		if (log_level > 0)
 			log_event(LOG_ERR, "No sender failing horribly!");
 		return;
 	}
@@ -190,9 +190,9 @@ dead_letter(void)
 	memcpy (path, pw->pw_dir, strlen (pw->pw_dir));
 	memcpy (path + strlen (pw->pw_dir), DEAD_LETTER, sizeof (DEAD_LETTER));
 
-	if((fp = fopen(path, "a")) == (FILE *)NULL) {
+	if ((fp = fopen(path, "a")) == (FILE *)NULL) {
 		/* Perhaps the person doesn't have a homedir... */
-		if(log_level > 0) {
+		if (log_level > 0) {
 			log_event(
 				LOG_ERR,
 				"Can't open %s: %s; failing horribly!",
@@ -215,11 +215,11 @@ dead_letter(void)
 		rewind(input);
 	}
 
-	while(fgets(buf, sizeof(buf), input))
+	while (fgets(buf, sizeof(buf), input))
 		(void)fputs(buf, fp);
 
-	if(fclose(fp) == -1) {
-		if(log_level > 0) {
+	if (fclose(fp) == -1) {
+		if (log_level > 0) {
 			log_event(LOG_ERR,
 				"Can't close %s/dead.letter: %s"
 				, pw->pw_dir, strerror(errno));
@@ -262,7 +262,7 @@ char *basename(char *str)
 	if (!p)
 		p = str;
 
-	return(strdup(p));
+	return strdup(p);
 }
 #endif /* _GNU_SOURCE */
 
@@ -275,9 +275,9 @@ strip_pre_ws(char *str)
 	char *p;
 
 	p = str;
-	while(*p && isspace(*p)) p++;
+	while (*p && isspace(*p)) p++;
 
-	return(p);
+	return p;
 }
 
 /*
@@ -289,10 +289,10 @@ strip_post_ws(char *str)
 	char *p;
 
 	p = (str + strlen(str));
-	while(isspace(*--p))
+	while (isspace(*--p))
 		*p = 0;
 
-	return(p);
+	return p;
 }
 
 /*
@@ -308,25 +308,25 @@ addr_parse(char *str)
 #endif
 
 	/* Simple case with email address enclosed in <> */
-	if((p = strdup(str)) == (char *)NULL)
+	if ((p = strdup(str)) == (char *)NULL)
 		die("addr_parse(): strdup()");
 
-	if((q = strchr(p, '<'))) {
+	if ((q = strchr(p, '<'))) {
 		q++;
 
-		if((p = strchr(q, '>')))
+		if ((p = strchr(q, '>')))
 			*p = 0;
 
 #if 0
 		(void)fprintf(stderr, "*** addr_parse(): q = [%s]\n", q);
 #endif
 
-		return(q);
+		return q;
 	}
 
 	q = strip_pre_ws(p);
-	if(*q == '(')
-		while((*q++ != ')'));
+	if (*q == '(')
+		while ((*q++ != ')'));
 	p = strip_pre_ws(q);
 
 #if 0
@@ -334,8 +334,8 @@ addr_parse(char *str)
 #endif
 
 	q = strip_post_ws(p);
-	if(*q == ')') {
-		while((*--q != '('));
+	if (*q == ')') {
+		while ((*--q != '('));
 		*q = 0;
 	}
 	(void)strip_post_ws(p);
@@ -344,7 +344,7 @@ addr_parse(char *str)
 	(void)fprintf(stderr, "*** addr_parse(): p = [%s]\n", p);
 #endif
 
-	return(p);
+	return p;
 }
 
 /*
@@ -355,7 +355,7 @@ append_domain(char *str)
 {
 	char buf[(BUF_SZ + 1)];
 
-	if(strchr(str, '@') == (char *)NULL) {
+	if (strchr(str, '@') == (char *)NULL) {
 		int ret;
 
 #ifdef REWRITE_DOMAIN
@@ -367,10 +367,10 @@ append_domain(char *str)
 		if (ret == -1)
 			die("append_domain() -- snprintf() failed");
 
-		return(strdup(buf));
+		return strdup(buf);
 	}
 
-	return(strdup(str));
+	return strdup(str);
 }
 
 /*
@@ -388,15 +388,15 @@ standardise(char *str, bool_t *linestart)
 	 * the buffer start up one
 	 */
 
-	if(*linestart && *str == '.')
+	if (*linestart && *str == '.')
 		leadingdot = True;
 	*linestart = False;
 
-	if((p = strchr(str, '\n'))) {
+	if ((p = strchr(str, '\n'))) {
 		*p = 0;
 		*linestart = True;
 	}
-	return(leadingdot);
+	return leadingdot;
 }
 
 /*
@@ -410,38 +410,38 @@ revaliases(struct passwd *pw)
 	FILE *fp;
 
 	/* Try to open the reverse aliases file */
-	if((fp = fopen(REVALIASES_FILE, "r"))) {
+	if ((fp = fopen(REVALIASES_FILE, "r"))) {
 		/* Search if a reverse alias is defined for the sender */
-		while(fgets(buf, sizeof(buf), fp)) {
+		while (fgets(buf, sizeof(buf), fp)) {
 			/* Make comments invisible */
-			if((p = strchr(buf, '#')))
+			if ((p = strchr(buf, '#')))
 				*p = 0;
 
 			/* Ignore malformed lines and comments */
-			if(strchr(buf, ':') == (char *)NULL)
+			if (strchr(buf, ':') == (char *)NULL)
 				continue;
 
 			/* Parse the alias */
-			if(((p = strtok(buf, ":"))) && !strcmp(p, pw->pw_name))
+			if (((p = strtok(buf, ":"))) && !strcmp(p, pw->pw_name))
 			{
-				if((p = strtok(NULL, ": \t\r\n"))) {
-					if((uad = strdup(p)) == (char *)NULL) {
+				if ((p = strtok(NULL, ": \t\r\n"))) {
+					if ((uad = strdup(p)) == (char *)NULL) {
 						die("revaliases() -- strdup()"
 							       " failed");
 					}
 				}
 
-				if((p = strtok(NULL, " \t\r\n:"))) {
-					if((mailhost.name = strdup(p)) ==
+				if ((p = strtok(NULL, " \t\r\n:"))) {
+					if ((mailhost.name = strdup(p)) ==
 							(char *)NULL) {
 						die("revaliases() -- strdup() "
 								"failed");
 					}
 
-					if((p = strtok(NULL, " \t\r\n:")))
+					if ((p = strtok(NULL, " \t\r\n:")))
 						mailhost.port = atoi(p);
 
-					if(log_level > 0) {
+					if (log_level > 0) {
 						log_event(LOG_INFO,
 							"Set MailHub=\"%s\"\n",
 							mailhost.name);
@@ -471,17 +471,17 @@ from_strip(char *str)
 	(void)fprintf(stderr, "*** from_strip(): str = [%s]\n", str);
 #endif
 
-	if(strncmp("From:", str, 5) == 0)
+	if (strncmp("From:", str, 5) == 0)
 		str += 5;
 
 	/* Remove the real name if necessary - just send the address */
-	if((p = addr_parse(str)) == (char *)NULL)
+	if ((p = addr_parse(str)) == (char *)NULL)
 		die("from_strip() -- addr_parse() failed");
 #if 0
 	(void)fprintf(stderr, "*** from_strip(): p = [%s]\n", p);
 #endif
 
-	return(strdup(p));
+	return strdup(p);
 }
 
 /*
@@ -492,31 +492,31 @@ from_format(char *str, bool_t override_from)
 {
 	char buf[(BUF_SZ + 1)];
 
-	if(override_from) {
-		if(minus_f)
+	if (override_from) {
+		if (minus_f)
 			str = append_domain(minus_f);
 
-		if(minus_F) {
-			if(snprintf(buf,
+		if (minus_F) {
+			if (snprintf(buf,
 				BUF_SZ, "\"%s\" <%s>", minus_F, str) == -1) {
 				die("from_format() -- snprintf() failed");
 			}
-		} else if(gecos) {
-			if(snprintf(buf, BUF_SZ, "\"%s\" <%s>", gecos, str) ==
+		} else if (gecos) {
+			if (snprintf(buf, BUF_SZ, "\"%s\" <%s>", gecos, str) ==
 					-1)
 				die("from_format() -- snprintf() failed");
 		} else {
-			if(snprintf(buf, BUF_SZ, "%s", str) == -1)
+			if (snprintf(buf, BUF_SZ, "%s", str) == -1)
 				die("from_format() -- snprintf() failed");
 		}
 	}
 	else {
-		if(gecos) {
-			if(snprintf(buf, BUF_SZ, "\"%s\" <%s>", gecos, str) ==
+		if (gecos) {
+			if (snprintf(buf, BUF_SZ, "\"%s\" <%s>", gecos, str) ==
 					-1)
 				die("from_format() -- snprintf() failed");
 		} else {
-			if(snprintf(buf, BUF_SZ, "%s", str) == -1)
+			if (snprintf(buf, BUF_SZ, "%s", str) == -1)
 				die("from_format() -- snprintf() failed");
 		}
 	}
@@ -525,7 +525,7 @@ from_format(char *str, bool_t override_from)
 	(void)fprintf(stderr, "*** from_format(): buf = [%s]\n", buf);
 #endif
 
-	return(strdup(buf));
+	return strdup(buf);
 }
 
 /*
@@ -540,9 +540,9 @@ rcpt_save(char *str, struct list_head *recips)
 # if 1
 	/* Horrible botch for group stuff */
 	p = str;
-	while(*p) p++;
+	while (*p) p++;
 
-	if(*--p == ';')
+	if (*--p == ';')
 		return;
 #endif
 
@@ -551,13 +551,13 @@ rcpt_save(char *str, struct list_head *recips)
 #endif
 
 	/* Ignore missing usernames */
-	if(*str == 0)
+	if (*str == 0)
 		return;
 
 	if ((node = malloc(sizeof(*node))) == NULL)
 		die("rcpt_save() -- malloc() failed");
 
-	if((node->string = strdup(str)) == (char *)NULL)
+	if ((node->string = strdup(str)) == (char *)NULL)
 		die("rcpt_save() -- strdup() failed");
 
 	list_add_tail(recips, &node->list);
@@ -576,12 +576,12 @@ rcpt_parse(char *str, struct list_head *recips)
 	(void)fprintf(stderr, "*** rcpt_parse(): str = [%s]\n", str);
 #endif
 
-	if((p = strdup(str)) == (char *)NULL)
+	if ((p = strdup(str)) == (char *)NULL)
 		die("rcpt_parse(): strdup() failed");
 	q = p;
 
 	/* Replace <CR>, <LF> and <TAB> */
-	while(*q) {
+	while (*q) {
 		switch(*q) {
 		case '\t':
 		case '\n':
@@ -597,23 +597,23 @@ rcpt_parse(char *str, struct list_head *recips)
 #endif
 
 	r = q;
-	while(*q) {
-		if(*q == '"')
+	while (*q) {
+		if (*q == '"')
 			in_quotes = (in_quotes ? False : True);
 
 		/* End of string? */
-		if(*(q + 1) == 0)
+		if (*(q + 1) == 0)
 			got_addr = True;
 
 		/* End of address? */
-		if((*q == ',') && (in_quotes == False)) {
+		if ((*q == ',') && (in_quotes == False)) {
 			got_addr = True;
 
 			*q = 0;
 		}
 
-		if(got_addr) {
-			while(*r && isspace(*r)) r++;
+		if (got_addr) {
+			while (*r && isspace(*r)) r++;
 
 			rcpt_save(addr_parse(r), recips);
 			r = (q + 1);
@@ -682,12 +682,12 @@ rcpt_remap(char *str)
 {
 	struct passwd *pw;
 
-	if((root==NULL) || strlen(root)==0 || strchr(str, '@') ||
+	if ((root==NULL) || strlen(root)==0 || strchr(str, '@') ||
 		((pw = getpwnam(str)) == NULL) || (pw->pw_uid > MAXSYSUID)) {
 		/* It's not a local systems-level user */
-		return(append_domain(str));
+		return append_domain(str);
 	} else {
-		return(append_domain(root));
+		return append_domain(root);
 	}
 }
 
@@ -707,7 +707,7 @@ header_save(
 #if 0
 	(void)fprintf(stderr, "header_save(): str = [%s]\n", str);
 #endif
-	if((p = strdup(str)) == (char *)NULL)
+	if ((p = strdup(str)) == (char *)NULL)
 		die("header_save() -- strdup() failed");
 
 	if ((node = malloc(sizeof(*node))) == NULL)
@@ -716,15 +716,15 @@ header_save(
 	node->string = p;
 	list_add_tail(headers, &node->list);
 
-	if(strncasecmp(node->string, "From:", 5) == 0) {
+	if (strncasecmp(node->string, "From:", 5) == 0) {
 #if 1
 		/* Hack check for NULL From: line */
-		if(*(p + 6) == 0)
+		if (*(p + 6) == 0)
 			return;
 #endif
 
 #ifdef REWRITE_DOMAIN
-		if(override_from == True)
+		if (override_from == True)
 			uad = from_strip(node->string);
 		else
 			return;
@@ -732,20 +732,20 @@ header_save(
 		have_from = True;
 	}
 #ifdef HASTO_OPTION
-	else if(strncasecmp(node->string, "To:" ,3) == 0) {
+	else if (strncasecmp(node->string, "To:" ,3) == 0) {
 		have_to = True;
 	}
 #endif
-	else if(strncasecmp(node->string, "Date:", 5) == 0) {
+	else if (strncasecmp(node->string, "Date:", 5) == 0) {
 		have_date = True;
 	}
 
-	if(minus_t_set) {
+	if (minus_t_set) {
 		/* Need to figure out recipients from the e-mail */
-		if(strncasecmp(node->string, "To:", 3) == 0) {
+		if (strncasecmp(node->string, "To:", 3) == 0) {
 			p = (node->string + 3);
 			rcpt_parse(p, recips);
-		} else if(strncasecmp(node->string, "Bcc:", 4) == 0) {
+		} else if (strncasecmp(node->string, "Bcc:", 4) == 0) {
 			p = (node->string + 4);
 			rcpt_parse(p, recips);
                         /* Undo adding the header to the list: */
@@ -753,7 +753,7 @@ header_save(
                         node->string = NULL;
 			list_del(&node->list);
                         return;
-		} else if(strncasecmp(node->string, "CC:", 3) == 0) {
+		} else if (strncasecmp(node->string, "CC:", 3) == 0) {
 			p = (node->string + 3);
 			rcpt_parse(p, recips);
 		}
@@ -780,21 +780,21 @@ header_parse(
 	char l = 0;
 	char c;
 
-	while(in_header && read(fd, &c, 1) > 0) {
+	while (in_header && read(fd, &c, 1) > 0) {
 		/* Must have space for up to two more characters, since we
 			may need to insert a '\r' */
-		if((p == (char *)NULL) || (len >= (size - 1))) {
+		if ((p == (char *)NULL) || (len >= (size - 1))) {
 			size += BUF_SZ;
 
 			p = (char *)realloc(p, (size * sizeof(char)));
-			if(p == (char *)NULL) {
+			if (p == (char *)NULL) {
 				die("header_parse() -- realloc() failed");
 			}
 			q = (p + len);
 		}
 		len++;
 
-		if(l == '\n') {
+		if (l == '\n') {
 			switch(c) {
 			case ' ':
 			case '\t':
@@ -816,7 +816,7 @@ header_parse(
 
 			default:
 				*q = 0;
-				if((q = strrchr(p, '\n')))
+				if ((q = strrchr(p, '\n')))
 					*q = 0;
 				header_save(p, headers, recips, minus_t_set);
 
@@ -828,36 +828,34 @@ header_parse(
 
 		l = c;
 	}
-	if(in_header) {
-		if(l == '\n') {
-			switch(c) {
-			case ' ':
-			case '\t':
-				/*
-				 * Must insert '\r' before '\n's embedded in 
-				 * header fields otherwise qmail won't accept 
-				 * our mail because a bare '\n' violates some 
-				 * RFC
-				 */
-				/* Replace previous \n with \r */
-				*(q - 1) = '\r';
-				/* Insert \n */
-				*q++ = '\n';
-				len++;
-				break;
+	if (in_header && l == '\n') {
+		switch(c) {
+		case ' ':
+		case '\t':
+			/*
+			 * Must insert '\r' before '\n's embedded in 
+			 * header fields otherwise qmail won't accept 
+			 * our mail because a bare '\n' violates some 
+			 * RFC
+			 */
+			/* Replace previous \n with \r */
+			*(q - 1) = '\r';
+			/* Insert \n */
+			*q++ = '\n';
+			len++;
+			break;
 
-			case '\n':
-				in_header = False;
+		case '\n':
+			in_header = False;
 
-			default:
+		default:
+			*q = 0;
+			if ((q = strrchr(p, '\n')))
 				*q = 0;
-				if((q = strrchr(p, '\n')))
-					*q = 0;
-				header_save(p, headers, recips, minus_t_set);
+			header_save(p, headers, recips, minus_t_set);
 
-				q = p;
-				len = 0;
-			}
+			q = p;
+			len = 0;
 		}
 	}
 	(void)free(p);
@@ -990,7 +988,7 @@ read_config()
 	if (!config_file)
 		config_file = CONFIGURATION_FILE;
 
-	if(!(fp = fopen(config_file, "r"))) {
+	if (!(fp = fopen(config_file, "r"))) {
 		log_event(LOG_ERR, "fopen %s: %s\n", config_file,
 							strerror(errno));
 		return False;
@@ -1006,7 +1004,7 @@ read_config()
 		return False;
 	}
 
-	while(fgets(buf, sizeof(buf), fp)) {
+	while (fgets(buf, sizeof(buf), fp)) {
 		char		*left;
 		char		*right;
 		regmatch_t	pmatch[3];
@@ -1039,7 +1037,7 @@ read_config()
 	if (use_starttls == True)
 		use_tls = True;
 
-	return (True);
+	return True;
 }
 
 /*
@@ -1049,10 +1047,10 @@ static ssize_t
 fd_getc(int fd, void *c)
 {
 #ifdef HAVE_SSL
-	if(use_tls == True)
-		return(SSL_read(ssl, c, 1));
+	if (use_tls == True)
+		return SSL_read(ssl, c, 1);
 #endif
-	return(read(fd, c, 1));
+	return read(fd, c, 1);
 }
 
 /*
@@ -1064,17 +1062,17 @@ fd_gets(char *buf, int size, int fd)
 	int i = 0;
 	char c;
 
-	while((i < size) && (fd_getc(fd, &c) == 1)) {
-		if(c == '\r')
+	while ((i < size) && (fd_getc(fd, &c) == 1)) {
+		if (c == '\r')
 			continue;	/* Strip <CR> */
-		else if(c == '\n')
+		else if (c == '\n')
 			break;
 		else
 			buf[i++] = c;
 	}
 	buf[i] = 0;
 
-	return(buf);
+	return buf;
 }
 
 /*
@@ -1084,10 +1082,10 @@ static ssize_t
 fd_puts(int fd, const void *buf, size_t count)
 {
 #ifdef HAVE_SSL
-	if(use_tls == True)
-		return(SSL_write(ssl, buf, count));
+	if (use_tls == True)
+		return SSL_write(ssl, buf, count);
 #endif
-	return(write(fd, buf, count));
+	return write(fd, buf, count);
 }
 
 /*
@@ -1101,20 +1099,20 @@ smtp_write(int fd, char *format, ...)
 	ssize_t outbytes = 0;
 
 	va_start(ap, format);
-	if(vsnprintf(buf, (BUF_SZ - 1), format, ap) == -1)
+	if (vsnprintf(buf, (BUF_SZ - 1), format, ap) == -1)
 		die("smtp_write() -- vsnprintf() failed");
 	va_end(ap);
 
-	if(log_level > 0)
+	if (log_level > 0)
 		log_event(LOG_INFO, "%s\n", buf);
 
-	if(minus_v)
+	if (minus_v)
 		(void)fprintf(stderr, "[->] %s\n", buf);
 	(void)strcat(buf, "\r\n");
 
 	outbytes = fd_puts(fd, buf, strlen(buf));
 
-	return (outbytes >= 0) ? outbytes : 0;
+	return outbytes >= 0 ? outbytes : 0;
 }
 
 /*
@@ -1124,20 +1122,20 @@ static int
 smtp_read(int fd, char *response)
 {
 	do {
-		if(fd_gets(response, BUF_SZ, fd) == NULL)
-			return(0);
+		if (fd_gets(response, BUF_SZ, fd) == NULL)
+			return 0;
 
 		if (strstr(response, "AUTH"))
 			auth_method = strdup(&response[9]);
-	} while(response[3] == '-');
+	} while (response[3] == '-');
 
-	if(log_level > 0)
+	if (log_level > 0)
 		log_event(LOG_INFO, "%s\n", response);
 
-	if(minus_v)
+	if (minus_v)
 		(void)fprintf(stderr, "[<-] %s\n", response);
 
-	return(atoi(response) / 100);
+	return atoi(response) / 100;
 }
 
 /*
@@ -1147,7 +1145,7 @@ smtp_read(int fd, char *response)
 static int
 smtp_okay(int fd, char *response)
 {
-	return((smtp_read(fd, response) == 2) ? 1 : 0);
+	return smtp_read(fd, response) == 2 ? 1 : 0;
 }
 
 
@@ -1178,27 +1176,27 @@ smtp_open(char *host, int port)
 	SSL_load_error_strings();
 	SSLeay_add_ssl_algorithms();
 	ctx = SSL_CTX_new(SSLv23_client_method());
-	if(!ctx) {
+	if (!ctx) {
 		log_event(LOG_ERR, "No SSL support initiated\n");
-		return(-1);
+		return -1;
 	}
 
-	if(use_cert == True) {
-		if(SSL_CTX_use_certificate_chain_file(ctx, tls_cert) <= 0) {
+	if (use_cert == True) {
+		if (SSL_CTX_use_certificate_chain_file(ctx, tls_cert) <= 0) {
 			perror("Use certfile");
-			return(-1);
+			return -1;
 		}
 
-		if(SSL_CTX_use_PrivateKey_file(ctx, tls_cert, SSL_FILETYPE_PEM)
+		if (SSL_CTX_use_PrivateKey_file(ctx, tls_cert, SSL_FILETYPE_PEM)
 				<= 0) {
 			perror("Use PrivateKey");
-			return(-1);
+			return -1;
 		}
 
-		if(!SSL_CTX_check_private_key(ctx)) {
+		if (!SSL_CTX_check_private_key(ctx)) {
 			log_event(LOG_ERR, "Private key does not match the "
 					"certificate public key\n");
-			return(-1);
+			return -1;
 		}
 	}
 #endif
@@ -1213,7 +1211,7 @@ smtp_open(char *host, int port)
 	if (getaddrinfo(host, servname, &hints, &ai0)) {
 		log_event(LOG_ERR, "Unable to locate %s: %s", host,
 							strerror(errno));
-		return(-1);
+		return -1;
 	}
 
 	for (ai = ai0; ai; ai = ai->ai_next) {
@@ -1230,36 +1228,36 @@ smtp_open(char *host, int port)
 		break;
 	}
 
-	if(s < 0) {
+	if (s < 0) {
 		log_event (LOG_ERR, "Unable to connect to \"%s\" port %d: \n",
 						host, port, strerror(errno));
-		return(-1);
+		return -1;
 	}
 #else
 	/* Check we can reach the host */
-	if((hent = gethostbyname(host)) == (struct hostent *)NULL) {
+	if ((hent = gethostbyname(host)) == (struct hostent *)NULL) {
 		log_event(LOG_ERR, "Unable to resolve %s: %s", host,
 							strerror(errno));
-		return(-1);
+		return -1;
 	}
 
-	if((unsigned)hent->h_length > sizeof(hent->h_addr)) {
+	if ((unsigned)hent->h_length > sizeof(hent->h_addr)) {
 		log_event(LOG_ERR, "Buffer overflow in gethostbyname()");
-		return(-1);
+		return -1;
 	}
 
 	/* Create a socket for the connection */
-	if((s = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP)) < 0) {
+	if ((s = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP)) < 0) {
 		log_event(LOG_ERR, "Unable to create a socket: %s",
 							strerror(errno));
-		return(-1);
+		return -1;
 	}
 
 	for (i = 0; ; ++i) {
 		if (!hent->h_addr_list[i]) {
 			log_event(LOG_ERR, "Unable to connect to %s "
 				"port %d: %s", host, port, strerror(errno));
-			return(-1);
+			return -1;
 		}
 
 		/* This SHOULD already be in Network Byte Order from gethostbyname() */
@@ -1269,14 +1267,14 @@ smtp_open(char *host, int port)
 		name.sin_port = htons(port);
 
 		namelen = sizeof(struct sockaddr_in);
-		if(connect(s, (struct sockaddr *)&name, namelen) < 0)
+		if (connect(s, (struct sockaddr *)&name, namelen) < 0)
 			continue;
 		break;
 	}
 #endif
 
 #ifdef HAVE_SSL
-	if(use_tls == True) {
+	if (use_tls == True) {
 		log_event(LOG_INFO, "Creating SSL connection to host");
 
 		if (use_starttls == True) {
@@ -1291,7 +1289,7 @@ smtp_open(char *host, int port)
 					if (!smtp_okay(s, buf)) {
 						log_event(LOG_ERR, "STARTTLS "
 								"not working");
-						return(-1);
+						return -1;
 					}
 				} else {
 					log_event(LOG_ERR, "Invalid response: "
@@ -1300,40 +1298,40 @@ smtp_open(char *host, int port)
 			} else {
 				log_event(LOG_ERR, "Invalid response SMTP "
 						"Server (STARTTLS)");
-				return(-1);
+				return -1;
 			}
 			/* now continue as normal for SSL */
 			use_tls=True;
 		}
 
 		ssl = SSL_new(ctx);
-		if(!ssl) {
+		if (!ssl) {
 			log_event(LOG_ERR, "SSL not working");
-			return(-1);
+			return -1;
 		}
 		SSL_set_fd(ssl, s);
 
 		err = SSL_connect(ssl);
-		if(err < 0) {
+		if (err < 0) {
 			perror("SSL_connect");
-			return(-1);
+			return -1;
 		}
 
-		if(log_level > 0 || 1) {
+		if (log_level > 0 || 1) {
 			log_event(LOG_INFO, "SSL connection using %s",
 				SSL_get_cipher(ssl));
 		}
 
 		server_cert = SSL_get_peer_certificate(ssl);
-		if(!server_cert)
-			return(-1);
+		if (!server_cert)
+			return -1;
 		X509_free(server_cert);
 
 		/* TODO: Check server cert if changed! */
 	}
 #endif
 
-	return(s);
+	return s;
 }
 
 #ifdef HAVE_SASL
@@ -1479,22 +1477,22 @@ start_smtp(FILE *input, int output, char **argv, char *pw_name)
 
 	/* no initial response after STARTTLS */
 	if (use_starttls == False) {
-		if(smtp_okay(output, buf) == False)
+		if (smtp_okay(output, buf) == False)
 			die("Invalid response SMTP server");
 	}
 
 	/* If user supplied username and password, then try ELHO */
-	if(auth_user)
+	if (auth_user)
 		outbytes += smtp_write(output, "EHLO %s", hostname);
 	else
 		outbytes += smtp_write(output, "HELO %s", hostname);
 	(void)alarm((unsigned) MEDWAIT);
 
-	if(smtp_okay(output, buf) == False)
+	if (smtp_okay(output, buf) == False)
 		die("%s (%s)", buf, hostname);
 
 	/* Try to log in if username was supplied */
-	if(auth_user) {
+	if (auth_user) {
 #ifdef HAVE_SASL
 		sasl_conn_t	*pconn;
 		const char	*mech = NULL;
@@ -1595,14 +1593,14 @@ start_smtp(FILE *input, int output, char **argv, char *pw_name)
 		goto authorised;
 
 #elif defined MD5AUTH
-		if(auth_pass == (char *)NULL)
+		if (auth_pass == (char *)NULL)
 			auth_pass = strdup("");
 
-		if(auth_method && strcasecmp(auth_method, "cram-md5") == 0) {
+		if (auth_method && strcasecmp(auth_method, "cram-md5") == 0) {
 			outbytes += smtp_write(output, "AUTH CRAM-MD5");
 			(void)alarm((unsigned) MEDWAIT);
 
-			if(smtp_read(output, buf) != 3)
+			if (smtp_read(output, buf) != 3)
 				die("Server rejected AUTH CRAM-MD5 (%s)", buf);
 			strncpy(challenge, strchr(buf,' ') + 1,
 					sizeof(challenge));
@@ -1620,7 +1618,7 @@ start_smtp(FILE *input, int output, char **argv, char *pw_name)
 		} else {
 			outbytes += smtp_write(output, "AUTH LOGIN");
 			(void)alarm((unsigned) MEDWAIT);
-			if(smtp_read(output, buf) != 3) {
+			if (smtp_read(output, buf) != 3) {
 				die("Server didn't like our AUTH LOGIN (%s)",
 						buf);
 			}
@@ -1632,7 +1630,7 @@ start_smtp(FILE *input, int output, char **argv, char *pw_name)
 		}
 
 		(void)alarm((unsigned) MEDWAIT);
-		if(smtp_read(output, buf) != 3)
+		if (smtp_read(output, buf) != 3)
 			die("Server didn't accept AUTH LOGIN (%s)", buf);
 		memset(buf, 0, bufsize);
 
@@ -1649,7 +1647,7 @@ authorised:
 		minus_v = minus_v_save;
 		(void)alarm((unsigned) MEDWAIT);
 
-		if(smtp_okay(output, buf) == False)
+		if (smtp_okay(output, buf) == False)
 			die("Authorization failed (%s)", buf);
 
 #ifdef HAVE_SASL
@@ -1665,12 +1663,12 @@ finished:
 
 	(void)alarm((unsigned) MEDWAIT);
 
-	if(smtp_okay(output, buf) == 0)
+	if (smtp_okay(output, buf) == 0)
 		die("%s", buf);
 
 	/* Send all the To: adresses */
 	/* Either we're using the -t option, or we're using the arguments */
-	if(minus_t) {
+	if (minus_t) {
 		struct string_node *node;
 
 		if (list_empty(&rcpt_list))
@@ -1682,13 +1680,13 @@ finished:
 
 			(void)alarm((unsigned)MEDWAIT);
 
-			if(smtp_okay(output, buf) == 0)
+			if (smtp_okay(output, buf) == 0)
 				die("RCPT TO:<%s> (%s)", p, buf);
 		}
 	} else {
 		for(i = 1; (argv[i] != NULL); i++) {
 			p = strtok(argv[i], ",");
-			while(p) {
+			while (p) {
 				/* RFC822 Address -> "foo@bar" */
 				q = rcpt_remap(addr_parse(p));
 				outbytes += smtp_write(output,
@@ -1696,7 +1694,7 @@ finished:
 
 				(void)alarm((unsigned) MEDWAIT);
 
-				if(smtp_okay(output, buf) == 0)
+				if (smtp_okay(output, buf) == 0)
 					die("RCPT TO:<%s> (%s)", q, buf);
 
 				p = strtok(NULL, ",");
@@ -1708,7 +1706,7 @@ finished:
 	outbytes += smtp_write(output, "DATA");
 	(void)alarm((unsigned) MEDWAIT);
 
-	if(smtp_read(output, buf) != 3) {
+	if (smtp_read(output, buf) != 3) {
 		/* Oops, we were expecting "354 send your data" */
 		die("%s", buf);
 	}
@@ -1721,14 +1719,14 @@ finished:
 		get_arpadate_now_tz()
 	);
 
-	if(have_from == False)
+	if (have_from == False)
 		outbytes += smtp_write(output, "From: %s", from);
 
-	if(have_date == False)
+	if (have_date == False)
 		outbytes += smtp_write(output, "Date: %s", get_arpadate_now());
 
 #ifdef HASTO_OPTION
-	if(have_to == False)
+	if (have_to == False)
 		outbytes += smtp_write(output, "To: postmaster");
 #endif
 
@@ -1747,7 +1745,7 @@ finished:
 	if (fileno(input) == fileno(stdin))
 		fcntl(fileno(input), F_SETFL,O_NONBLOCK);
 
-	while(!feof(input)) {
+	while (!feof(input)) {
 		bool_t leadingdot;
 
 		if (!fgets(buf, bufsize, input)) {
@@ -1783,14 +1781,14 @@ finished:
 		}
 		(void)alarm((unsigned) MEDWAIT);
 	}
-	if(!linestart)
+	if (!linestart)
 		smtp_write(output, "");
 	/* End of body */
 
 	outbytes += smtp_write(output, ".");
 	(void)alarm((unsigned) MAXWAIT);
 
-	if(smtp_okay(output, buf) == 0)
+	if (smtp_okay(output, buf) == 0)
 		die("%s", buf);
 
 	/* Close connection */
@@ -1820,7 +1818,7 @@ ssmtp(char **argv)
 	FILE		*input = NULL;
 
 	hostname = xgethostname();
-	if(!hostname) {
+	if (!hostname) {
 		perror("xgethostname");
 		die("Cannot get the name of this machine");
 	}
@@ -1833,20 +1831,20 @@ ssmtp(char **argv)
 
 	outbytes = 0;
 
-	if((pw = getpwuid(getuid())) == (struct passwd *)NULL)
+	if ((pw = getpwuid(getuid())) == (struct passwd *)NULL)
 		die("Could not find password entry for UID %d", getuid());
 
-	if(read_config() == False)
+	if (read_config() == False)
 		log_event(LOG_INFO, "%s not found", config_file);
 
-	if((p = strtok(pw->pw_gecos, ";,"))) {
-		if((gecos = strdup(p)) == (char *)NULL)
+	if ((p = strtok(pw->pw_gecos, ";,"))) {
+		if ((gecos = strdup(p)) == (char *)NULL)
 			die("ssmtp() -- strdup() failed");
 	}
 	revaliases(pw);
 
 	/* revaliases() may have defined this */
-	if(uad == (char *)NULL)
+	if (uad == (char *)NULL)
 		uad = append_domain(pw->pw_name);
 
 	header_parse(fileno(input), &header_list, &rcpt_list, minus_t);
@@ -1864,12 +1862,12 @@ ssmtp(char **argv)
 	/* Now to the delivery of the message */
 	(void)signal(SIGALRM, (void(*)())handler);	/* Catch SIGALRM */
 	(void)alarm((unsigned) MAXWAIT);		/* Set initial timer */
-	if(setjmp(TimeoutJmpBuf) != 0) {
+	if (setjmp(TimeoutJmpBuf) != 0) {
 		/* Then the timer has gone off and we bail out */
 		die("Connection lost in middle of processing");
 	}
 
-	if((sock = smtp_open(mailhost.name, mailhost.port)) == -1)
+	if ((sock = smtp_open(mailhost.name, mailhost.port)) == -1)
 		die("Cannot open %s:%d", mailhost.name, mailhost.port);
 
 	ret = start_smtp(input, sock, argv, pw->pw_name);
@@ -1914,24 +1912,24 @@ char **parse_options(int argc, char **argv)
 		paq("Cannot run basename on %s", argv[0]);
 	}
 
-	if(strcmp(prog, "mailq") == 0) {
+	if (strcmp(prog, "mailq") == 0) {
 		/* Someone wants to know the queue state... */
 		paq("mailq: Mail queue is empty\n");
-	} else if(strcmp(prog, "newaliases") == 0) {
+	} else if (strcmp(prog, "newaliases") == 0) {
 		/* Someone wanted to rebuild aliases */
 		paq("newaliases: Aliases are not used in sSMTP\n");
 	}
 
 	i = 1;
-	while(i < argc) {
-		if(argv[i][0] != '-') {
+	while (i < argc) {
+		if (argv[i][0] != '-') {
 			new_argv[new_argc++] = argv[i++];
 			continue;
 		}
 		j = 0;
 
 		add = 1;
-		while(argv[i][++j] != 0) {
+		while (argv[i][++j] != 0) {
 			switch(argv[i][j]) {
 #ifdef INET6
 			case '6':
@@ -1946,10 +1944,10 @@ char **parse_options(int argc, char **argv)
 			case 'a':
 				switch(argv[i][++j]) {
 				case 'u':
-					if((!argv[i][(j + 1)])
+					if ((!argv[i][(j + 1)])
 						&& argv[(i + 1)]) {
 						auth_user = strdup(argv[i+1]);
-						if(auth_user == (char *)NULL) {
+						if (auth_user == (char *)NULL) {
 							die("parse_options() --"
 								" strdup() "
 								"failed");
@@ -1957,7 +1955,7 @@ char **parse_options(int argc, char **argv)
 						add++;
 					} else {
 						auth_user = strdup(argv[i]+j+1);
-						if(auth_user == (char *)NULL) {
+						if (auth_user == (char *)NULL) {
 							die("parse_options() --"
 								" strdup() "
 								"failed");
@@ -1966,10 +1964,10 @@ char **parse_options(int argc, char **argv)
 					goto exit;
 
 				case 'p':
-					if((!argv[i][(j + 1)])
+					if ((!argv[i][(j + 1)])
 						&& argv[(i + 1)]) {
 						auth_pass = strdup(argv[i+1]);
-						if(auth_pass == (char *)NULL) {
+						if (auth_pass == (char *)NULL) {
 							die("parse_options() --"
 								" strdup() "
 								"failed");
@@ -1977,7 +1975,7 @@ char **parse_options(int argc, char **argv)
 						add++;
 					} else {
 						auth_pass = strdup(argv[i]+j+1);
-						if(auth_pass == (char *)NULL) {
+						if (auth_pass == (char *)NULL) {
 							die("parse_options() --"
 								" strdup() "
 								"failed");
@@ -1989,7 +1987,7 @@ char **parse_options(int argc, char **argv)
 #ifdef MD5AUTH
 */
 				case 'm':
-					if(!argv[i][j+1]) {
+					if (!argv[i][j+1]) {
 						auth_method = strdup(argv[i+1]);
 						add++;
 					} else {
@@ -2029,16 +2027,16 @@ char **parse_options(int argc, char **argv)
 
 			/* Configfile name */
 			case 'C':
-				if((!argv[i][(j + 1)]) && argv[(i + 1)]) {
+				if ((!argv[i][(j + 1)]) && argv[(i + 1)]) {
 					config_file = strdup(argv[(i + 1)]);
-					if(config_file == (char *)NULL) {
+					if (config_file == (char *)NULL) {
 						die("parse_options() --"
 							" strdup() failed");
 					}
 					add++;
 				} else {
 					config_file = strdup(argv[i]+j+1);
-					if(config_file == (char *)NULL) {
+					if (config_file == (char *)NULL) {
 						die("parse_options() --"
 							" strdup() failed");
 					}
@@ -2059,7 +2057,7 @@ char **parse_options(int argc, char **argv)
 
 			case 'R':
 				/* Amount of the message to be returned */
-				if(!argv[i][j+1]) {
+				if (!argv[i][j+1]) {
 					add++;
 					goto exit;
 				} else {
@@ -2069,16 +2067,16 @@ char **parse_options(int argc, char **argv)
 
 			/* Fullname of sender */
 			case 'F':
-				if((!argv[i][(j + 1)]) && argv[(i + 1)]) {
+				if ((!argv[i][(j + 1)]) && argv[(i + 1)]) {
 					minus_F = strdup(argv[(i + 1)]);
-					if(minus_F == (char *)NULL) {
+					if (minus_F == (char *)NULL) {
 						die("parse_options() --"
 							" strdup() failed");
 					}
 					add++;
 				} else {
 					minus_F = strdup(argv[i]+j+1);
-					if(minus_F == (char *)NULL) {
+					if (minus_F == (char *)NULL) {
 						die("parse_options() --"
 							" strdup() failed");
 					}
@@ -2089,16 +2087,16 @@ char **parse_options(int argc, char **argv)
 			case 'f':
 			/* Obsolete -f flag */
 			case 'r':
-				if((!argv[i][(j + 1)]) && argv[(i + 1)]) {
+				if ((!argv[i][(j + 1)]) && argv[(i + 1)]) {
 					minus_f = strdup(argv[(i + 1)]);
-					if(minus_f == (char *)NULL) {
+					if (minus_f == (char *)NULL) {
 						die("parse_options() --"
 							" strdup() failed");
 					}
 					add++;
 				} else {
 					minus_f = strdup(argv[i]+j+1);
-					if(minus_f == (char *)NULL) {
+					if (minus_f == (char *)NULL) {
 						die("parse_options() --"
 							" strdup() failed");
 					}
@@ -2245,13 +2243,13 @@ exit:
 	}
 	new_argv[new_argc] = NULL;
 
-	if(new_argc <= 1 && !minus_t) {
+	if (new_argc <= 1 && !minus_t) {
 		paq("%s: No recipients supplied - mail will not be sent\n",
 				prog);
 	}
 
-	if(new_argc > 1 && minus_t)
+	if (new_argc > 1 && minus_t)
 		paq("%s: recipients with -t option not supported\n", prog);
 
-	return(&new_argv[0]);
+	return &new_argv[0];
 }
