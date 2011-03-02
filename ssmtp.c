@@ -1470,7 +1470,6 @@ start_smtp(FILE *input, int output, char **argv, char *pw_name)
 	struct string_node	*node;
 	int			timeout = 0;
 	bool_t			linestart = True;
-	int			ret;
 
 	/* setup buffer with leading dot */
 	b[0] = '.';

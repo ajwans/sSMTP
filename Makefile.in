@@ -91,9 +91,12 @@ test: test.o $(OBJS)
 		./test;							\
 	fi
 
+cscope.out: $(SRCS)
+	cscope -b $?
+
 .PHONY: clean
 clean:
-	$(RM) ssmtp *.o md5auth/*.o core
+	$(RM) ssmtp *.o md5auth/*.o core cscope.out
 
 .PHONY: distclean
 distclean: clean
