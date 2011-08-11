@@ -43,8 +43,7 @@ EXTRADEFS=\
 
 CFLAGS=@DEFS@ $(EXTRADEFS) -I. @CFLAGS@
 
-.PHONY: all
-all: ssmtp
+all: ssmtp test
 
 .PHONY: install
 install: ssmtp $(GEN_CONFIG)
@@ -55,7 +54,6 @@ install: ssmtp $(GEN_CONFIG)
 	$(INSTALL) -d -m 755 $(SSMTPCONFDIR)
 	$(INSTALL) -m 644 $(srcdir)/revaliases $(INSTALLED_REVALIASES_FILE)
 	$(GEN_CONFIG) $(INSTALLED_CONFIGURATION_FILE)
-
 
 .PHONY: install-sendmail
 install-sendmail: install
@@ -80,11 +78,11 @@ uninstall-sendmail: uninstall
 	$(RM)  $(mandir)/sendmail.8
 
 # Binaries:
-ssmtp: main.o $(OBJS) test
+ssmtp: main.o $(OBJS)
 	$(CC) -o $@ $< $(OBJS) $(LIBPATH) @LIBS@ $(CFLAGS)
 
-.PHONY: test
-test: test.o $(OBJS)
+.PRECIOUS: test
+test: test.c $(OBJS)
 	if [ x"$(TEST)" != x"" ];					\
 	then								\
 		$(CC) -o $@ $< $(OBJS) $(LIBPATH) @LIBS@ $(CFLAGS);	\
