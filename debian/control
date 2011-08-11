@@ -2,8 +2,8 @@ Source: ssmtp
 Section: mail
 Priority: extra
 Maintainer: Anibal Monsalve Salazar <anibal@debian.org>
-Build-Depends: po-debconf, libgnutls-dev, quilt
-Standards-Version: 3.8.4
+Build-Depends: po-debconf, libgnutls-dev
+Standards-Version: 3.9.2
 Vcs-Git: git://git.debian.org/ssmtp/ssmtp.git
 Vcs-Browser: http://git.debian.org/?p=ssmtp/ssmtp.git
 Homepage: http://packages.qa.debian.org/s/ssmtp.html

@@ -1,3 +1,16 @@
+ssmtp (2.64-5) unstable; urgency=low
+
+  [ Iain Lane ]
+  * Link against libgnutls-openssl; fixes FTBFS against multiarch enabled
+    gnutls (Closes: #636143)
+
+  [ Anibal Monsalve Salazar ]
+  * Fix unneeded-build-dep-on-quilt
+  * Fix debian-rules-missing-recommended-target
+  * Standards-Version is 3.9.2
+
+ -- Anibal Monsalve Salazar <anibal@debian.org>  Thu, 11 Aug 2011 21:23:43 +1000
+
 ssmtp (2.64-4) unstable; urgency=low
 
   * Set back permissions as before 2.64-1 

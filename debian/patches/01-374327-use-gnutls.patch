@@ -6,7 +6,7 @@ GPL code linked against OpenSSL without exception
 * Initial port from openssl to gnutls
  
 [ Anibal Monsalve Salazar ]
-* configure: replaced -lssl with /usr/lib/libgnutls-openssl.so.
+* configure: replaced -lssl with -lgnutls-openssl
 * ssmtp.c: replaced SSL_CTX_use_certificate_chain_file with
   SSL_CTX_use_certificate_file and marked SSL_CTX_check_private_key
   as not used.
@@ -21,7 +21,7 @@ Anibal Monsalve Salazar <anibal@debian.org>
  EOF
  
 -	LIBS="$LIBS -lssl"
-+	LIBS="$LIBS /usr/lib/libgnutls-openssl.so"
++	LIBS="$LIBS -lgnutls-openssl"
  fi
  enableval=""
  
@@ -32,7 +32,7 @@ Anibal Monsalve Salazar <anibal@debian.org>
  if test x$enableval = xyes ; then
  	AC_DEFINE(HAVE_SSL)
 -	LIBS="$LIBS -lssl"
-+	LIBS="$LIBS /usr/lib/libgnutls-openssl.so"
++	LIBS="$LIBS -lgnutls-openssl"
  fi
  enableval=""
  
