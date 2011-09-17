@@ -1,1 +1,0 @@
-ssmtp: non-standard-file-perm etc/logcheck/ignore.d.server/ssmtp 0640 != 0644
