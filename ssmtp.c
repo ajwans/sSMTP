@@ -27,6 +27,11 @@
 #include <libgen.h>
 #include <errno.h>
 #include <fcntl.h>
+
+#ifdef HAVE_SIGNAL_H
+#include <signal.h>
+#endif
+
 #ifdef HAVE_SSL
 #include <openssl/crypto.h>
 #include <openssl/x509.h>

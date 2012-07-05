@@ -38,6 +38,15 @@ AC_TYPE_SIGNAL
 AC_FUNC_VPRINTF
 AC_CHECK_FUNCS(gethostname socket strdup strndup strstr)
 
+AC_CHECK_DECL(fdopen)
+if test x$ac_cv_have_decl_fdopen != xyes ; then
+	unset ac_cv_have_decl_fdopen
+	savedCFLAGS=$CFLAGS
+	CFLAGS="$CFLAGS -D_POSIX_SOURCE"
+	AC_CHECK_DECL(fdopen, AC_DEFINE(_POSIX_SOURCE), AC_ERROR(no fdopen))
+	CFLAGS=$savedCFLAGS
+fi
+
 savedCFLAGS=$CFLAGS
 AC_CHECK_DECL(isascii, [],
 	unset ac_cv_have_decl_isascii
@@ -80,6 +89,8 @@ if test x$ac_cv_search_initscr != xno ; then
 		CFLAGS=$savedCFLAGS
 	])
 fi
+
+AC_CHECK_HEADER(signal.h, [ AC_DEFINE(HAVE_SIGNAL_H) ])
 
 AC_ARG_ENABLE(ssl,
 [  --enable-ssl           support for secure connection to mail server])
