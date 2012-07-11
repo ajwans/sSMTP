@@ -1742,7 +1742,7 @@ finished:
 	 * functions like fgets in the first place
 	 */
 	if (fileno(input) == fileno(stdin))
-		fcntl(fileno(input), F_SETFL,O_NONBLOCK);
+		fcntl(fileno(input), F_SETFL, O_NONBLOCK);
 
 	while (!feof(input)) {
 		bool_t leadingdot;
