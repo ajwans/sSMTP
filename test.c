@@ -1,6 +1,10 @@
 #include <CUnit/Basic.h>
+#include <stdio.h>
 #include <unistd.h>
 #include <sys/socket.h>
+#include <pthread.h>
+#include <ctype.h>
+#include <fcntl.h>
 
 #include "ssmtp.h"
 #include "ccan/list/list.h"
@@ -41,8 +45,11 @@ test_duplicate_recipient(void)
 
 	header_parse(fds[0], &header_list, &rcpt_list, True);
 
-	list_for_each(&rcpt_list, node, list)
+	list_for_each(&rcpt_list, node, list) {
+		if (nrecips)
+			printf("extra nrecip %s\n", node->string);
 		nrecips++;
+	}
 	CU_ASSERT(nrecips == 1);
 
 	node = list_top(&rcpt_list, struct string_node, list);
@@ -56,36 +63,154 @@ test_long_indented_paragraph(void)
 	CU_ASSERT(msg != NULL);
 }
 
+struct start_smtp_params {
+	FILE	*mail_input;
+	int	smtp_server;
+	int	ret;
+};
+
+void *smtp_reader(void *params)
+{
+	struct start_smtp_params *start_smtp_params =
+					(struct start_smtp_params *)params;
+	char	*argv[] = { NULL, "root", NULL };
+	char	*pw_name = "root";
+
+	start_smtp_params->ret = start_smtp(start_smtp_params->mail_input,
+				start_smtp_params->smtp_server, argv, pw_name);
+
+	return NULL;
+}
+
+extern bool_t minus_v;
+extern char *uad;
+
 static void
 test_lost_last_line(void)
 {
 	char	*msg = "From: root\r\nTo: root\r\nSubject: ssmtp test - last lines are stripped\r\n\r\nHello, world.\r\nYou\r\n will not see these two lines.\r\n";
-	char	*argv[] = { NULL, NULL };
-	char	*pw_name = "root";
-	int	in_fds[2];
-	int	out_fds[2];
-	char	buf[4096];
-	int	ret;
-	FILE	*input;
+	int		in_fds[2];
+	int		out_fds[2];
+	char		buf[4096];
+	int		ret;
+	FILE		*input;
+	pthread_t	p;
+	void		*pthread_ret;
+	struct start_smtp_params start_smtp_params;
 
 	CU_ASSERT_FATAL(pipe(in_fds) != -1);
 	CU_ASSERT_FATAL(socketpair(PF_UNIX, SOCK_STREAM, 0, out_fds) != -1);
 
+	/* write our message down the pipe and close */
 	CU_ASSERT((unsigned)write(in_fds[1], msg, strlen(msg)) == strlen(msg));
-
-	input = fdopen(in_fds[0], "r");
-	ret = start_smtp(input, out_fds[1], argv, pw_name);
-	CU_ASSERT(ret == 0);
 	close(in_fds[1]);
 
+	input = fdopen(in_fds[0], "r");
+	CU_ASSERT_FATAL(input != NULL);
+
+	start_smtp_params.mail_input	= input;
+	start_smtp_params.smtp_server	= out_fds[1];
+
+#ifdef DEBUG
+	minus_v = True;
+#endif
+	uad = "root";
+
+	/* start an sssmtp thread */
+	ret = pthread_create(&p, NULL, smtp_reader, (void *)&start_smtp_params);
+	CU_ASSERT_FATAL(ret == 0);
+
+	/* pretend to be a smtp server */
+	ret = sprintf(buf, "220 mail.foo.com ESMTP ready\r\n");
+	write(out_fds[0], buf, ret);
+
 	while (read(out_fds[0], buf, 1) != 0) {
-		printf("%c 0x%x\n", buf[0], buf[0]);
+		if (minus_v)
+			printf("%c 0x%x\n",
+					isprint(buf[0]) ? buf[0] : '.', buf[0]);
 		fflush(stdout);
+		if (buf[0] == '\n') {
+			break;
+		}
 	}
 
-	read(out_fds[0], buf, sizeof(buf));
+	/* HELO */
+	ret = sprintf(buf, "250 mail.foo.com\r\n");
+	write(out_fds[0], buf, ret);
 
-	printf("%s", buf);
+	while (read(out_fds[0], buf, 1) != 0) {
+		if (minus_v)
+			printf("%c 0x%x\n",
+					isprint(buf[0]) ? buf[0] : '.', buf[0]);
+		fflush(stdout);
+		if (buf[0] == '\n') {
+			break;
+		}
+	}
+
+	/* MAIL FROM */
+	ret = sprintf(buf, "250 OK\r\n");
+	write(out_fds[0], buf, ret);
+
+	while (read(out_fds[0], buf, 1) != 0) {
+		if (minus_v)
+			printf("%c 0x%x\n",
+					isprint(buf[0]) ? buf[0] : '.', buf[0]);
+		fflush(stdout);
+		if (buf[0] == '\n') {
+			break;
+		}
+	}
+
+	/* DATA */
+	ret = sprintf(buf, "250 OK\r\n");
+	write(out_fds[0], buf, ret);
+
+	while (read(out_fds[0], buf, 1) != 0) {
+		if (minus_v)
+			printf("%c 0x%x\n",
+					isprint(buf[0]) ? buf[0] : '.', buf[0]);
+		fflush(stdout);
+		if (buf[0] == '\n') {
+			break;
+		}
+	}
+
+	ret = sprintf(buf, "354 OK\r\n");
+	write(out_fds[0], buf, ret);
+
+	/* give the other thread time to write everything */
+	sleep(1);
+
+
+	int flags;
+	fcntl(out_fds[0], F_GETFL, &flags);
+	fcntl(out_fds[0], F_SETFL, flags | O_NONBLOCK);
+
+	read(out_fds[0], buf, sizeof(buf));
+	if (minus_v)
+		printf("%s", buf);
+
+	/* end of DATA */
+	ret = sprintf(buf, "250 OK\r\n");
+	write(out_fds[0], buf, ret);
+
+	/* QUIT */
+	while (read(out_fds[0], buf, 1) != 0) {
+		if (minus_v)
+			printf("%c 0x%x\n",
+					isprint(buf[0]) ? buf[0] : '.', buf[0]);
+		fflush(stdout);
+		if (buf[0] == '\n') {
+			break;
+		}
+	}
+
+	ret = sprintf(buf, "250 OK\r\n");
+	write(out_fds[0], buf, ret);
+
+	pthread_join(p, &pthread_ret);
+	CU_ASSERT_FATAL(pthread_ret == NULL);
 }
 
 int

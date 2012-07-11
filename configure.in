@@ -17,12 +17,10 @@ dnl Checks for header files.
 AC_HEADER_STDC
 AC_CHECK_HEADERS(limits.h strings.h syslog.h unistd.h)
 
-
 AC_CACHE_CHECK([for obsolete openlog],ssmtp_cv_obsolete_openlog,
 	[ AC_TRY_COMPILE([#include <syslog.h> ] , [ openlog("xx",1); ] ,
 	ssmtp_cv_obsolete_openlog=yes, ssmtp_cv_obsolete_openlog=no)]
 )
-
 
 dnl Checks for typedefs, structures, and compiler characteristics.
 AC_C_CONST
