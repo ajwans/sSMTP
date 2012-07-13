@@ -11,6 +11,19 @@ AC_PROG_CC
 AC_PROG_INSTALL
 AC_PROG_LN_S
 
+
+AC_ARG_ENABLE(ragel,
+	[  --enable-ragel	use ragel to build parser ])
+if test x$enableval != xno ; then
+	AC_CHECK_PROG(RAGEL, ragel, yes, no, $enableval)
+	if test x$ac_cv_prog_RAGEL = xyes ; then
+		AC_DEFINE(HAVE_RAGEL)
+		HAVE_RAGEL=1
+	fi
+	AC_SUBST(HAVE_RAGEL)
+fi
+enableval=""
+
 dnl Checks for libraries.
 
 dnl Checks for header files.

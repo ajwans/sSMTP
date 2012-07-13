@@ -61,6 +61,10 @@
 #include "base64.h"
 #endif
 
+#ifdef HAVE_RAGEL
+#include "rfc822.h"
+#endif
+
 #include <regex.h>
 
 #define ARRAY_SIZE(x) sizeof(x) / sizeof(x[0])
@@ -720,7 +724,7 @@ rcpt_remap(char *str)
 /*
  * header_save() -- Store entry into header list
  */
-static void
+void
 header_save(
 	const char		*str,
 	struct list_head	*headers,
@@ -790,6 +794,7 @@ header_save(
 #endif
 }
 
+#ifndef HAVE_RAGEL
 /*
  * header_parse() -- Break headers into seperate entries
  */
@@ -886,6 +891,7 @@ header_parse(
 	}
 	(void)free(p);
 }
+#endif /* HAVE_RAGEL */
 
 static void
 add_config(

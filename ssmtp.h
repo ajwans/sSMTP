@@ -1,3 +1,6 @@
+#ifndef _SSMTP_H
+#define _SSMTP_H
+
 /*
 
  See COPYRIGHT for the license
@@ -51,3 +54,6 @@ char **parse_options(int argc, char **argv);
 int ssmtp(char **argv);
 void header_parse(int, struct list_head *, struct list_head *, bool_t);
 int start_smtp(FILE *, int, char **, char *);
+void header_save(const char *, struct list_head	*, struct list_head *, bool_t);
+
+#endif /* _SSMTP_H */
