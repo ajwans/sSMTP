@@ -43,6 +43,10 @@ EXTRADEFS=\
 
 CFLAGS=@DEFS@ $(EXTRADEFS) -I. @CFLAGS@
 
+ifneq ("@HAVE_RAGEL@", "")
+	OBJS += rfc822.o
+endif
+
 all: ssmtp test
 
 .PHONY: install
@@ -102,4 +106,7 @@ distclean: clean
 
 %.o: %.c %.h
 	$(CC) $(CFLAGS) -c -o $@ $<
+
+%.c: %.rl
+	ragel $<
 
