@@ -89,7 +89,7 @@ ssmtp: main.o $(OBJS)
 test: test.c $(OBJS)
 	if [ x"$(TEST)" != x"" ];					\
 	then								\
-		$(CC) -o $@ $< $(OBJS) $(LIBPATH) @LIBS@ $(CFLAGS);	\
+		$(CC) -o $@ $< $(OBJS) $(LIBPATH) @LIBS@ $(CFLAGS) &&	\
 		./test;							\
 	fi
 

@@ -9,15 +9,26 @@
 #include "ssmtp.h"
 #include "ccan/list/list.h"
 
+#ifdef DEBUG
+#include "debug/hex.h"
+#include "debug/log.h"
+#endif
+
 static int
 init_header_tests(void)
 {
+#ifdef DEBUG
+	log_open(NULL, LOG_DEBUG, 0);
+#endif
 	return 0;
 }
 
 static int
 clean_header_tests(void)
 {
+#ifdef DEBUG
+	log_close();
+#endif
 	return 0;
 }
 
@@ -214,14 +225,16 @@ test_lost_last_line(void)
 	/* give the other thread time to write everything */
 	sleep(1);
 
-
 	int flags;
 	fcntl(out_fds[0], F_GETFL, &flags);
 	fcntl(out_fds[0], F_SETFL, flags | O_NONBLOCK);
 
-	read(out_fds[0], buf, sizeof(buf));
+	ret = read(out_fds[0], buf, sizeof(buf));
+	buf[ret] = 0;
+#ifdef DEBUG
 	if (minus_v)
-		printf("%s", buf);
+		hexdump(LOG_DEBUG, buf, ret);
+#endif
 
 	/* end of DATA */
 	ret = sprintf(buf, "250 OK\r\n");
