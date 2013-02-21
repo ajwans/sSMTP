@@ -31,8 +31,6 @@ GEN_CONFIG=$(srcdir)/generate_config
 
 SRCS=ssmtp.c arpadate.c xgethostname.c @SRCS@
 
-OBJS=$(SRCS:.c=.o)
-
 INSTALL=@INSTALL@
 
 EXTRADEFS=\
@@ -44,8 +42,10 @@ EXTRADEFS=\
 CFLAGS=@DEFS@ $(EXTRADEFS) -I. @CFLAGS@
 
 ifneq ("@HAVE_RAGEL@", "")
-	OBJS += rfc822.o
+	SRCS += rfc822.c
 endif
+
+OBJS=$(SRCS:.c=.o)
 
 all: ssmtp test
 
