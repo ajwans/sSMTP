@@ -1432,6 +1432,7 @@ ssmtp() -- send the message (exactly one) from stdin to the mailhub SMTP port
 int ssmtp(char *argv[])
 {
 	char b[(BUF_SZ + 2)], *buf = b+1, *p, *q;
+	char *remote_addr;
 #ifdef MD5AUTH
 	char challenge[(BUF_SZ + 1)];
 #endif
@@ -1633,6 +1634,10 @@ int ssmtp(char *argv[])
 
 	if(have_from == False) {
 		outbytes += smtp_write(sock, "From: %s", from);
+	}
+
+	if(remote_addr=getenv("REMOTE_ADDR")) {
+		outbytes += smtp_write(sock, "X-Originating-IP: %s", remote_addr);
 	}
 
 	if(have_date == False) {
