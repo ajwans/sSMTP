@@ -66,6 +66,13 @@ if test x$enableval = xyes ; then
 fi
 enableval=""
 
+AC_ARG_ENABLE(crypto,
+[  --enable-crypto        adds libcrypto in case X509_free needs the library])
+if test x$enableval = xyes ; then
+	LIBS="$LIBS -lcrypto"
+fi
+enableval=""
+
 AC_ARG_ENABLE(inet6,
 [  --enable-inet6         support for IPv6 transport])
 if test x$enableval = xyes ; then
