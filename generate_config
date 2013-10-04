@@ -1,10 +1,16 @@
-#!/bin/sh -e
+#!/bin/bash -e
 
 #
 # Figure out the system's mailname
 #
 
-syshostname=`hostname --fqdn`
+if test `uname` == 'SunOS'
+then
+	syshostname='uname -n'
+else
+	syshostname='hostname --fqdn'
+fi
+
 if test -f /etc/mailname
 then
 	mailname="`head -1 /etc/mailname`"

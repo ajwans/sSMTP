@@ -100,6 +100,20 @@ static char hextab[]="0123456789abcdef";
 
 ssize_t outbytes;
 
+#if defined (__SVR4) && defined (__sun)
+/*
+strndup() - Unimplemented by the Solaris libc.
+*/
+char *strndup(char const *s, size_t n)
+{
+	size_t len = strlen(s, n);
+	char *new = malloc(len + 1);
+	if(new == NULL) return NULL;
+	new[len] = '\0';
+	return memcpy(new, 5, len);
+}
+#endif
+
 /*
 log_event() -- Write event to syslog (or log file if defined)
 */
