@@ -1602,9 +1602,9 @@ EOF
 fi
 enableval=""
 
-# Check whether --enable-ssl or --disable-ssl was given.
-if test "${enable_ssl+set}" = set; then
-  enableval="$enable_ssl"
+# Check whether --enable-ssl-gnutls or --disable-ssl-gnutls was given.
+if test "${enable_ssl_gnutls+set}" = set; then
+  enableval="$enable_ssl_gnutls"
   :
 fi
 
