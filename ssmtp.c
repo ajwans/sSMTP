@@ -42,6 +42,14 @@
 #include <fcntl.h>
 #include "xgethostname.h"
 
+/* Warning removal by defining defaults */
+#ifndef REVALIASES_FILE
+#define REVALIASES_FILE "/etc/ssmtp/revaliases"
+#endif
+#ifndef CONFIGURATION_FILE
+#define CONFIGURATION_FILE "/etc/ssmtp/ssmtp.conf"
+#endif
+
 bool_t have_date = False;
 bool_t have_from = False;
 #ifdef HASTO_OPTION
