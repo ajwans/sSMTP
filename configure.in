@@ -49,10 +49,20 @@ fi
 enableval=""
 
 AC_ARG_ENABLE(ssl,
-[  --enable-ssl           support for secure connection to mail server])
+[  --enable-ssl           support for secure connection to mail server (openssl)])
 if test x$enableval = xyes ; then
 	AC_DEFINE(HAVE_SSL)
+	AC_DEFINE(HAVE_SSL_OPENSSL)
 	LIBS="$LIBS -lssl"
+fi
+enableval=""
+
+AC_ARG_ENABLE(ssl,
+[  --enable-ssl-gnutls    support for secure connection to mail server (gnutils)])
+if test x$enableval = xyes ; then
+	AC_DEFINE(HAVE_SSL)
+	AC_DEFINE(HAVE_SSL_GNUTLS)
+	LIBS="$LIBS -lgnutls-openssl"
 fi
 enableval=""
 
