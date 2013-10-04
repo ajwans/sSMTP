@@ -1143,14 +1143,21 @@ int smtp_open(char *host, int port)
 	int err;
 	char buf[(BUF_SZ + 1)];
 
+	/* Special handling of const to avoid compile warnings */
+#ifdef HAVE_SSL_OPENSSL
+	X509 *server_cert;
+	const SSL_METHOD *meth;
+#else /* gnutls */
+	const X509 *server_cert;
+	SSL_METHOD *meth;
+#endif
+
 	/* Init SSL stuff */
 	SSL_CTX *ctx;
-	SSL_METHOD *meth;
-	X509 *server_cert;
 
 	SSL_load_error_strings();
 	SSLeay_add_ssl_algorithms();
-	meth=SSLv23_client_method();
+	meth = SSLv23_client_method();
 	ctx = SSL_CTX_new(meth);
 	if(!ctx) {
 		log_event(LOG_ERR, "No SSL support initiated\n");
