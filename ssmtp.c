@@ -25,12 +25,15 @@
 #include <string.h>
 #include <ctype.h>
 #include <netdb.h>
-#ifdef HAVE_SSL
+#ifdef HAVE_SSL_OPENSSL
 #include <openssl/crypto.h>
 #include <openssl/x509.h>
 #include <openssl/pem.h>
 #include <openssl/ssl.h>
 #include <openssl/err.h>
+#endif
+#ifdef HAVE_SSL_GNUTLS
+#include <gnutls/openssl.h>
 #endif
 #ifdef MD5AUTH
 #include "md5auth/hmac_md5.h"
@@ -1133,7 +1136,11 @@ int smtp_open(char *host, int port)
 	}
 
 	if(use_cert == True) { 
+#ifdef HAVE_SSL_OPENSSL
 		if(SSL_CTX_use_certificate_chain_file(ctx, tls_cert) <= 0) {
+#else /* gnutls */
+		if(SSL_CTX_use_certificate_file(ctx, tls_cert, SSL_FILETYPE_PEM) <= 0) {
+#endif
 			perror("Use certfile");
 			return(-1);
 		}
@@ -1143,10 +1150,12 @@ int smtp_open(char *host, int port)
 			return(-1);
 		}
 
+#ifdef HAVE_SSL_OPENSSL
 		if(!SSL_CTX_check_private_key(ctx)) {
 			log_event(LOG_ERR, "Private key does not match the certificate public key\n");
 			return(-1);
 		}
+#endif
 	}
 #endif
 

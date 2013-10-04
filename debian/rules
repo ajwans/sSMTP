@@ -13,7 +13,7 @@ CC=gcc
 CFLAGS+=-O2 -g -Wall
 
 do_cfg:
-	test -f Makefile || ./configure --exec-prefix="/usr" --prefix="" --enable-ssl --enable-inet6 --enable-md5auth --with-cflags="$(CFLAGS)"
+	test -f Makefile || ./configure --exec-prefix="/usr" --prefix="" --enable-ssl-gnutls --enable-inet6 --enable-md5auth --with-cflags="$(CFLAGS)"
 
 build-arch: build
 build-indep: build
