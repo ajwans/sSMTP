@@ -1,7 +1,7 @@
 # Vietnamese translation for SSMTP.
 # Copyright © 2010 Free Software Foundation, Inc.
 # Clytie Siddall <clytie@riverland.net.au>, 2005-2010.
-#
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: ssmtp 2.64-2\n"
@@ -10,6 +10,7 @@ msgstr ""
 "PO-Revision-Date: 2010-02-13 18:29+1030\n"
 "Last-Translator: Clytie Siddall <clytie@riverland.net.au>\n"
 "Language-Team: Vietnamese <vi-VN@googlegroups.com>\n"
+"Language: vi\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -32,12 +33,15 @@ msgid ""
 "control of this file yourself) then set this option to have the program "
 "never touch this file."
 msgstr ""
-"Tập tin cấu hình thư « /etc/ssmtp/ssmtp.conf » có thể được tự động cập nhật mỗi lần nâng cấp, dùng thông tin được cung cấp cho cơ sở dữ liệu cấu hình debconf. Nếu bạn không muốn trường hợp này xảy ra (tức là bạn muốn tự điều khiển tập tin này) thì đặt tùy chọn này để không bao giờ cho phép chương trình sửa đổi tập tin này."
+"Tập tin cấu hình thư « /etc/ssmtp/ssmtp.conf » có thể được tự động cập nhật "
+"mỗi lần nâng cấp, dùng thông tin được cung cấp cho cơ sở dữ liệu cấu hình "
+"debconf. Nếu bạn không muốn trường hợp này xảy ra (tức là bạn muốn tự điều "
+"khiển tập tin này) thì đặt tùy chọn này để không bao giờ cho phép chương "
+"trình sửa đổi tập tin này."
 
 #. Type: string
 #. Description
 #: ../templates:2001
-#| msgid "Who gets mail for userids < 1000:"
 msgid "Username who gets mail for userids < 1000:"
 msgstr "Tên người dùng nên nhận thư cho UID < 1000:"
 
@@ -49,7 +53,9 @@ msgid ""
 "here. This is useful for daemons which mail reports to root and other system "
 "UIDs. Make this empty to disable rewriting."
 msgstr ""
-"Thư được gửi cho một người dùng cục bộ có UID dưới 1000 thì được chuyển hướng đến đây. Tùy chọn này có ích cho trình nền gửi thư cho người chủ (root) và UID hệ thống khác. Bỏ trống tùy chọn này để tắt chức năng ghi lại."
+"Thư được gửi cho một người dùng cục bộ có UID dưới 1000 thì được chuyển "
+"hướng đến đây. Tùy chọn này có ích cho trình nền gửi thư cho người chủ "
+"(root) và UID hệ thống khác. Bỏ trống tùy chọn này để tắt chức năng ghi lại."
 
 #. Type: string
 #. Description
@@ -65,7 +71,8 @@ msgid ""
 "required; no MX records are consulted. Commonly, mailhosts are named \"mail."
 "domain.com\"."
 msgstr ""
-"Giá trị này lập máy cho đó mọi thư được phát. Cần thiết tên máy thật: không đọc mục ghi MX nào. Bình thường, máy thư có tên « mail.miền.com »."
+"Giá trị này lập máy cho đó mọi thư được phát. Cần thiết tên máy thật: không "
+"đọc mục ghi MX nào. Bình thường, máy thư có tên « mail.miền.com »."
 
 #. Type: string
 #. Description
@@ -80,12 +87,12 @@ msgid ""
 "If your remote SMTP server listens on a port other than 25 (Standard/RFC) "
 "then set it here."
 msgstr ""
-"Nếu trình phục vụ SMTP ở xa có lắng nghe trên một cổng khác với 25 (chuẩn/RFC) thì hãy lập nó vào đây."
+"Nếu trình phục vụ SMTP ở xa có lắng nghe trên một cổng khác với 25 (chuẩn/"
+"RFC) thì hãy lập nó vào đây."
 
 #. Type: string
 #. Description
 #: ../templates:5001
-#| msgid "What domain to masquerade as:"
 msgid "Domain to masquerade as:"
 msgstr "Miền dưới đó cần giả trang:"
 
@@ -96,12 +103,12 @@ msgid ""
 "ssmtp will use \"username@REWRITEDOMAIN\" as the default From: address for "
 "outgoing mail which contains only a local username."
 msgstr ""
-"Phần mềm ssmtp sẽ dùng « tên_ngườI_dùng@MIỀN_GHI_LẠI » là địa chỉ « Từ : » (From:) mặc định cho thư gửi đi mà chứa chỉ một tên người dùng cục bộ."
+"Phần mềm ssmtp sẽ dùng « tên_ngườI_dùng@MIỀN_GHI_LẠI » là địa chỉ « Từ : "
+"» (From:) mặc định cho thư gửi đi mà chứa chỉ một tên người dùng cục bộ."
 
 #. Type: string
 #. Description
 #: ../templates:6001
-#| msgid "What name to store in /etc/mailname:"
 msgid "Name to store in /etc/mailname:"
 msgstr "Tên cần lưu vào « /etc/mailname »:"
 
@@ -112,7 +119,8 @@ msgid ""
 "This is the portion of the address after the '@' sign to be shown on "
 "outgoing news and mail messages."
 msgstr ""
-"Đây là phần địa chỉ đằng sau dấu a-còng « @ », để hiển thị trên các bài tin và thư gửi đi."
+"Đây là phần địa chỉ đằng sau dấu a-còng « @ », để hiển thị trên các bài tin "
+"và thư gửi đi."
 
 #. Type: string
 #. Description
@@ -127,7 +135,8 @@ msgid ""
 "This should specify the real hostname of this machine, and will be sent to "
 "the mailhub when delivering mail."
 msgstr ""
-"Giá trị này nên ghi rõ tên máy thật của máy này, và sẽ được gửi cho thiết bị trung tâm mạng thư (mailhub) khi phát thư."
+"Giá trị này nên ghi rõ tên máy thật của máy này, và sẽ được gửi cho thiết bị "
+"trung tâm mạng thư (mailhub) khi phát thư."
 
 #. Type: boolean
 #. Description
@@ -145,5 +154,8 @@ msgid ""
 "this, and use only the default address or addresses set in /etc/ssmtp/"
 "revaliases."
 msgstr ""
-"Trả lời « Có » (yes) tại đây thì cho phép người dùng cục bộ nhập bất kỳ dòng « Từ: » (From:) vào thư, mà không bị hỏng, và gây ra trình ssmtp ghi lại phần đầu bao dùng địa chỉ này. Còn trả lời « Không » (no) sẽ không cho phép tùy chọn này nên dùng chỉ địa chỉ mặc định hoặc địa chỉ được lập trong « /etc/ssmtp/revaliases »."
-"ssmtp/revaliases »."
+"Trả lời « Có » (yes) tại đây thì cho phép người dùng cục bộ nhập bất kỳ dòng "
+"« Từ: » (From:) vào thư, mà không bị hỏng, và gây ra trình ssmtp ghi lại "
+"phần đầu bao dùng địa chỉ này. Còn trả lời « Không » (no) sẽ không cho phép "
+"tùy chọn này nên dùng chỉ địa chỉ mặc định hoặc địa chỉ được lập trong « /"
+"etc/ssmtp/revaliases ».ssmtp/revaliases »."
