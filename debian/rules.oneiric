@@ -6,14 +6,14 @@
 
 #export DEB_BUILD_MAINT_OPTIONS = hardening=+all
 DPKG_EXPORT_BUILDFLAGS = 1
-include /usr/share/dpkg/buildflags.mk
+#include /usr/share/dpkg/buildflags.mk
 
 SHELL=/bin/bash
 CC=gcc
 CFLAGS+=-O2 -g -Wall
 
 do_cfg:
-	test -f Makefile || ./configure --exec-prefix="/usr" --prefix="" --enable-ssl --enable-crypto --enable-inet6 --enable-md5auth --with-cflags="$(CFLAGS)"
+	test -f Makefile || ./configure --exec-prefix="/usr" --prefix="" --enable-ssl --enable-inet6 --enable-md5auth --with-cflags="$(CFLAGS)"
 
 build-arch: build
 build-indep: build
