@@ -632,7 +632,7 @@ int crammd5(char *challengeb64, char *username, char *password, char *responseb6
 {
 	int i;
 	unsigned char digest[MD5_DIGEST_LEN];
-	unsigned char digascii[MD5_DIGEST_LEN * 2];
+	unsigned char digascii[MD5_DIGEST_LEN * 2 + 1];
 	unsigned char challenge[(BUF_SZ + 1)];
 	unsigned char response[(BUF_SZ + 1)];
 	unsigned char secret[(MD5_BLOCK_LEN + 1)]; 
@@ -1651,7 +1651,8 @@ int ssmtp(char *argv[])
 		outbytes += smtp_write(sock, "From: %s", from);
 	}
 
-	if(remote_addr=getenv("REMOTE_ADDR")) {
+	remote_addr = getenv("REMOTE_ADDR");
+	if(remote_addr) {
 		outbytes += smtp_write(sock, "X-Originating-IP: %s", remote_addr);
 	}
 
