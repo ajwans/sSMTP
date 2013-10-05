@@ -2,6 +2,7 @@
 *.bak
 *.o
 *.swp
+.bzr
 config.cache
 config.log
 config.status
