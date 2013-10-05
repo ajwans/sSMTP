@@ -1,3 +1,16 @@
+ssmtp (2.65-0ppa1) unstable; urgency=low
+
+  Merged Debian patches into mainline source
+  Added option to be able to compile against openssl instead of gnutls
+
+  Releasing this version so ssmtp can work with Amazon's SES better as
+  recent Amazon changes have made email sending unreliable.  Switching
+  SSL libraries to OpenSSL seems to fix things.  I don't know how gnutls's
+  version differs when it talks to Amazon, nor am I able to really figure
+  out why without more help from their side.
+
+ -- Tyler Akins <fidian@rumkin.com>  Fri, 04 Oct 2013 19:48:03 +0500
+
 ssmtp (2.64-7) unstable; urgency=low
 
   * Use hardening options
