@@ -89,6 +89,7 @@ int log_level = 1;
 #else
 int log_level = 0;
 #endif
+int minuserid = MAXSYSUID+1;
 int port = 25;
 #ifdef INET6
 int p_family = PF_UNSPEC;		/* Protocol family used in SMTP connection */
@@ -674,7 +675,7 @@ char *rcpt_remap(char *str)
 {
 	struct passwd *pw;
 	if((root==NULL) || strlen(root)==0 || strchr(str, '@') ||
-		((pw = getpwnam(str)) == NULL) || (pw->pw_uid > MAXSYSUID)) {
+		((pw = getpwnam(str)) == NULL) || (pw->pw_uid >= minuserid)) {
 		return(append_domain(str));	/* It's not a local systems-level user */
 	}
 	else {
@@ -921,6 +922,17 @@ bool_t read_config()
 
 				if(log_level > 0) {
 					log_event(LOG_INFO, "Set Root=\"%s\"\n", root);
+				}
+			}
+			else if(strcasecmp(p, "MinUserId") == 0) {
+				if((r = strdup(q)) == (char *)NULL) {
+					die("parse_config() -- strdup() failed");
+				}
+
+				minuserid = atoi(r);
+
+				if(log_level > 0) {
+					log_event(LOG_INFO, "Set MinUserId=\"%d\"\n", minuserid);
 				}
 			}
 			else if(strcasecmp(p, "MailHub") == 0) {
