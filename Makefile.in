@@ -9,6 +9,8 @@ mandir=$(prefix)/man/man8
 
 LN_S=@LN_S@
 CC=@CC@
+LDFLAGS=@LDFLAGS@
+LIBS=@LIBS@
 
 etcdir=@sysconfdir@
 SSMTPCONFDIR=$(etcdir)/ssmtp
@@ -79,7 +81,7 @@ uninstall-sendmail: uninstall
 
 # Binaries:
 ssmtp: $(OBJS)
-	$(CC) -o ssmtp $(OBJS) @LIBS@ $(CFLAGS) $(LDFLAGS)
+	$(CC) -o ssmtp $(OBJS) $(LIBS) $(CFLAGS) $(LDFLAGS)
 
 .PHONY: clean
 clean:
