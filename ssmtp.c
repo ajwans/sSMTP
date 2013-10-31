@@ -479,7 +479,7 @@ from_format() -- Generate standard From: line
 */
 char *from_format(char *str, bool_t override_from)
 {
-	char buf[(BUF_SZ + 1)];
+	char buf[(BUF_SZ + 1)] = "";
 
 	if(override_from) {
 		if(minus_f) {
