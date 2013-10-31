@@ -249,11 +249,10 @@ void die(char *format, ...)
 	exit(1);
 }
 
-#ifndef _GNU_SOURCE
 /*
-basename() -- Return last element of path
+xbasename() -- Return last element of path
 */
-char *basename(char *str)
+char *xbasename(char *str)
 {
 	char *p;
 
@@ -264,7 +263,6 @@ char *basename(char *str)
 
 	return(strdup(p));
 }
-#endif /* _GNU_SOURCE */
 
 /*
 strip_pre_ws() -- Return pointer to first non-whitespace character
@@ -2133,7 +2131,7 @@ int main(int argc, char **argv)
 	(void)signal(SIGTTOU, SIG_IGN);
 
 	/* Set the globals */
-	prog = basename(argv[0]);
+	prog = xbasename(argv[0]);
 
 	hostname = xgethostname();
 
