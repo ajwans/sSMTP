@@ -13,6 +13,7 @@
 #define VERSION "2.65"
 #define _GNU_SOURCE
 
+#include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <sys/param.h>
