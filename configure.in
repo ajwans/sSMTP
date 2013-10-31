@@ -50,26 +50,16 @@ enableval=""
 
 AC_ARG_ENABLE(ssl,
 [  --enable-ssl           support for secure connection to mail server (openssl)])
+AC_ARG_WITH([gnutls],
+	AS_HELP_STRING([--with-gnutls], [Use GnuTLS for SSL support]))
 if test x$enableval = xyes ; then
 	AC_DEFINE(HAVE_SSL)
-	AC_DEFINE(HAVE_SSL_OPENSSL)
-	LIBS="$LIBS -lssl"
-fi
-enableval=""
-
-AC_ARG_ENABLE(ssl-gnutls,
-[  --enable-ssl-gnutls    support for secure connection to mail server (gnutils)])
-if test x$enableval = xyes ; then
-	AC_DEFINE(HAVE_SSL)
-	AC_DEFINE(HAVE_SSL_GNUTLS)
-	LIBS="$LIBS -lgnutls-openssl"
-fi
-enableval=""
-
-AC_ARG_ENABLE(crypto,
-[  --enable-crypto        adds libcrypto in case X509_free needs the library])
-if test x$enableval = xyes ; then
-	LIBS="$LIBS -lcrypto"
+	if test "x$with_gnutls" != "xyes"; then
+		LIBS="$LIBS -lssl -lcrypto"
+	else
+		AC_DEFINE([HAVE_GNUTLS])
+		LIBS="$LIBS -lgnutls-openssl"
+	fi
 fi
 enableval=""
 
