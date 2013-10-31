@@ -871,7 +871,16 @@ char *firsttok(char **s, const char *delim)
 	if (!rest) {
 		return NULL;
 	}
+#ifdef HAVE_STRNDUP
 	tok=strndup(*s,rest-(*s));
+#else
+	{
+		size_t len = rest - (*s);
+		tok = malloc(sizeof(char) * (len + 1));
+		memcpy(tok, *s, len);
+		tok[len] = '\0';
+	}
+#endif
 	if (!tok) {
 		die("firsttok() -- strndup() failed");
 	}
