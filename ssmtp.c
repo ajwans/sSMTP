@@ -1082,7 +1082,8 @@ bool_t read_config()
 				}
 			}
 			else if(strcasecmp(p, "AuthPass") == 0 && !auth_pass) {
-				if((auth_pass = strdup(q)) == (char *)NULL) {
+				auth_pass = firsttok(&rightside, " \n\t");
+				if(auth_pass  == (char *)NULL) {
 					die("parse_config() -- strdup() failed");
 				}
 
