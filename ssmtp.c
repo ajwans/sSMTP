@@ -1083,8 +1083,8 @@ bool_t read_config()
 			}
 			else if(strcasecmp(p, "AuthPass") == 0 && !auth_pass) {
 				auth_pass = firsttok(&rightside, " \n\t");
-				if(auth_pass  == (char *)NULL) {
-					die("parse_config() -- strdup() failed");
+				if(auth_pass == (char *)NULL) {
+					die("parse_config() -- firsttok() failed");
 				}
 
 				if(log_level > 0) {
