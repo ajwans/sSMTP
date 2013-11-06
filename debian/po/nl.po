@@ -1,26 +1,27 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# Dutch translation of ssmtp debconf templates.
+# Copyright (C) 2007-2012 THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the ssmtp package.
+# Bart Cornelis <cobaco@skolelinux.no>, 2007.
+# Jeroen Schot <schot@a-eskwadraat.nl>, 2012.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: ssmtp\n"
+"Project-Id-Version: ssmtp 2.64-5\n"
 "Report-Msgid-Bugs-To: ssmtp@packages.debian.org\n"
 "POT-Creation-Date: 2009-11-24 09:07+1100\n"
-"PO-Revision-Date: 2007-03-09 23:00+0100\n"
-"Last-Translator: Bart Cornelis <cobaco@skolelinux.no>\n"
-"Language-Team: debian-l10n-dutch <debian-l10n-dutch@lists.debian.org>\n"
+"PO-Revision-Date: 2012-01-05 15:54+0100\n"
+"Last-Translator: Jeroen Schot <schot@a-eskwadraat.nl>\n"
+"Language-Team: Debian l10n Dutch <debian-l10n-dutch@lists.debian.org>\n"
+"Language: nl\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Poedit-Language: Dutch\n"
 
 #. Type: boolean
 #. Description
 #: ../templates:1001
 msgid "Automatically overwrite config files?"
-msgstr "Wilt u de configuratiebestanden automatisch overschrijven?"
+msgstr "De configuratiebestanden automatisch overschrijven?"
 
 #. Type: boolean
 #. Description
@@ -34,16 +35,14 @@ msgid ""
 msgstr ""
 "Het is mogelijk om het configuratiebestand /etc/ssmtp/ssmtp.conf bij elke "
 "opwaardering bij te werken met de informatie aangeleverd door debconf. Als u "
-"dit niet wilt (b.v. omdat u dit bestand handmatig wilt beheren) stel deze "
+"dit niet wilt (bv. omdat u dit bestand handmatig wilt beheren) stel deze "
 "optie dan in om het bestand nooit aan te raken."
 
 #. Type: string
 #. Description
 #: ../templates:2001
-#, fuzzy
-#| msgid "Who gets mail for userids < 1000:"
 msgid "Username who gets mail for userids < 1000:"
-msgstr "Wie krijgt de e-mail voor userids < 1000:"
+msgstr "Gebruikersnaam die de e-mail voor userids < 1000 ontvangt:"
 
 #. Type: string
 #. Description
@@ -53,10 +52,9 @@ msgid ""
 "here. This is useful for daemons which mail reports to root and other system "
 "UIDs. Make this empty to disable rewriting."
 msgstr ""
-"E-mail naar een lokale gebruiker met een UID kleiner dan duizend wordt "
-"hiernaar omgeleid. Dit is nuttig voor achtergronddiensten die rapporten e-"
-"mailen naar root en andere systeem-UIDs. Maak dit leeg om omleiden te "
-"deactiveren. "
+"E-mail naar een lokale gebruiker met een UID kleiner dan 1000 wordt hiernaar "
+"omgeleid. Dit is nuttig voor achtergronddiensten die rapporten e-mailen naar "
+"root en andere systeem-UIDs. Maak dit leeg om omleiden te deactiveren."
 
 #. Type: string
 #. Description
@@ -73,14 +71,14 @@ msgid ""
 "domain.com\"."
 msgstr ""
 "Dit stelt de computer in waar de e-mail afgeleverd wordt. De eigenlijke "
-"machinenaam is niet vereist; er worden geen MX-records nagekeken. Gewoonlijk "
-"worden e-mailservers 'mail.domain.com' genoemd. "
+"machinenaam is vereist; er worden geen MX-records nagekeken. Gewoonlijk "
+"worden e-mailservers 'mail.domain.com' genoemd."
 
 #. Type: string
 #. Description
 #: ../templates:4001
 msgid "Remote SMTP port number:"
-msgstr "Poort waarop de mailhub luistert:"
+msgstr "SMTP-poortnummer van externe server:"
 
 #. Type: string
 #. Description
@@ -89,16 +87,14 @@ msgid ""
 "If your remote SMTP server listens on a port other than 25 (Standard/RFC) "
 "then set it here."
 msgstr ""
-"Als uw mailhub op een andere poort dan 25 (de standaardpoort volgens de RFC) "
-"luistert, dient u dit hier in te stellen."
+"Als uw externe SMTP-server op een andere poort dan 25 (de standaardpoort "
+"volgens de RFC) luistert, dient u dit hier in te stellen."
 
 #. Type: string
 #. Description
 #: ../templates:5001
-#, fuzzy
-#| msgid "What domain to masquerade as:"
 msgid "Domain to masquerade as:"
-msgstr "Als welk domein te maskeren:"
+msgstr "Te maskeren domein:"
 
 #. Type: string
 #. Description
@@ -107,16 +103,14 @@ msgid ""
 "ssmtp will use \"username@REWRITEDOMAIN\" as the default From: address for "
 "outgoing mail which contains only a local username."
 msgstr ""
-"ssmtp gebruikt 'gebruikersnaam@HERSCHRIJFDOMEIN' als het standaard 'Van'-"
+"Ssmtp gebruikt 'gebruikersnaam@HERSCHRIJFDOMEIN' als het standaard 'From'-"
 "adres voor uitgaande e-mail die enkel een lokale gebruikersnaam heeft."
 
 #. Type: string
 #. Description
 #: ../templates:6001
-#, fuzzy
-#| msgid "What name to store in /etc/mailname:"
 msgid "Name to store in /etc/mailname:"
-msgstr "Naam die in /etc/mailname opgeslagen moet worden:"
+msgstr "Naam die opgeslagen moet worden in /etc/mailname:"
 
 #. Type: string
 #. Description
@@ -126,13 +120,13 @@ msgid ""
 "outgoing news and mail messages."
 msgstr ""
 "Dit is het deel van het adres na het '@'-teken dat getoond wordt voor "
-"uitgaande nieuws- en e-mail-berichten."
+"uitgaande e-mail- en nieuwsberichten."
 
 #. Type: string
 #. Description
 #: ../templates:7001
 msgid "Fully qualified hostname:"
-msgstr "Volledig gekwalificeerde domein naam (FQDN):"
+msgstr "Volledige computernaam (FQDN):"
 
 #. Type: string
 #. Description
@@ -149,7 +143,7 @@ msgstr ""
 #: ../templates:8001
 msgid "Allow override of From: line in email header?"
 msgstr ""
-"Wilt u het aanpassen van het 'Van:'-adres in een e-mail-koptekst toelaten?"
+"Wilt u het aanpassen van het 'From:'-adres in een e-mailkoptekst toestaan?"
 
 #. Type: boolean
 #. Description
@@ -161,7 +155,7 @@ msgid ""
 "this, and use only the default address or addresses set in /etc/ssmtp/"
 "revaliases."
 msgstr ""
-"Een positief antwoord laat lokale gebruikers toe om om het even welk 'Van'-"
+"Een positief antwoord staat lokale gebruikers toe om om het even welk 'Van'-"
 "adres op te geven in hun berichten zonder dat dit ssmtp de envelop-koptekst "
 "herschrijft om dat aan te passen. Een negatief antwoord verhindert dit en "
 "laat enkel het standaardadres (of de standaardadressen) die in /etc/ssmtp/"

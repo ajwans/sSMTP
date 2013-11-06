@@ -1,26 +1,25 @@
-# Esko Arajärvi <edu@iki.fi>, 2010.
+# Copyright (C) YEAR ssmtp COPYRIGHT HOLDER
+# This file is distributed under the same license as the ssmtp package.
+# Ivan Masár <helix84@centrum.sk>, 2012.
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: ssmtp\n"
 "Report-Msgid-Bugs-To: ssmtp@packages.debian.org\n"
 "POT-Creation-Date: 2009-11-24 09:07+1100\n"
-"PO-Revision-Date: 2010-01-09 21:39+0200\n"
-"Last-Translator: Esko Arajärvi <edu@iki.fi>\n"
-"Language-Team: Finnish <debian-l10n-finnish@lists.debian.org>\n"
-"Language: fi\n"
+"PO-Revision-Date: 2012-01-19 23:33+0100\n"
+"Last-Translator: Ivan Masár <helix84@centrum.sk>\n"
+"Language-Team: Slovak <sk-i18n@lists.linux.sk>\n"
+"Language: sk\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Poedit-Language: Finnish\n"
-"X-Poedit-Country: FINLAND\n"
-"X-Generator: Lokalize 1.0\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #. Type: boolean
 #. Description
 #: ../templates:1001
 msgid "Automatically overwrite config files?"
-msgstr "Korvataanko asetustiedostot automaattisesti?"
+msgstr "Automaticky prepísať konfiguračné súbory?"
 
 #. Type: boolean
 #. Description
@@ -32,16 +31,17 @@ msgid ""
 "control of this file yourself) then set this option to have the program "
 "never touch this file."
 msgstr ""
-"Sähköpostien asetustiedosto /etc/ssmtp/ssmtp.conf voidaan päivittää "
-"automaattisesti aina paketin päivityksen yhteydessä käyttäen debconf-"
-"tietokantaan annettuja tietoja. Jos et halua näitä päivityksiä (eli haluat "
-"hallinnoida tiedostoa käsin), älä valitse tätä vaihtoehtoa."
+"Konfiguračný súbor pošty /etc/ssmtp/ssmtp.conf je možné automaticky "
+"aktualizovať pri každej aktualizácii informáciami dodanými do databázy "
+"debconf. Ak nechcete, aby sa tak dialo (t.j. ak si chcete ponechať kontrolu "
+"nad týmto súborom), nastavte túto voľbu, aby sa program nikdy nedotýkal "
+"tohto súboru."
 
 #. Type: string
 #. Description
 #: ../templates:2001
 msgid "Username who gets mail for userids < 1000:"
-msgstr "Tunnus, joka saa viestit, joiden vastaanottajan käyttäjä-id < 1000:"
+msgstr "Meno používateľa, ktorý bude dostávať poštu pre ID používateľa < 1000:"
 
 #. Type: string
 #. Description
@@ -51,17 +51,16 @@ msgid ""
 "here. This is useful for daemons which mail reports to root and other system "
 "UIDs. Make this empty to disable rewriting."
 msgstr ""
-"Viestit käyttäjille, joiden käyttäjä-id on pienempi kuin 1000, lähetetään "
-"näiden käyttäjien sijaan tälle käyttäjälle. Tästä on hyötyä taustaohjelmien "
-"kanssa, jotka lähettävät viestejä pääkäyttäjälle ja muille "
-"järjestelmätunnuksille. Jätä kenttä tyhjäksi, jos haluat poistaa "
-"uudelleenohjauksen käytöstä."
+"Pošta poslaná lokálnemu používateľovi, ktorého UID je menšie ako 1000 sa "
+"namiesto toho poše sem. To sa hodí pre démony, ktorých pošta sa hlási "
+"používateľovi root a iným UID systému. Ak necháte voľbu prázdnu, vypne sa "
+"prepisovanie."
 
 #. Type: string
 #. Description
 #: ../templates:3001
 msgid "Name of your mailhub:"
-msgstr "Sähköpostipalvelimen nimi:"
+msgstr "Názov vášho poštového centra:"
 
 #. Type: string
 #. Description
@@ -71,15 +70,15 @@ msgid ""
 "required; no MX records are consulted. Commonly, mailhosts are named \"mail."
 "domain.com\"."
 msgstr ""
-"Tämä määrittää koneen, jolle viestit välitetään. Tämän täytyy olla oikea "
-"konenimi, MX-tietueita ei tutkita. Usein postipalvelimien nimi on muotoa "
-"”mail.example.com”."
+"Toto nastavuje názov počítača, na ktorá sa doručuje pošta. Vyžaduje sa "
+"skutočný názov počítača; nezisťujú sa žiadne záznamy MX. Poštové servery sa "
+"zvyčajne volajú „mail.domena.sk“"
 
 #. Type: string
 #. Description
 #: ../templates:4001
 msgid "Remote SMTP port number:"
-msgstr "Etä-SMTP-portin numero:"
+msgstr "Číslo portu vzdialeného SMTP:"
 
 #. Type: string
 #. Description
@@ -88,14 +87,14 @@ msgid ""
 "If your remote SMTP server listens on a port other than 25 (Standard/RFC) "
 "then set it here."
 msgstr ""
-"Jos etäpään SMTP-palvelin kuuntelee muuta porttia kuin 25 (standardi), anna "
-"se tässä."
+"Ak váš vzdialený server SMTP počúva na inom porte ako (štandardný podľa "
+"RFC), nastavte ho tu."
 
 #. Type: string
 #. Description
 #: ../templates:5001
 msgid "Domain to masquerade as:"
-msgstr "Mistä verkkoalueesta viestit naamioidaan tuleviksi:"
+msgstr "Prekladať na názov domény:"
 
 #. Type: string
 #. Description
@@ -104,14 +103,14 @@ msgid ""
 "ssmtp will use \"username@REWRITEDOMAIN\" as the default From: address for "
 "outgoing mail which contains only a local username."
 msgstr ""
-"Jos viestin lähettäjänä on pelkkä paikallinen käyttäjätunnus, ssmtp käyttää "
-"lähettäjäosoitteena oletuksena muotoa ”tunnus@NAAMIOVERKKOALUE”."
+"ssmtp použije „pouzivatel@PREPISANA_DOMENA“ ako predvolenú adresu Od: pre "
+"odchádzajúcu poštu, ktorá zvyčajne obsahuje iba meno lokálneho používateľa."
 
 #. Type: string
 #. Description
 #: ../templates:6001
 msgid "Name to store in /etc/mailname:"
-msgstr "Tiedostoon /etc/mailname tallennettava nimi:"
+msgstr "Meno, ktoré sa uloží v /etc/mailname:"
 
 #. Type: string
 #. Description
@@ -120,14 +119,14 @@ msgid ""
 "This is the portion of the address after the '@' sign to be shown on "
 "outgoing news and mail messages."
 msgstr ""
-"Tämä on ”@”-merkin jälkeinen osoitteen osa, joka näytetään lähtevissä "
-"sähköposteissa ja uutisviesteissä."
+"Toto je časť adresy za znakom „@“, ktorá sa zobrazí na odchádzajúcich "
+"správach noviniek a pošty."
 
 #. Type: string
 #. Description
 #: ../templates:7001
 msgid "Fully qualified hostname:"
-msgstr "Täydellinen verkkotunnus:"
+msgstr "Plne kvalifikovaný názov počítača (FQDN):"
 
 #. Type: string
 #. Description
@@ -136,15 +135,14 @@ msgid ""
 "This should specify the real hostname of this machine, and will be sent to "
 "the mailhub when delivering mail."
 msgstr ""
-"Tämän tulisi määrittää tämän koneen oikea konenimi, joka lähetetään "
-"sähköpostipalvelimelle välitettäessä viestejä."
+"Tu by mal byť uvedený skutočný názov tohto počítača, ktorý sa pošle "
+"poštovému centru pri doručovaní pošty."
 
 #. Type: boolean
 #. Description
 #: ../templates:8001
 msgid "Allow override of From: line in email header?"
-msgstr ""
-"Sallitaanko lähettäjäosoitteen muuttaminen sähköpostin otsikkotiedoissa?"
+msgstr "Umožniť prepísanie riadka Od: v hlavičke emailu?"
 
 #. Type: boolean
 #. Description
@@ -156,8 +154,8 @@ msgid ""
 "this, and use only the default address or addresses set in /etc/ssmtp/"
 "revaliases."
 msgstr ""
-"Jos valitset tämän, paikalliset käyttäjät voivat asettaa "
-"lähettäjäosoitteeksi minkä tahansa haluamansa, ja ssmtp muokkaa "
-"lähetysotsakkeeseen annetun osoitteen. Jos et valitse tätä, käyttäjät eivät "
-"voi muokata lähettäjäosoitetta ja käytössä ovat vain tiedostossa /etc/ssmtp/"
-"revaliases asetetut oletusosoitteet."
+"Ak odpoviete kladne, povolíte lokálnym používateľom zadať akýkoľvek riadok "
+"Od: v ich správach, a nikdy nebude zmenený a spôsobíte, že ssmtp prepíše "
+"hlavičku v obálke touto adresou. Záporná odpoveď to zakáže a bude sa "
+"používať iba predvolená adresa alebo adresy nastavené v /etc/ssmtp/"
+"revaliases."
