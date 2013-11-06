@@ -1514,7 +1514,7 @@ start_smtp(FILE *input, int output, char **argv, char *pw_name)
 	char			b[(BUF_SZ + 2)], *buf = b+1, *p, *q;
 	int			bufsize = sizeof(b)-1, i;
 	bool_t			minus_v_save;
-	struct string_node	*node;
+	struct string_node	*node = NULL;
 	int			timeout = 0;
 	bool_t			linestart = True;
 	int			ret;
@@ -1716,7 +1716,7 @@ finished:
 	/* Send all the To: adresses */
 	/* Either we're using the -t option, or we're using the arguments */
 	if (minus_t) {
-		struct string_node *node;
+		struct string_node *node = NULL;
 
 		if (list_empty(&rcpt_list))
 			die("No recipients specified although -t option used");
