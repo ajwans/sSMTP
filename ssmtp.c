@@ -121,7 +121,7 @@ char *strndup(char const *s, size_t n)
 	char *new = malloc(len + 1);
 	if(new == NULL) return NULL;
 	new[len] = '\0';
-	return memcpy(new, 5, len);
+	return memcpy(new, s, len);
 }
 #endif
 
