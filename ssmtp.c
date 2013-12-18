@@ -112,7 +112,7 @@ int log_level = 1;
 #else
 int log_level = 0;
 #endif
-int minuserid = MAXSYSUID+1;
+unsigned int minuserid = MAXSYSUID+1;
 #ifdef INET6
 int p_family = PF_UNSPEC;		/* Protocol family used in SMTP connection */
 #endif
@@ -1517,7 +1517,6 @@ start_smtp(FILE *input, int output, char **argv, char *pw_name)
 	struct string_node	*node = NULL;
 	int			timeout = 0;
 	bool_t			linestart = True;
-	int			ret;
 	char			*remote_addr;
 
 	/* setup buffer with leading dot */
