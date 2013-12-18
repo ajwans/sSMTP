@@ -81,7 +81,6 @@ AC_ARG_ENABLE(ssl,
 AC_ARG_WITH([gnutls],
 	AS_HELP_STRING([--with-gnutls], [Use GnuTLS for SSL support]))
 if test x$enableval = xyes ; then
-<<<<<<< HEAD
 	AC_DEFINE(HAVE_SSL)
 	if test "x$with_gnutls" != "xyes"; then
 		AC_CHECK_HEADER(openssl/crypto.h, [
