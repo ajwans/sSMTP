@@ -14,12 +14,14 @@ AC_PROG_LN_S
 AC_ARG_ENABLE(ragel,
 	[  --enable-ragel	use ragel to build parser ])
 if test x$enableval != xno ; then
-	AC_CHECK_PROG(RAGEL, ragel, yes, no, $enableval)
+	AC_CHECK_PROG(RAGEL, ragel, yes, no)
 	if test x$ac_cv_prog_RAGEL = xyes ; then
 		AC_DEFINE(HAVE_RAGEL)
 		HAVE_RAGEL=1
 	fi
 	AC_SUBST(HAVE_RAGEL)
+else
+	AC_MSG_CHECKING([No ragel selected]);
 fi
 enableval=""
 
@@ -77,14 +79,17 @@ enableval=""
 if test x$ac_cv_search_initscr != xno ; then
 	AC_ARG_ENABLE([cunit], [  --enable-cunit=<path> support cunit testing],[
 		savedCFLAGS=$CFLAGS
-		CFLAGS="$CFLAGS -L$enableval/lib -I$enableval/include"
+		savedLDFLAGS=$LDFLAGS
+		CFLAGS="$CFLAGS -I$enableval/include"
+		LDFLAGS="$LDFLAGS -L$enableval/lib"
 		AC_CHECK_LIB([cunit], [CU_get_error], [
 			AC_CHECK_HEADER([CUnit/CUnit.h], [
 				savedCFLAGS=$CFLAGS
 				TEST=1
 				AC_SUBST(TEST)
 				LIBS="$LIBS -lcunit"
-			])
+				AC_MSG_CHECKING([cunit found])
+			], AC_MSG_FAILURE([cunit header not found]))
 		])
 		enableval=""
 		CFLAGS=$savedCFLAGS
@@ -115,10 +120,10 @@ if test "x$ac_cv_header_openssl_crypto_h" == "xyes"; then
 
 	AC_LANG_PUSH(C)
 	AC_COMPILE_IFELSE(
-		AC_LANG_PROGRAM(
-			[#include <openssl/ssl.h>],
-			[SSL_read(NULL, NULL, 0);]
-		), [
+		[AC_LANG_SOURCE(
+			[#include <openssl/ssl.h>
+			int main(void) { SSL_read(NULL, NULL, 0); }]
+		)], [
 			ac_cv_func_SSL_read=yes
 			AC_MSG_RESULT(yes)
 		], ac_cv_func_SSL_read=no
@@ -127,10 +132,10 @@ if test "x$ac_cv_header_openssl_crypto_h" == "xyes"; then
 	if test "x$ac_cv_func_SSL_read" != "xyes"; then
 		CFLAGS="$CFLAGS -Wno-deprecated-declarations"
 		AC_COMPILE_IFELSE(
-			AC_LANG_PROGRAM(
-				[#include <openssl/ssl.h>],
-				[SSL_read(NULL, NULL, 0);]
-			), [
+			[AC_LANG_SOURCE(
+				[#include <openssl/ssl.h>
+				int main(void) { SSL_read(NULL, NULL, 0); }]
+			)], [
 				ac_cv_func_SSL_read=yes
 				savedCFLAGS=$CFLAGS
 				AC_MSG_RESULT([yes, with -Wno-deprecated-declarations])

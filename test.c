@@ -43,7 +43,7 @@ test_duplicate_recipient(void)
 	int			fds[2];
 	struct list_head	rcpt_list;
 	struct list_head	header_list;
-	struct string_node	*node;
+	struct string_node	*node = NULL;
 	int			nrecips = 0;
 
 	list_head_init(&rcpt_list);
@@ -75,7 +75,7 @@ test_folded_headers(void)
 	int			fds[2];
 	struct list_head	rcpt_list;
 	struct list_head	header_list;
-	struct string_node	*node;
+	struct string_node	*node = NULL;
 	int			nrecips = 0;
 
 	list_head_init(&rcpt_list);

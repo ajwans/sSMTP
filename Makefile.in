@@ -85,13 +85,13 @@ uninstall-sendmail: uninstall
 
 # Binaries:
 ssmtp: main.o $(OBJS)
-	$(CC) -o $@ $< $(OBJS) $(LIBPATH) $(LIBS) $(CFLAGS)
+	$(CC) -o $@ $< $(OBJS) $(LDFLAGS) $(LIBPATH) $(LIBS) $(CFLAGS)
 
 .PRECIOUS: test
 test: test.c $(OBJS)
 	if [ x"$(TEST)" != x"" ];					\
 	then								\
-		$(CC) -o $@ $< $(OBJS) $(LIBPATH) $(LIBS) $(CFLAGS) &&	\
+		$(CC) -o $@ $< $(OBJS) $(LDFLAGS) $(LIBPATH) $(LIBS) $(CFLAGS) &&	\
 		./test;							\
 	fi
 
