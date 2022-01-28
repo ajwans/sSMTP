@@ -910,7 +910,7 @@ bool_t read_config()
 		char *begin=buf;
 		char *rightside;
 		/* Make comments invisible */
-		if((p = strchr(buf, '#'))) {
+		if ((p = strip_pre_ws(buf))[0] == '#') {
 			*p = '\0';
 		}
 
