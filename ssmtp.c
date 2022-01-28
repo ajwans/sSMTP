@@ -459,7 +459,7 @@ char *from_strip(char *str)
 	(void)fprintf(stderr, "*** from_strip(): str = [%s]\n", str);
 #endif
 
-	if(strncmp("From:", str, 5) == 0) {
+	if(strncasecmp("From:", str, 5) == 0) {
 		str += 5;
 	}
 
